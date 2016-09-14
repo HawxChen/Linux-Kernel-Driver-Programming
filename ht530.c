@@ -15,27 +15,44 @@
 module_init(ht530_init);
 module_exit(ht530_exit);
 
+static unsigned long cur_size;
+static DEFINE_HASHTABLE(ht530_tbl, HT530_HT_BITS);
+static struct ht530_dev *dev_ptr;
+static struct class *ht530_class;
+
 static struct file_operations ht530_fops = {
     .owner = THIS_MODULE,
     .open = ht530_open,
     .release = ht530_release,
     .write = ht530_write,
     .read = ht530_read,
-    .unlocked_ioctl = ht530_unlocked_ioctl
+    .unlocked_ioctl = ht530_unlocked_ioctl,
+    .fsync = ht530_fsync
 };
 
-static unsigned long cur_size;
-struct test_set test_data;
-static DEFINE_HASHTABLE(ht530_tbl, HT530_HT_BITS);
-static struct ht530_dev *dev_ptr;
-static struct class *ht530_class;
+int ht530_fsync (struct file *fops, loff_t start, loff_t end, int datasync) {
+    volatile int xmen2 = 123456;
+    volatile int xmen3 = 654321;
+    printk(KERN_ALERT "ht530: fsync,xmen2: %p, ht530_fsync: %p\n",&xmen2, ht530_fsync);
+    printk(KERN_ALERT "ht530: fsync,xmen3: %p, ht530_fsync: %p\n",&xmen3, ht530_fsync);
+    printk(KERN_ALERT "ht530: fsync Done\n");
+    return 0;
+}
+
+
 static int ht530_open(struct inode* node, struct file* file) {
     printk(KERN_ALERT "ht530: Open\n");
+    printk(KERN_ALERT "ht530: Open Done\n");
     return 0;
 }
 
 static int ht530_release(struct inode* node, struct file* file) {
+    volatile int superman2 = 1234560;
+    volatile int superman3 = 6543210;
     printk(KERN_ALERT "ht530: Release\n");
+    printk(KERN_ALERT "ht530:, supermen2: %p, ht530_release: %p\n",&superman2, ht530_release);
+    printk(KERN_ALERT "ht530:, supermen3: %p, ht530_release: %p\n",&superman3, ht530_release);
+    printk(KERN_ALERT "ht530: Release Done\n");
     return 0;
 }
 
@@ -172,7 +189,7 @@ long ht530_unlocked_ioctl (struct file *file, unsigned int req1, unsigned long r
 
     if(RET_CUR_SIZE == req1) {
         printk(KERN_ALERT "ht530: RET_CUR_SIZE:%lu\n", cur_size); 
-        copy_to_user((unsigned long*) req2, &cur_size, sizeof(unsigned long));
+        failed_copy = copy_to_user((unsigned long*) req2, &cur_size, sizeof(unsigned long));
     }
 
     //here is protectd by user (Synchronization)
@@ -182,7 +199,7 @@ long ht530_unlocked_ioctl (struct file *file, unsigned int req1, unsigned long r
         ht_object_t* back_storage = (ht_object_t*) req2;
         printk(KERN_ALERT "ht530: ALL_DUMP\n"); 
         hash_for_each(ht530_tbl, bkt, drv_node, node) {
-            copy_to_user(back_storage, &drv_node->pair,sizeof(ht_object_t));
+            failed_copy = copy_to_user(back_storage, &drv_node->pair,sizeof(ht_object_t));
             back_storage ++;
         }
     }
@@ -237,7 +254,7 @@ static int __init ht530_init(void) {
         printk(KERN_ALERT "Error: alloc_chrdev_region");
         return -1;
     } else {
-        printk(KERN_ALERT "ht530: Major:%d, Minor:%d\n", MAJOR(Ht530_devnum), MINOR(Ht530_devnum));
+        printk(KERN_ALERT "ht530: devnum:%d, Major:%d, Minor:%d\n", Ht530_devnum,MAJOR(Ht530_devnum), MINOR(Ht530_devnum));
     }
 
     ht530_class = class_create(THIS_MODULE, MODULE_NAME);
@@ -265,7 +282,7 @@ static void __exit ht530_exit(void) {
     struct hlist_node *tmp_node = NULL;
     int bkt = 0;
 
-    printk(KERN_ALERT "GoodBye Kernel World!!!\n");
+    printk(KERN_ALERT "ht530: GoodBye Kernel World!!!\n");
     /*delete hashtable*/
     if(!hash_empty(ht530_tbl)) {
         hash_for_each_safe(ht530_tbl, bkt, tmp_node, scan_node, node) {
@@ -288,3 +305,4 @@ static void __exit ht530_exit(void) {
 } 
 
 MODULE_LICENSE("GPL");
+EXPORT_SYMBOL(ht530_fsync);

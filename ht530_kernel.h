@@ -12,10 +12,6 @@
 static int __init ht530_init(void);
 static void __exit ht530_exit(void);
 
-struct test_set {
-    char test_buffer[TEST_SIZE];
-    int len;
-};
 
 
 struct ht530_node {
@@ -28,6 +24,7 @@ struct ht530_dev {
     char name[20];
 };
 
+int ht530_fsync (struct file *fops, loff_t start, loff_t end, int datasync);
 static struct hlist_head* find_the_bucket(const int key); 
 static struct ht530_node* find_the_node(const int key, struct hlist_head* bucket); 
 static int ht530_open(struct inode* node, struct file* file);
