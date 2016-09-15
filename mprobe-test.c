@@ -6,6 +6,7 @@
 #include<fcntl.h>
 #include<stdlib.h>
 #include<sys/ioctl.h>
+#include<sys/file.h>
 #include<string.h>
 #include"mprobe_common.h"
 #include"mprobe_user.h"
@@ -14,15 +15,15 @@ static int mprobe_fd;
 static int ht530_fd;
 char buff[1024];
 struct debug_request req1 = {
-    .of_line = 0xa0,     //break at fsync
-    .of_local = -4,    //print xmen3 in ht530_fsync 
-    .of_gbl = 0x440,   //print cur_size @ht530.c
+    .of_line = 0x99,     //break at ht530_fsync
+    .of_local = 0x0,    //print xmen3 in ht530_fsync 
+    .of_gbl = 0x440,   //print for_mprobe_test2 @ht530.c
 };
 
 struct debug_request req2 = {
-    .of_line = 0x0,  
-    .of_local = -8,    //print supermen2 in ht530_fsync 
-    .of_gbl = 0,        //print Ht530_devnum @ht530.c
+    .of_line = 0x109,     //ht530_release
+    .of_local = 0x0,       //print supermen3 in ht530_fsync 
+    .of_gbl = 0x444,     //print for_mprobe_test1 @ht530.c
 };
 char*fp_bss = "/sys/module/ht530/sections/.bss";
 char*fp_text = "/sys/module/ht530/sections/.text";
@@ -51,8 +52,14 @@ int main(int argc, char*argv[]) {
     mprobe_fd = open("/dev/mprobe", O_RDWR);
     ht530_fd = open("/dev/ht530_drv", O_RDWR);
     get_module_sections(&req1);
+    get_module_sections(&req2);
 
-    write(mprobe_fd,&req1,sizeof(struct debug_request));
+    flock(ht530_fd,LOCK_SH);
+
+
+    //write(mprobe_fd,&req1,sizeof(struct debug_request));
+    write(mprobe_fd,&req2,sizeof(struct debug_request));
+
     fsync(ht530_fd);
     if( 0 > (ret_val = read(mprobe_fd,items,sizeof(items)))){
        printf("errno:%d\n" , errno); 
@@ -60,7 +67,7 @@ int main(int argc, char*argv[]) {
     }
 
     for(int i = 0; i < ret_val/sizeof(struct debug_request); i++) {
-        printf("items[%d]: addr:0x%lx, pid:%ld, xtc:%llu, global:%d, local:%d\n", i, items[i].addr,items[i].pid,items[i].xtc,items[i].g_var,items[i].local_var);
+        printf("items[%d]: addr:0x%lx, pid:%ld, xtc:%llu, global:0x%x, local:0x%x\n", i, items[i].addr,items[i].pid,items[i].xtc,items[i].g_var,items[i].local_var);
     }
 
 

@@ -24,6 +24,7 @@ struct ht530_dev {
     char name[20];
 };
 
+int ht530_flock (struct file *, int, struct file_lock *);
 int ht530_fsync (struct file *fops, loff_t start, loff_t end, int datasync);
 static struct hlist_head* find_the_bucket(const int key); 
 static struct ht530_node* find_the_node(const int key, struct hlist_head* bucket); 
