@@ -19,6 +19,9 @@ static unsigned long cur_size;
 static DEFINE_HASHTABLE(ht530_tbl, HT530_HT_BITS);
 static struct ht530_dev *dev_ptr;
 static struct class *ht530_class;
+static dev_t Ht530_devnum;
+static int for_mprobe_test1 = 0x12345;
+static int for_mprobe_test2 = 0x54321;
 
 static struct file_operations ht530_fops = {
     .owner = THIS_MODULE,
@@ -31,8 +34,9 @@ static struct file_operations ht530_fops = {
 };
 
 int ht530_fsync (struct file *fops, loff_t start, loff_t end, int datasync) {
-    volatile int xmen2 = 123456;
-    volatile int xmen3 = 654321;
+    volatile int xmen2 = 0x123456;
+    volatile int xmen3 = 0x654321;
+    printk(KERN_ALERT "ht530: fsync\n");
     printk(KERN_ALERT "ht530: fsync,xmen2: %p, ht530_fsync: %p\n",&xmen2, ht530_fsync);
     printk(KERN_ALERT "ht530: fsync,xmen3: %p, ht530_fsync: %p\n",&xmen3, ht530_fsync);
     printk(KERN_ALERT "ht530: fsync Done\n");
@@ -41,14 +45,14 @@ int ht530_fsync (struct file *fops, loff_t start, loff_t end, int datasync) {
 
 
 static int ht530_open(struct inode* node, struct file* file) {
-    printk(KERN_ALERT "ht530: Open\n");
+    printk(KERN_ALERT "ht530: Open, mp_t1:0x%x, mp_t2:0x%x\n", for_mprobe_test1, for_mprobe_test2);
     printk(KERN_ALERT "ht530: Open Done\n");
     return 0;
 }
 
 static int ht530_release(struct inode* node, struct file* file) {
-    volatile int superman2 = 1234560;
-    volatile int superman3 = 6543210;
+    volatile int superman2 = 0x1234560;
+    volatile int superman3 = 0x6543210;
     printk(KERN_ALERT "ht530: Release\n");
     printk(KERN_ALERT "ht530:, supermen2: %p, ht530_release: %p\n",&superman2, ht530_release);
     printk(KERN_ALERT "ht530:, supermen3: %p, ht530_release: %p\n",&superman3, ht530_release);
@@ -243,7 +247,6 @@ long ht530_unlocked_ioctl (struct file *file, unsigned int req1, unsigned long r
     return 0;
 }
 
-static dev_t Ht530_devnum;
 static int __init ht530_init(void) {
     int ret = 0;
     printk(KERN_ALERT "ht530: init\n");
@@ -306,3 +309,4 @@ static void __exit ht530_exit(void) {
 
 MODULE_LICENSE("GPL");
 EXPORT_SYMBOL(ht530_fsync);
+EXPORT_SYMBOL(ht530_open);

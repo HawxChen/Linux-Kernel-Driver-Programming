@@ -9,6 +9,7 @@
 #include<linux/slab.h>
 #include<linux/cdev.h>
 #include<linux/kdev_t.h>
+#include<linux/errno.h>
 #include<linux/kprobes.h>
 #include<asm/timex.h>
 #include "mprobe_kernel.h"
@@ -16,6 +17,7 @@
 module_init(mprobe_init);
 module_exit(mprobe_exit);
 
+extern int errno;
 static struct file_operations mprobe_fops = {
     .owner = THIS_MODULE,
     .open = mprobe_open,
@@ -28,9 +30,26 @@ static struct file_operations mprobe_fops = {
 static struct kprobe* kp=NULL ;
 
 ringbuffer rbf;
+
+
 static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
-	printk(KERN_INFO "pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx, bp = 0x%lx, sp = 0x%lx, time = %llu\n", p->addr, regs->ip, regs->flags, regs->bp, regs->sp, get_cycles());
-        return 0;
+    unsigned long long local_addr = 0;
+    unsigned long long g_addr = 0;
+    struct debug_result *drst;
+
+    local_addr = regs->sp + rbf.req.of_local;
+    g_addr = rbf.req.sect.bss + 0x440;
+
+    drst = &rbf.rst[rbf.idx++%RING_SIZE];
+    drst->addr = regs->ip;
+    drst->pid = current->pid;
+    drst->xtc = get_cycles();
+    //drst->local_var = *((int*)local_addr);
+    //drst->g_var = *((int*)g_addr);
+
+    printk(KERN_INFO "pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx, bp = 0x%lx, sp = 0x%lx, time = %llu,local_addr:%llx, global_addr:%llx\n", p->addr, regs->ip, regs->flags, regs->bp, regs->sp, get_cycles(), local_addr, g_addr);
+    printk(KERN_INFO "bss:%llx", rbf.req.sect.bss);
+    return 0;
 }
 
 static int handler_fault(struct kprobe *p, struct pt_regs *regs, int trapnr) {
@@ -112,10 +131,21 @@ static int mprobe_release(struct inode* node, struct file* file) {
 
 //ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
 static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
-    struct debug_request *req = (struct debug_request*) buf;
+    int i = 0;
+    int tail;
     printk(KERN_ALERT "mprobe: read\n");
+    if(0 == rbf.rst[0].xtc) {
+        return -EINVAL;
+    }
+
+    for(; i < RING_SIZE ;i++) {
+       if(0 ==  rbf.rst[i].xtc) break;
+    }
+
+    copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
+
     printk(KERN_ALERT "mprobe: read Done\n");
-    return 0;
+    return sizeof(struct debug_result)*i;
 }
 
 //ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
@@ -133,6 +163,7 @@ static ssize_t mprobe_write(struct file *file, const char __user *buf, size_t co
     printk("req->of_line + req->sect.text:%llx\n",req->of_line + req->sect.text);
     init_kp(kp, req->of_line + req->sect.text, NULL);
     register_kprobe(kp);
+    rbf.req = *req;
 
     printk(KERN_ALERT "mprobe: write Done\n");
     return 0;
@@ -151,9 +182,11 @@ static int __init mprobe_init(void) {
     int ret = 0;
     printk(KERN_ALERT "mprobe: init\n");
 
+    /*
     kp = (struct kprobe*) kmalloc(sizeof(struct kprobe), GFP_KERNEL);
-    init_kp(kp, 0, "ht530_fsync");
+    init_kp(kp, 0, "ht530_open");
     if(kp->addr != 0 || kp->symbol_name != NULL) register_kprobe(kp);
+    */
 
     if(0 > alloc_chrdev_region(&mprobe_devnum, MINOR_BASE, MINOR_COUNT, MODULE_NAME)) {
         printk(KERN_ALERT "Error: alloc_chrdev_region");
@@ -184,10 +217,10 @@ static int __init mprobe_init(void) {
 static void __exit mprobe_exit(void) {
     printk(KERN_ALERT "mprobe: GoodBye Kernel World!!!\n");
 
-    if(kp->addr != 0 || kp->symbol_name != NULL)
+    if((kp != NULL) && (kp->addr != 0 || kp->symbol_name != NULL)) {
         unregister_kprobe(kp);
-
-    destroy_kp(&kp);
+        destroy_kp(&kp);
+    }
     unregister_chrdev_region(mprobe_devnum, MINOR_COUNT);
     /*Destroy device*/
     device_destroy(mprobe_class, MKDEV(MAJOR(mprobe_devnum),0));
