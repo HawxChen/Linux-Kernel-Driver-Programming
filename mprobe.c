@@ -12,6 +12,7 @@
 #include<linux/errno.h>
 #include<linux/kprobes.h>
 #include<asm/timex.h>
+#include<linux/io.h>
 #include "mprobe_kernel.h"
 
 module_init(mprobe_init);
@@ -33,23 +34,23 @@ ringbuffer rbf;
 
 
 static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
-    unsigned long long local_addr = 0;
-    unsigned long long g_addr = 0;
+    unsigned long  local_addr = 0;
+    unsigned long  g_addr = 0;
     struct debug_result *drst;
 
-    local_addr = regs->sp + rbf.req.of_local;
-    g_addr = rbf.req.sect.bss + 0x440;
+    local_addr = ((unsigned long)regs->sp) + (unsigned long)rbf.req.of_local;
+    g_addr = ((unsigned long)rbf.req.sect.bss) + 0x440;
 
     drst = &rbf.rst[rbf.idx++];
     rbf.idx%=RING_SIZE;
     drst->addr = regs->ip;
     drst->pid = current->pid;
     drst->xtc = get_cycles();
-    //drst->local_var = *((int*)local_addr);
-    //drst->g_var = *((int*)g_addr);
+    drst->local_var = *((int*)local_addr);
+    drst->g_var = *((int*)g_addr);
 
     printk(KERN_INFO "pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx, bp = 0x%lx, sp = 0x%lx, time = %llu,local_addr:%llx, global_addr:%llx\n", p->addr, regs->ip, regs->flags, regs->bp, regs->sp, get_cycles(), local_addr, g_addr);
-    printk(KERN_INFO "bss:%llx", rbf.req.sect.bss);
+    printk(KERN_INFO "bss:%llx,*bp=0x%lx \n", rbf.req.sect.bss,*((unsigned long*)regs->bp));
     return 0;
 }
 
@@ -158,13 +159,15 @@ static ssize_t mprobe_write(struct file *file, const char __user *buf, size_t co
     if(kp != NULL) {
         unregister_kprobe(kp);
         destroy_kp(&kp);
+        printk(KERN_ALERT "destroy KP\n");
     }
-
-    kp = (struct kprobe*) kmalloc(sizeof(struct kprobe), GFP_KERNEL);
     printk("req->of_line + req->sect.text:%llx\n",req->of_line + req->sect.text);
+    kp = (struct kprobe*) kmalloc(sizeof(struct kprobe), GFP_KERNEL);
     init_kp(kp, req->of_line + req->sect.text, NULL);
-    register_kprobe(kp);
     rbf.req = *req;
+    printk("HERE2");
+    register_kprobe(kp);
+    
 
     printk(KERN_ALERT "mprobe: write Done\n");
     return 0;

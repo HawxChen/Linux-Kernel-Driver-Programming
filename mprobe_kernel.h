@@ -7,6 +7,7 @@
 static int __init mprobe_init(void);
 static void __exit mprobe_exit(void);
 
+#define STACK_SIZE_KPROBE (0x100000000)
 typedef struct ringbuffer{
     unsigned idx;
     struct debug_request req; 
