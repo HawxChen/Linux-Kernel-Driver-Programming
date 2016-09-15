@@ -13,10 +13,10 @@ KDIR := /root/course/eosi/kernel/linux-3.16.4/
 all: $(TESTER_NAME) $(MTESTER_NAME)
 	make -C $(KDIR) SUBDIRS=$(PWD) modules
 
-$(TESTER_NAME): $(TESTER_NAME).c ht530_user.h ht530_common.h
+$(TESTER_NAME): $(TESTER_NAME).c ht530_user.h ht530_common.h common_user.h
 	gcc $(TESTER_FLAGS) -o $(TESTER_NAME) $(TESTER_NAME).c
 
-$(MTESTER_NAME): $(MTESTER_NAME).c ht530_user.h ht530_common.h
+$(MTESTER_NAME): $(MTESTER_NAME).c ht530_user.h ht530_common.h common_user.h
 	gcc $(TESTER_FLAGS) -o $(MTESTER_NAME) $(MTESTER_NAME).c
 
 .PHONY: install uninstall dellog reinstall

@@ -7,8 +7,6 @@
 #include<stdlib.h>
 #include<sys/ioctl.h>
 #include<string.h>
-#include"ht530_user.h"
-#include"ht530_common.h"
 #include"mprobe_common.h"
 #include"mprobe_user.h"
 
@@ -17,7 +15,7 @@ static int ht530_fd;
 char buff[1024];
 struct debug_request req1 = {
     .of_line = 0xa0,     //break at fsync
-    .of_local = -6,    //print xmen3 in ht530_fsync 
+    .of_local = -4,    //print xmen3 in ht530_fsync 
     .of_gbl = 0x440,   //print cur_size @ht530.c
 };
 
@@ -47,15 +45,20 @@ int get_module_sections(struct debug_request* req) {
     return 0;
 }
 
+struct debug_result items[RING_SIZE];
 int main(int argc, char*argv[]) {
     mprobe_fd = open("/dev/mprobe", O_RDWR);
     ht530_fd = open("/dev/ht530_drv", O_RDWR);
     get_module_sections(&req1);
 
-    write(mprobe_fd,&req1,sizeof(struct debug_request));
+    //write(mprobe_fd,&req1,sizeof(struct debug_request));
+    //fsync(ht530_fd);
+    if( 0 > read(mprobe_fd,items,sizeof(items))){
+       printf("errno:%d\n" , errno); 
+       handle_error("XXXXX");
+    }
 
 
-    fsync(ht530_fd);
 
     close(mprobe_fd);
     close(ht530_fd);

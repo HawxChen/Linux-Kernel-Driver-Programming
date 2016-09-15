@@ -1,3 +1,4 @@
+#include"common_user.h"
 #define DO_ADD (1)
 #define DO_DELETE (2)
 #define DO_SEARCH (3)

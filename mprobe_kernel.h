@@ -3,15 +3,14 @@
 #define DEVICE_NAME ("mprobe")
 #define MINOR_BASE (0)
 #define MINOR_COUNT (5)
-#define RING_SIZE (10)
 
 static int __init mprobe_init(void);
 static void __exit mprobe_exit(void);
 
 typedef struct ringbuffer{
-    int next;
-    int tail;
-    struct debug_result info[RING_SIZE];
+    unsigned idx;
+    struct debug_request req; 
+    struct debug_result rst[RING_SIZE];
 } ringbuffer;
 struct mprobe_dev {
     struct cdev cdev;

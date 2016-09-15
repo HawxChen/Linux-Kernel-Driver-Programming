@@ -124,52 +124,6 @@ int main(int argc, char*argv[]) {
     //dump_set.n = 0;
     //ioctl(dev_fd, HASH_DUMP,(unsigned long) &dump_set);
 
-    /*
-    dump_set.n = 1;
-    int ret = 0;
-    ht_object_t input ;
-    input.key =1;
-    input.data =800;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key =2;
-    input.data =900;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key =3;
-    input.data =10000;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key =4;
-    input.data =99999;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key =5;
-    input.data =1199999;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key =6;
-    input.data =66666;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key =7;
-    input.data =9995500;
-//    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    
-    if(ret < 0) handle_error_en(errno , "FAILED WRITE");
-
-    input.key =8;
-    input.data =38491240;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key = 9;
-    input.data =111166666;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key = 10;
-    input.data =222266;
-    ret = write(dev_fd, (void*) &input, sizeof(ht_object_t));
-    input.key = 3;
-
-    ret = read(dev_fd, (void*) &input, sizeof(ht_object_t));
-    printf("READ: key:%d, data:%d\n", input.key, input.data);
-
-
-    if(ret < 0) handle_error_en(errno , "FAILED WRITE");
-    */
     return 0;
     
 }
