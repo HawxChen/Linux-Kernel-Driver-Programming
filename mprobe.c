@@ -40,7 +40,8 @@ static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
     local_addr = regs->sp + rbf.req.of_local;
     g_addr = rbf.req.sect.bss + 0x440;
 
-    drst = &rbf.rst[rbf.idx++%RING_SIZE];
+    drst = &rbf.rst[rbf.idx++];
+    rbf.idx%=RING_SIZE;
     drst->addr = regs->ip;
     drst->pid = current->pid;
     drst->xtc = get_cycles();
@@ -142,7 +143,7 @@ static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *p
     }
 
     //delete warning by i
-    i = copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
+    copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
 
     printk(KERN_ALERT "mprobe: read Done\n");
     return sizeof(struct debug_result)*i;
