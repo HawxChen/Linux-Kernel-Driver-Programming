@@ -58,6 +58,8 @@ int main(int argc, char*argv[]) {
        printf("errno:%d\n" , errno); 
        handle_error("XXXXX");
     }
+
+    printf("====ret_val:%d====\n",ret_val);
     for(int i = 0; i < ret_val/sizeof(struct debug_request); i++) {
         printf("items[%d].xtc:%llx\n", i, items[i].xtc);
     }
