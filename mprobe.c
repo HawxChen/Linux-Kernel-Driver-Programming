@@ -132,7 +132,6 @@ static int mprobe_release(struct inode* node, struct file* file) {
 //ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
 static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
     int i = 0;
-    int tail;
     printk(KERN_ALERT "mprobe: read\n");
     if(0 == rbf.rst[0].xtc) {
         return -EINVAL;
@@ -142,7 +141,8 @@ static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *p
        if(0 ==  rbf.rst[i].xtc) break;
     }
 
-    copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
+    //delete warning by i
+    i = copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
 
     printk(KERN_ALERT "mprobe: read Done\n");
     return sizeof(struct debug_result)*i;

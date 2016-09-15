@@ -47,15 +47,19 @@ int get_module_sections(struct debug_request* req) {
 
 struct debug_result items[RING_SIZE];
 int main(int argc, char*argv[]) {
+    int ret_val = 0;
     mprobe_fd = open("/dev/mprobe", O_RDWR);
     ht530_fd = open("/dev/ht530_drv", O_RDWR);
     get_module_sections(&req1);
 
-    //write(mprobe_fd,&req1,sizeof(struct debug_request));
-    //fsync(ht530_fd);
-    if( 0 > read(mprobe_fd,items,sizeof(items))){
+    write(mprobe_fd,&req1,sizeof(struct debug_request));
+    fsync(ht530_fd);
+    if( 0 > (ret_val = read(mprobe_fd,items,sizeof(items)))){
        printf("errno:%d\n" , errno); 
        handle_error("XXXXX");
+    }
+    for(int i = 0; i < ret_val/sizeof(struct debug_request); i++) {
+        printf("items[%d].xtc:%llx\n", i, items[i].xtc);
     }
 
 
