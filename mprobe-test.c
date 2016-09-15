@@ -59,9 +59,8 @@ int main(int argc, char*argv[]) {
        handle_error("XXXXX");
     }
 
-    printf("====ret_val:%d====\n",ret_val);
     for(int i = 0; i < ret_val/sizeof(struct debug_request); i++) {
-        printf("items[%d].xtc:%llx\n", i, items[i].xtc);
+        printf("items[%d]: addr:0x%lx, pid:%ld, xtc:%llu, global:%d, local:%d\n", i, items[i].addr,items[i].pid,items[i].xtc,items[i].g_var,items[i].local_var);
     }
 
 
