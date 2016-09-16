@@ -57,8 +57,8 @@ int main(int argc, char*argv[]) {
     flock(ht530_fd,LOCK_SH);
 
 
-    //write(mprobe_fd,&req1,sizeof(struct debug_request));
-    write(mprobe_fd,&req2,sizeof(struct debug_request));
+    write(mprobe_fd,&req1,sizeof(struct debug_request));
+    //write(mprobe_fd,&req2,sizeof(struct debug_request));
 
     fsync(ht530_fd);
     if( 0 > (ret_val = read(mprobe_fd,items,sizeof(items)))){

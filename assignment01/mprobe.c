@@ -137,6 +137,7 @@ static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *p
     printk(KERN_ALERT "mprobe: read\n");
     if(0 == rbf.rst[0].xtc) {
         return -EINVAL;
+        //return -1;
     }
 
     for(; i < RING_SIZE ;i++) {
