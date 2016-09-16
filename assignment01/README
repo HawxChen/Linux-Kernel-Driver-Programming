@@ -1,4 +1,6 @@
 # KernelRocks
+KDIR should be the path of kernel source directory
+
 Install it
   #make
   #make install_all
