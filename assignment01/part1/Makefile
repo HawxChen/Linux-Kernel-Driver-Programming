@@ -1,54 +1,32 @@
 NAME = ht530
-NAME_MPROBE = mprobe
 TESTER_NAME = ht530-test
-MTESTER_NAME = mprobe-test
 TESTER_FLAGS = -Wall -g -lpthread -std=c99
 
 obj-m := $(NAME).o
-obj-m += $(NAME_MPROBE).o
 PWD := $(shell pwd)
 KDIR := /root/course/eosi/kernel/linux-3.16.4/
 
 .PHONY: all 
-all: $(TESTER_NAME) $(MTESTER_NAME)
+all: $(TESTER_NAME)
 	make -C $(KDIR) SUBDIRS=$(PWD) modules
 
 $(TESTER_NAME): $(TESTER_NAME).c ht530_user.h ht530_common.h common_user.h
 	gcc $(TESTER_FLAGS) -o $(TESTER_NAME) $(TESTER_NAME).c
 
-$(MTESTER_NAME): $(MTESTER_NAME).c ht530_user.h ht530_common.h common_user.h
-	gcc $(TESTER_FLAGS) -o $(MTESTER_NAME) $(MTESTER_NAME).c
 
 .PHONY: install uninstall dellog reinstall
-install_ht530:
+install:
 	cp -f `pwd`/ht530.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/ht530/ht530.ko 
 	modprobe --force ht530
 
-uninstall_ht530:
+uninstall:
 	modprobe -r ht530
 
-reinstall_ht530:
+reinstall:
 	cp -f `pwd`/ht530.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/ht530/ht530.ko 
 	modprobe -r ht530
 	modprobe --force ht530
 
-install_mprobe:
-	cp -f `pwd`/mprobe.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/ht530/mprobe.ko 
-	modprobe --force mprobe
-
-uninstall_mprobe:
-	modprobe -r mprobe
-
-reinstall_mprobe:
-	cp -f `pwd`/mprobe.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/ht530/mprobe.ko 
-	modprobe -r mprobe 
-	modprobe --force mprobe
-
-install_all: install_ht530 install_mprobe
-
-reinstall_all: reinstall_ht530 reinstall_mprobe
-
-uninstall_all: uninstall_ht530 uninstall_mprobe
 
 dellog:
 	cat /dev/null >  /var/log/kern.log
@@ -57,6 +35,5 @@ dellog:
 clean:
 	make -C $(KDIR) SUBDIRS=$(PWD) clean
 	rm -f $(TESTER_NAME)
-	rm -f $(MTESTER_NAME)
 depmod:
 	depmod

@@ -1,9 +1,16 @@
 # KernelRocks
+Makefile:
 KDIR should be the path of kernel source directory
 
 Install it
   #make
-  #make install_all
+  #make install
+
+Uninstall:
+  #make uninstall
+
+Reinstall:
+  #make reinstall
 
 Demo for part1:
   #./ht530-test
