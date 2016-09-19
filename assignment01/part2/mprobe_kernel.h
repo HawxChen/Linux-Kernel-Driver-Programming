@@ -30,6 +30,7 @@ long mprobe_unlocked_ioctl (struct file *file, unsigned int req1, unsigned long 
 static int __init mprobe_init(void);
 static void __exit mprobe_exit(void);
 
+/*
 static void bzero(void* sl, unsigned long n) {
     register char *t = sl;
     while(n != 0) {
@@ -37,3 +38,4 @@ static void bzero(void* sl, unsigned long n) {
         n --;
     }
 }
+*/

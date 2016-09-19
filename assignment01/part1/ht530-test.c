@@ -42,11 +42,11 @@ int read_hash(int key) {
 
 void* thread_exec(void* arg) {
     /*random access*/
+    int ret = 0;
     struct Thread_Info* tinfo = (struct Thread_Info*) arg;
     printf("I am thread:%2d\n", tinfo->thread_num);
     int i = 0;
     int act = 0;
-    int ret  = 0;
     for(i = 0; i < 100;i++) {
         act = RAND_SCALE(DO_ADD, DO_SEARCH);
         switch (act) {
@@ -63,6 +63,7 @@ void* thread_exec(void* arg) {
                 break;
         }
     }
+    if(0 > ret) puts("----");
     return NULL;
 }
 
@@ -98,7 +99,7 @@ int fill_hash_table(int size) {
 }
 
 int main(int argc, char*argv[]) {
-    struct dump_org dump_set;
+    struct dump_org; 
     dev_fd = open("/dev/ht530_drv", O_RDWR);
     unsigned long hash_cur_size = 0;
     ht_object_t* dump_record = NULL;

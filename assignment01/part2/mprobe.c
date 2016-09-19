@@ -49,7 +49,7 @@ static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
     drst->local_var = *((int*)local_addr);
     drst->g_var = *((int*)g_addr);
 
-    printk(KERN_INFO "pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx, bp = 0x%lx, sp = 0x%lx, time = %llu,local_addr:%llx, global_addr:%llx\n", p->addr, regs->ip, regs->flags, regs->bp, regs->sp, get_cycles(), local_addr, g_addr);
+    printk(KERN_INFO "pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx, bp = 0x%lx, sp = 0x%lx, time = %llu,local_addr:%lx, global_addr:%lx\n", p->addr, regs->ip, regs->flags, regs->bp, regs->sp, get_cycles(), local_addr, g_addr);
     printk(KERN_INFO "bss:%llx,*bp=0x%lx \n", rbf.req.sect.bss,*((unsigned long*)regs->bp));
     return 0;
 }
@@ -134,6 +134,7 @@ static int mprobe_release(struct inode* node, struct file* file) {
 //ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
 static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
     int i = 0;
+    int failed_copy = 0;
     printk(KERN_ALERT "mprobe: read\n");
     if(0 == rbf.rst[0].xtc) {
         return -EINVAL;
@@ -143,8 +144,7 @@ static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *p
        if(0 ==  rbf.rst[i].xtc) break;
     }
 
-    //delete warning by i
-    copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
+    failed_copy = copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
 
     printk(KERN_ALERT "mprobe: read Done\n");
     return sizeof(struct debug_result)*i;
