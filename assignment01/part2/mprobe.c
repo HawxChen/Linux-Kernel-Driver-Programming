@@ -86,7 +86,7 @@ char* mprobe_strcpy(char *dst, char* src) {
     return tmp;
 }
 static int destroy_kp(struct kprobe** kp) {
-    if(NULL == *kp) return -1;
+    if(NULL == *kp) return -EINVAL;
 
     if(NULL != (*kp)->symbol_name) {
         kfree((*kp)->symbol_name);
@@ -97,7 +97,7 @@ static int destroy_kp(struct kprobe** kp) {
 
 static int init_kp(struct kprobe* kp, unsigned long long addr, char* symbol_name) {
 
-    if(addr == 0 && symbol_name == NULL) return -1;
+    if(addr == 0 && symbol_name == NULL) return -EINVAL;
 
     kp->addr = 0;
     kp->symbol_name = NULL;
@@ -137,7 +137,6 @@ static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *p
     printk(KERN_ALERT "mprobe: read\n");
     if(0 == rbf.rst[0].xtc) {
         return -EINVAL;
-        //return -1;
     }
 
     for(; i < RING_SIZE ;i++) {
@@ -195,7 +194,7 @@ static int __init mprobe_init(void) {
 
     if(0 > alloc_chrdev_region(&mprobe_devnum, MINOR_BASE, MINOR_COUNT, MODULE_NAME)) {
         printk(KERN_ALERT "Error: alloc_chrdev_region");
-        return -1;
+        return -EINVAL;
     } else {
         printk(KERN_ALERT "mprobe: Major:%d, Minor:%d\n", MAJOR(mprobe_devnum), MINOR(mprobe_devnum));
     }

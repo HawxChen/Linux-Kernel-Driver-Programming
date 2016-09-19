@@ -204,7 +204,7 @@ long ht530_unlocked_ioctl (struct file *file, unsigned int req1, unsigned long r
 
     if(HASH_DUMP == req1) {
 
-        if(dump_set->n >= BUCKET_SIZE) return -1;
+        if(dump_set->n >= BUCKET_SIZE) return -EINVAL;
         bzero(dump_set, sizeof(struct dump_org));
         hlist_for_each_entry(obj, h, node) {
             failed_copy = copy_to_user(&dump_set->object_array[acc_n++], &obj->pair,sizeof(ht_object_t));
@@ -276,7 +276,7 @@ static int __init ht530_init(void) {
 
     if(0 > alloc_chrdev_region(&Ht530_devnum, MINOR_BASE, MINOR_COUNT, MODULE_NAME)) {
         printk(KERN_ALERT "Error: alloc_chrdev_region");
-        return -1;
+        return -EINVAL;
     } else {
         printk(KERN_ALERT "ht530: devnum:%d, Major:%d, Minor:%d\n", Ht530_devnum,MAJOR(Ht530_devnum), MINOR(Ht530_devnum));
     }
