@@ -9,6 +9,9 @@
 #include"hc_sr04_user.h"
 #include"hc_sr04_common.h"
 int main(int argc, char*argv[]) {
-    puts("Hello HC_SR04");
+    int fd = open("/dev/HCSR_1", O_RDWR);
+    int fd2 = open("/dev/HCSR_2", O_RDWR);
+    perror("open failed");
+    printf("%d-%d\n", fd, fd2);
     return 0;
 }

@@ -30,7 +30,7 @@ static struct miscdevice hc_sr04_A = {
 
 static struct miscdevice hc_sr04_B = {
     .minor = MISC_DYNAMIC_MINOR,
-    .name  = "HCSR_1",
+    .name  = "HCSR_2",
     .fops = &hc_sr04_fops,
 };
 
@@ -44,15 +44,16 @@ module_exit(hc_sr04_exit);
 
 static int hc_sr04_open(struct inode* node, struct file* file) {
     int minor;
+    hc_struct *c;
     printk(KERN_ALERT "hc_sr04: Open\n");
     minor = iminor(node);
-    hc_struct *c;
 
-    list_for_each_entry(c, &hc_list, list); {
+    list_for_each_entry(c, &hc_list, list) {
         if(c->hc_sr04->minor == minor) {
+            break;
         }
     }
-
+    printk(KERN_ALERT "Open: %s", c->hc_sr04->name);
     printk(KERN_ALERT "hc_sr04: Open Done\n");
     return 0;
 }
@@ -92,13 +93,13 @@ static void dereg_misc(struct miscdevice* md) {
 
 static void init_hc_struct(hc_struct* hc, struct miscdevice* md) {
     hc->hc_sr04 = md;
-    INIT_LIST_HEAD(&(md->list));
+    INIT_LIST_HEAD(&(hc->list));
     list_add(&(hc->list), &hc_list);
 }
 
 static int __init hc_sr04_init(void) {
     printk(KERN_ALERT "hc_sr04: INIT\n");
-    if( !(reg_misc(&hc_sr04_A) || reg_misc(&hc_sr04_B)) )
+    if( reg_misc(&hc_sr04_A) || reg_misc(&hc_sr04_B) )
         return 0;
 
     init_hc_struct(&hcA, &hc_sr04_A);
