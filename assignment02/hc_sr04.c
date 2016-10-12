@@ -12,6 +12,7 @@
 #include<linux/kdev_t.h>
 #include<linux/miscdevice.h>
 #include<linux/list.h>
+#include<linux/gpio.h>
 #include"hc_sr04_kernel.h"
 
 static struct file_operations hc_sr04_fops = {
@@ -19,9 +20,9 @@ static struct file_operations hc_sr04_fops = {
     .open = hc_sr04_open,
     .read = hc_sr04_read,
     .write = hc_sr04_write,
+    .unlocked_ioctl = hc_sr04_ioctl,
     .release = hc_sr04_release,
 };
-
 static struct miscdevice hc_sr04_A = {
     .minor = MISC_DYNAMIC_MINOR,
     .name  = "HCSR_1",
@@ -34,26 +35,33 @@ static struct miscdevice hc_sr04_B = {
     .fops = &hc_sr04_fops,
 };
 
-hc_struct hcA;
-hc_struct hcB;
+hcsr_struct hcA;
+hcsr_struct hcB;
 
 static LIST_HEAD(hc_list);
+static char irq_done = IRQ_NOT_DONE;
+int echo_irq = -1;
 
 module_init(hc_sr04_init);
 module_exit(hc_sr04_exit);
 
-static int hc_sr04_open(struct inode* node, struct file* file) {
+struct hcsr_struct* get_curr_hcsr(struct inode* node) {
     int minor;
-    hc_struct *c;
-    printk(KERN_ALERT "hc_sr04: Open\n");
+    hcsr_struct *c;
     minor = iminor(node);
-
     list_for_each_entry(c, &hc_list, list) {
         if(c->hc_sr04->minor == minor) {
-            break;
+            return c;
         }
     }
-    printk(KERN_ALERT "Open: %s", c->hc_sr04->name);
+    return NULL;
+}
+
+static int hc_sr04_open(struct inode* node, struct file* file) {
+    struct hcsr_struct* curr_hcsr;
+    printk(KERN_ALERT "hc_sr04: Open\n");
+    curr_hcsr = get_curr_hcsr(node);
+    printk(KERN_ALERT "Open: %s", curr_hcsr->hc_sr04->name);
     printk(KERN_ALERT "hc_sr04: Open Done\n");
     return 0;
 }
@@ -64,6 +72,95 @@ static int hc_sr04_release(struct inode* node, struct file* file) {
     return 0;
 }
 
+static long ioctl_SETPINs(struct file* file, unsigned long addr) {
+    pin_set pins;
+    int ret = 0;
+    printk(KERN_ALERT "ioctl_SETPIN\n");
+    if(0 != copy_from_user(&pins, (void*)addr, sizeof(pin_set))) {
+        printk(KERN_ALERT "SETPIN: copy_from_user ERROR\n");
+        ret = -EAGAIN;
+        goto ERR_SETPIN_RETURN;
+    }
+
+    if(TRIGGER_PIN != pins.trigger_pin  || ECHO_PIN != pins.echo_pin) {
+        ret = -EINVAL;
+        goto ERR_SETPIN_RETURN;
+    }
+
+    if(irq_done) {
+        goto SUCCESS_SETPIN_RETURN;
+    }
+
+    //For Trigger
+    ret = gpio_request(TRIGGER_PIN, "HCSR_TRIGGER");
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_request,pin:%d, ret=%d\n", TRIGGER_PIN, ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    ret = gpio_direction_output(TRIGGER_PIN, 0);
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_dir_output:%d\n", ret);
+        goto ERR_SETPIN_RETURN;
+    }
+
+    //For Echo
+    ret = gpio_request(ECHO_PIN, "HCSR_ECHO");
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_request,pin:%d, ret=%d\n", ECHO_PIN, ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    ret = gpio_direction_input(ECHO_PIN);
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_dir_input:%d\n", ret);
+        goto ERR_SETPIN_RETURN;
+    }
+
+    ret=gpio_to_irq(ECHO_PIN);
+    if(0 > ret) {
+        printk(KERN_ALERT "SETPIN: gpio_to_irq:%d\n", ret);
+        goto ERR_SETPIN_RETURN;
+    } else {
+        echo_irq = ret;
+    }
+
+    //ret = request_irq(echo_irq, echo_isr, IRQ_FLAG, "HC-SR04_Echo", NULL);
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: request_irq:%d\n", ret);
+        goto ERR_SETPIN_RETURN;
+    }
+
+
+    irq_done = IRQ_DONE;
+    goto SUCCESS_SETPIN_RETURN;
+
+ERR_SETPIN_RETURN:
+        return ret;
+
+SUCCESS_SETPIN_RETURN:
+    printk(KERN_ALERT "ioctl_SETPIN DONE\n");
+    return 0;
+}
+
+static long ioctl_SETMODE(struct file* file, unsigned long addr) {
+        printk(KERN_ALERT "ioctl_SETMODE\n");
+        printk(KERN_ALERT "ioctl_SETMODE DONE\n");
+    return 0;
+}
+
+static long hc_sr04_ioctl(struct file* file, unsigned int arg1, unsigned long arg2) {
+    printk(KERN_ALERT "ioctl\n");
+    switch (arg1) {
+        case SETPINS:
+            return ioctl_SETPINs(file, arg2);
+        case SETMODE:
+            return ioctl_SETMODE(file, arg2);
+        default: 
+            return -EINVAL;
+    }
+
+    printk(KERN_ALERT "ioctl DONE\n");
+    return 0;
+}
 static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
 
     printk(KERN_ALERT "hc_sr04: Read\n");
@@ -91,7 +188,7 @@ static void dereg_misc(struct miscdevice* md) {
     misc_deregister(md);
 }
 
-static void init_hc_struct(hc_struct* hc, struct miscdevice* md) {
+static void init_hcsr_struct(hcsr_struct* hc, struct miscdevice* md) {
     hc->hc_sr04 = md;
     INIT_LIST_HEAD(&(hc->list));
     list_add(&(hc->list), &hc_list);
@@ -101,9 +198,8 @@ static int __init hc_sr04_init(void) {
     printk(KERN_ALERT "hc_sr04: INIT\n");
     if( reg_misc(&hc_sr04_A) || reg_misc(&hc_sr04_B) )
         return 0;
-
-    init_hc_struct(&hcA, &hc_sr04_A);
-    init_hc_struct(&hcB, &hc_sr04_B);
+    init_hcsr_struct(&hcA, &hc_sr04_A);
+    init_hcsr_struct(&hcB, &hc_sr04_B);
 
     printk(KERN_ALERT "hc_sr04: INIT DONE\n");
     return 0;
@@ -111,6 +207,17 @@ static int __init hc_sr04_init(void) {
 
 static void __exit hc_sr04_exit(void) {
     printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!\n");
+
+    if(irq_done) {
+        gpio_set_value(TRIGGER_PIN, 0);
+        /*
+        if(0 < echo_irq)
+            free_irq(echo_irq, NULL);
+            */
+        gpio_free(TRIGGER_PIN);
+        gpio_free(ECHO_PIN);
+    }
+
     dereg_misc(&hc_sr04_A);
     dereg_misc(&hc_sr04_B);
     printk(KERN_ALERT "hc_sr04: EXIT DONE\n");

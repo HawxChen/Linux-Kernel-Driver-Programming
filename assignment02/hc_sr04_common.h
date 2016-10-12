@@ -1,4 +1,17 @@
+#ifndef _HC_SR04_COMMON_H_
+#define _HC_SR04_COMMON_H_
+#include<linux/ioctl.h>
 #define NUM_ITEM (5) 
-struct record {
+#define HCSR_W_MAGIC ('H')
+#define SETPINS _IOW (HCSR_W_MAGIC, 1, struct pin_set*)
+#define SETMODE _IOW (HCSR_W_MAGIC, 2, struct pin_set*)
+#define PIN_SIZE (2)
+typedef struct pin_set {
+    int trigger_pin;
+    int echo_pin;
+} pin_set;
+
+typedef struct record {
     int data[NUM_ITEM];
-};
+} record;
+#endif
