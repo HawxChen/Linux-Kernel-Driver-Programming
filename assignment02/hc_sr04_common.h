@@ -1,5 +1,6 @@
 #ifndef _HC_SR04_COMMON_H_
 #define _HC_SR04_COMMON_H_
+#define __DEUBG__
 #include<linux/ioctl.h>
 #define ONE_SHOT (0)
 #define PERIODIC (1)

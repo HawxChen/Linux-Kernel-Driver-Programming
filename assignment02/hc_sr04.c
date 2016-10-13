@@ -103,14 +103,26 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
     //Only one isr_handler in the same time: IRQF_DISABLED, enable it at request_irq.
     ktime_t kend;
     unsigned long diff;
+    double distance;
 
     if(!ongoing) {
         //printk(KERN_ALERT "!!! Signal from Dark Force !!!");
         return IRQ_HANDLED;
     }
+
+
     kend = ktime_get();
     diff = ktime_to_ns(ktime_sub(kend, kstart));
     printk(KERN_ALERT "echo_recv_isr: %ld\n", diff);
+
+    spin_lock(&(kconfig.kconfig_lock));
+    if(ONE_SHOT == kconfig.set.mode) {
+        
+    } else if(PERIODIC == kconfig.set.mode) {
+    } else {
+    }
+    spin_unlock(&(kconfig.kconfig_lock));
+    
 
     /*
        add to buffer...
@@ -138,6 +150,20 @@ static long ioctl_SETPINs(struct file* file, unsigned long addr) {
         goto SUCCESS_SETPIN_RETURN;
     }
 
+    //For Trigger Dir
+    ret = gpio_request(TRIGGER_PIN_DIRECTION, "HCSR_TRIGGER_DIRECTION");
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_request,pin:%d, ret=%d\n", TRIGGER_PIN_DIRECTION, ret);
+        goto ERR_SETPIN_RETURN;
+    }
+
+    ret = gpio_direction_output(TRIGGER_PIN_DIRECTION, 0);
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_dir_output:%d:%d\n", TRIGGER_PIN_DIRECTION, ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    gpio_export(TRIGGER_PIN_DIRECTION, 0);
+
     //For Trigger
     ret = gpio_request(TRIGGER_PIN, "HCSR_TRIGGER");
     if(ret) {
@@ -149,6 +175,9 @@ static long ioctl_SETPINs(struct file* file, unsigned long addr) {
         printk(KERN_ALERT "SETPIN: gpio_dir_output:%d\n", ret);
         goto ERR_SETPIN_RETURN;
     }
+    //gpio_set_value(TRIGGER_PIN, 1);
+    //gpio_export(TRIGGER_PIN, 0);
+
 
     //For Echo
     ret = gpio_request(ECHO_PIN, "HCSR_ECHO");
@@ -159,6 +188,30 @@ static long ioctl_SETPINs(struct file* file, unsigned long addr) {
     ret = gpio_direction_input(ECHO_PIN);
     if(ret) {
         printk(KERN_ALERT "SETPIN: gpio_dir_input:%d\n", ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    //For Echo_Direction
+    ret = gpio_request(ECHO_PIN_DIRECTION, "HCSR_ECHO_DIRECTION");
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_request,pin:%d, ret=%d\n", ECHO_PIN_DIRECTION, ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    ret = gpio_direction_output(ECHO_PIN_DIRECTION, 1);
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_dir_output:%d:%d\n", ECHO_PIN_DIRECTION,ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    gpio_set_value(ECHO_PIN_DIRECTION, 1);
+
+    //For Echo_PULL
+    ret = gpio_request(ECHO_PIN_PULL, "HCSR_ECHO_PULL");
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_request,pin:%d, ret=%d\n", ECHO_PIN_PULL, ret);
+        goto ERR_SETPIN_RETURN;
+    }
+    ret = gpio_direction_output(ECHO_PIN_PULL, PULL_DOWN);
+    if(ret) {
+        printk(KERN_ALERT "SETPIN: gpio_dir_output:%d:%d\n", ECHO_PIN_PULL, ret);
         goto ERR_SETPIN_RETURN;
     }
 
@@ -184,6 +237,7 @@ ERR_SETPIN_RETURN:
         return ret;
 
 SUCCESS_SETPIN_RETURN:
+    send();
     printk(KERN_ALERT "ioctl_SETPIN DONE\n");
     return 0;
 }
@@ -225,34 +279,38 @@ SUCCESS_SETMODE_RETURN:
 }
 
 static long hc_sr04_ioctl(struct file* file, unsigned int arg1, unsigned long arg2) {
+    int ret;
+
     printk(KERN_ALERT "ioctl\n");
     switch (arg1) {
         case SETPINS:
-            return ioctl_SETPINs(file, arg2);
+            ret = ioctl_SETPINs(file, arg2);
+            break;
         case SETMODE:
-            return ioctl_SETMODE(file, arg2);
+            ret = ioctl_SETMODE(file, arg2);
+            break;
         default: 
             return -EINVAL;
     }
 
     printk(KERN_ALERT "ioctl DONE\n");
-    return 0;
+    return ret;
 }
 static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
     printk(KERN_ALERT "hc_sr04: Read\n");
     spin_lock(&(kconfig.kconfig_lock));
     if(ONE_SHOT == kconfig.set.mode) {
-        spin_unlock(&(kconfig.kconfig_lock));
         if(0 == ongoing) {
             send();
+        } else {
+            while(1 == ongoing) {}
         }
+
         //take the newest one into its own buffer!
         //copy_to_user
     } else if(PERIODIC == kconfig.set.mode) {
-        spin_unlock(&(kconfig.kconfig_lock));
-    } else {
-        spin_unlock(&(kconfig.kconfig_lock));
-    }
+    } 
+    spin_unlock(&(kconfig.kconfig_lock));
     printk(KERN_ALERT "hc_sr04: Read Done\n");
     return 0;
 }
@@ -262,16 +320,13 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
     //copy_from_user..
     spin_lock(&(kconfig.kconfig_lock));
     if(ONE_SHOT == kconfig.set.mode) {
-        spin_unlock(&(kconfig.kconfig_lock));
         if(0 == ongoing) {
             send();
         }
     } else if(PERIODIC == kconfig.set.mode) {
-        spin_unlock(&(kconfig.kconfig_lock));
     } else {
-        spin_unlock(&(kconfig.kconfig_lock));
     }
-
+    spin_unlock(&(kconfig.kconfig_lock));
     printk(KERN_ALERT "hc_sr04: Write Done\n");
     return 0;
 }
@@ -306,7 +361,7 @@ static int __init hc_sr04_init(void) {
     spin_lock_init(&(kconfig.kconfig_lock));
     spin_lock_init(&(hcA.record.record_lock));
     spin_lock_init(&(hcB.record.record_lock));
-    kconfig.set.mode = -1;
+    kconfig.set.mode = ONE_SHOT;//Init: ONE_SHOT.
     
 
     printk(KERN_ALERT "hc_sr04: INIT DONE\n");
@@ -316,13 +371,19 @@ static int __init hc_sr04_init(void) {
 static void __exit hc_sr04_exit(void) {
     printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!\n");
 
+    gpio_set_value(TRIGGER_PIN, 0);
     if(irq_done) {
         if(0 < echo_irq)
             free_irq(echo_irq, NULL);
     }
 
+  
     gpio_free(TRIGGER_PIN);
+    gpio_free(TRIGGER_PIN_DIRECTION);
+
     gpio_free(ECHO_PIN);
+    gpio_free(ECHO_PIN_PULL);
+    gpio_free(ECHO_PIN_DIRECTION);
 
     dereg_misc(&hc_sr04_A);
     dereg_misc(&hc_sr04_B);
