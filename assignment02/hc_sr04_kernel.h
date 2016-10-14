@@ -2,28 +2,35 @@
 #define _HC_SR04_KERNEL_H_
 
 #include "hc_sr04_common.h"
+#include "hw_setting.h"
 #include <linux/spinlock.h>
-
 #define IRQ_FLAG (IRQF_TRIGGER_RISING | IRQF_DISABLED )
 //#define IRQ_FLAG (IRQF_TRIGGER_RISING | IRQF_DISABLED | IRQF_TRIGGER_FALLING )
-#define TRIGGER_PIN (6) //IO4
-#define TRIGGER_PIN_DIRECTION (36) //IO4
 
-#define ECHO_PIN (15) //IO12
-#define ECHO_PIN_DIRECTION (42) //IO12
-#define ECHO_PIN_PULL (43) //IO12
-#define PULL_DOWN (0)
-#define PULL_UP (1)
 #define IRQ_DONE (1)
 #define IRQ_NOT_DONE (0)
 
-typedef struct krecord {
+typedef struct kprecord {
     record record;
+    char sampling;
     spinlock_t record_lock;
-} krecord;
+} kprecord;
+
+typedef struct koshot {
+    unsigned long distance;
+    char sampling;
+    spinlock_t koshot_lock;
+} koshot;
+
 typedef struct hcsr_struct {
     struct miscdevice* hc_sr04;
-    krecord record;
+    koshot oshot;
+    kprecord precord;
+    int irq_done;
+    int echo_isr_number;
+    spinlock_t irq_done_lock;
+    char(*pins)[5][2];
+    char*(*pin_str)[5];
     struct list_head list;
 } hcsr_struct;
 typedef struct hcsr_kconfig {

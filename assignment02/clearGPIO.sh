@@ -28,3 +28,41 @@ echo -n "0" > /sys/class/gpio/gpio43/value || "Failed to set gpio43 value 0"
 echo -n "15" > /sys/class/gpio/unexport || echo "gpio15 alreay unexported"  
 echo -n "42" > /sys/class/gpio/unexport || echo "gpio42 already unexported"  
 echo -n "43" > /sys/class/gpio/unexport || echo "gpio43 already unexported"  
+
+#IO4 Trigger Pin
+echo -n "0" > /sys/class/gpio/export || echo "gpio0 alreay exported"  
+echo -n "18" > /sys/class/gpio/export || echo "gpio18 already exported"  
+echo -n "66" > /sys/class/gpio/export || echo "gpio66 already exported"  
+
+echo -n "out" > /sys/class/gpio/gpio0/direction || "Failed to set gpio0 out"  
+echo -n "out" > /sys/class/gpio/gpio18/direction || "Failed to set gpio18 out"  
+echo -n "out" > /sys/class/gpio/gpio66/direction || "Failed to set gpio66 out"  
+
+echo -n "0" > /sys/class/gpio/gpio0/value || "Failed to set gpio0 value 0"
+echo -n "0" > /sys/class/gpio/gpio18/value || "Failed to set gpio18 value 0"
+echo -n "0" > /sys/class/gpio/gpio66/value || "Failed to set gpio66 value 0"
+
+echo -n "6" > /sys/class/gpio/unexport || echo "gpio0 alreay unexported"  
+echo -n "18" > /sys/class/gpio/unexport || echo "gpio18 already unexported"  
+echo -n "66" > /sys/class/gpio/unexport || echo "gpio66 already unexported"  
+
+#IO12 Echo Pin
+echo -n "1" > /sys/class/gpio/export || echo "gpio1 alreay exported"  
+echo -n "20" > /sys/class/gpio/export || echo "gpio20 already exported"  
+echo -n "41" > /sys/class/gpio/export || echo "gpio21 already exported"  
+echo -n "68" > /sys/class/gpio/export || echo "gpio68 already exported"  
+
+echo -n "out" > /sys/class/gpio/gpio1/direction || "Failed to set gpio1 out"  
+echo -n "out" > /sys/class/gpio/gpio20/direction || "Failed to set gpio20 out"  
+echo -n "out" > /sys/class/gpio/gpio21/direction || "Failed to set gpio21 out"  
+echo -n "out" > /sys/class/gpio/gpio68/direction || "Failed to set gpio68 out"  
+
+echo -n "0" > /sys/class/gpio/gpio1/value || "Failed to set gpio1 value 0"
+echo -n "0" > /sys/class/gpio/gpio20/value || "Failed to set gpio20 value 0"
+echo -n "0" > /sys/class/gpio/gpio21/value || "Failed to set gpio21 value 0"
+echo -n "0" > /sys/class/gpio/gpio68/value || "Failed to set gpio68 value 0"
+
+echo -n "1" > /sys/class/gpio/unexport || echo "gpio1 alreay unexported"  
+echo -n "20" > /sys/class/gpio/unexport || echo "gpio20 already unexported"  
+echo -n "21" > /sys/class/gpio/unexport || echo "gpio21 already unexported"  
+echo -n "68" > /sys/class/gpio/unexport || echo "gpio68 already unexported"  
