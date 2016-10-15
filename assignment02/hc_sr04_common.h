@@ -4,7 +4,7 @@
 #include<linux/ioctl.h>
 #define ONE_SHOT (0)
 #define PERIODIC (1)
-#define NUM_ITEM (5) 
+#define NUM_DATA (5) 
 #define HCSR_W_MAGIC ('H')
 #define SETPINS _IOW (HCSR_W_MAGIC, 1, struct pin_set*)
 #define SETMODE _IOW (HCSR_W_MAGIC, 2, struct pin_set*)
@@ -20,6 +20,6 @@ typedef struct hcsr_set {
 } hcsr_set;
 
 typedef struct record {
-    int data[NUM_ITEM];
+    int data[NUM_DATA];
 } record;
 #endif
