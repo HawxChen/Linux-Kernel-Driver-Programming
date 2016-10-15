@@ -16,7 +16,7 @@ typedef struct pin_set {
 
 typedef struct hcsr_set {
     int mode;
-    int freq;
+    unsigned int freq;
 } hcsr_set;
 
 typedef struct record {

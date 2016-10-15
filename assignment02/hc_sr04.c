@@ -15,6 +15,7 @@
 #include<linux/gpio.h>
 #include<linux/interrupt.h>
 #include<linux/delay.h>
+#include<linux/kthread.h>
 #include<linux/ktime.h>
 #include<linux/sched.h>
 #include"hc_sr04_kernel.h"
@@ -43,15 +44,8 @@ static struct miscdevice hc_sr04_B = {
 hcsr_struct hcA;
 hcsr_struct hcB;
 
-/*
-Dynamically define.
-wait_queue_head_t my_event;
-init_waitqueue_head(&my_event);
-*/
-DECLARE_WAIT_QUEUE_HEAD(hcsrA_WQ);
-DECLARE_WAIT_QUEUE_HEAD(hcsrB_WQ);
 
-static LIST_HEAD(hc_list);
+static LIST_HEAD(hcsr_list);
 ktime_t kstart;
 
 
@@ -62,7 +56,7 @@ struct hcsr_struct* get_curr_hcsr(struct inode* node) {
     int minor;
     hcsr_struct *c;
     minor = iminor(node);
-    list_for_each_entry(c, &hc_list, list) {
+    list_for_each_entry(c, &hcsr_list, list) {
         if(c->hc_sr04->minor == minor) {
             return c;
         }
@@ -87,6 +81,7 @@ static int hc_sr04_release(struct inode* node, struct file* file) {
 
 static int do_send(struct hcsr_struct* hcsr){
     unsigned int counter = 0;
+    char cnt = 0;
     int trig_pin = hcsr->pins[TRIGGER_INDEX][HC_GPIO_LINUX][PIN_INDEX];
 
     spin_lock(&(hcsr->ongoing_lock));
@@ -98,9 +93,12 @@ static int do_send(struct hcsr_struct* hcsr){
     gpio_set_value(trig_pin, 0);
     kstart = ktime_get();
     
-//    spin_lock(&(hcsr->ongoing_lock));
+    spin_lock(&(hcsr->ongoing_lock));
     while(ONGOING == hcsr->ongoing) {
-//        spin_unlock(&(hcsr->ongoing_lock));
+        if(!cnt){ 
+            spin_unlock(&(hcsr->ongoing_lock));
+            cnt++;
+        }
         if(++counter > 50000) {
             spin_lock(&(hcsr->ongoing_lock));
             hcsr->ongoing = STOPPING;
@@ -109,8 +107,7 @@ static int do_send(struct hcsr_struct* hcsr){
         }
         udelay(1);
     }
-//    spin_unlock(&(hcsr->ongoing_lock));
-
+    if(!cnt) spin_unlock(&(hcsr->ongoing_lock));
     return 0;
 }
 
@@ -132,21 +129,25 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
     struct hcsr_struct* hcsr = (struct hcsr_struct*) data;
 
     printk(KERN_ALERT "echo_recv_isr\n");
-    spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(STOPPING == hcsr->ongoing) {
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
-        //printk(KERN_ALERT "!!! Signal from Dark Force !!!");
-        goto RETURNED;
-    }
-    spin_unlock(&(hcsr->kconfig.kconfig_lock));
 
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     if(-1 == hcsr->kconfig.set.mode) {
         printk(KERN_ALERT "Mode doesn't get initialization-mode;%d\n", hcsr->kconfig.set.mode);
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
         goto RETURNED;
+    } else {
+        spin_unlock(&(hcsr->kconfig.kconfig_lock));
     }
-    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+    spin_lock(&(hcsr->ongoing_lock));
+    if(STOPPING == hcsr->ongoing) {
+        spin_unlock(&(hcsr->ongoing_lock));
+        //printk(KERN_ALERT "!!! Signal from Dark Force !!!");
+        goto RETURNED;
+    } else {
+        spin_unlock(&(hcsr->ongoing_lock));
+    }
+
 
     kend = ktime_get();
     diff = ktime_to_ns(ktime_sub(kend, kstart));
@@ -157,10 +158,20 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
         hcsr->cirb.buf.data[(hcsr->cirb.newest)%NUM_DATA] = distance;
     spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    if(PERIODIC == hcsr->kconfig.set.mode) {
+        spin_unlock(&(hcsr->kconfig.kconfig_lock));
+        wake_up_all(&(hcsr->wq));
+    } else {
+        spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    }
+
     printk(KERN_ALERT "echo_recv_isr: %d CM, newest:%d\n",distance, hcsr->cirb.newest);
 
 RETURNED:
+    spin_lock(&(hcsr->ongoing_lock));
     hcsr->ongoing = STOPPING;
+    spin_unlock(&(hcsr->ongoing_lock));
     printk(KERN_ALERT "echo_recv_isr Done\n");
     return IRQ_HANDLED;
 }
@@ -314,13 +325,14 @@ void spin_ongoing (struct hcsr_struct* hcsr) {
 RETEST:
     if(ONGOING == hcsr->ongoing) {
         while(ONGOING == hcsr->ongoing) {
-            udelay(10);
+            udelay(1);
         }
         goto RETEST;
     }
     return;
 }
 static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
+    int ret = 0;
     struct hcsr_struct* hcsr = get_curr_hcsr(file->f_dentry->d_inode);
 
     printk(KERN_ALERT "hc_sr04: Read\n");
@@ -328,16 +340,34 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     if(ONE_SHOT == hcsr->kconfig.set.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+        spin_lock(&(hcsr->ongoing_lock));
         if(STOPPING == hcsr->ongoing) {
+            spin_unlock(&(hcsr->ongoing_lock));
             send(hcsr, 5);
         } else {
             spin_ongoing(hcsr);
-            //get value;
+
+            spin_lock(&(hcsr->cirb.cir_buf_lock));
+            ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
+            spin_unlock(&(hcsr->cirb.cir_buf_lock));
+            if(ret) return -EAGAIN;
         }
-        //take the newest one into its own buffer!
-        //copy_to_user
     } else if(PERIODIC == hcsr->kconfig.set.mode) {
-            spin_unlock(&(hcsr->kconfig.kconfig_lock));
+            spin_lock(&(hcsr->cirb.cir_buf_lock));
+            if(-1 == hcsr->cirb.newest) {
+                spin_unlock(&(hcsr->cirb.cir_buf_lock));
+            } else {
+                spin_unlock(&(hcsr->cirb.cir_buf_lock));
+
+                wait_event_interruptible((hcsr->wq),BUFF_IN);
+
+                spin_lock(&(hcsr->cirb.cir_buf_lock));
+                ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
+                spin_unlock(&(hcsr->cirb.cir_buf_lock));
+                if(ret) return -EAGAIN;
+            }
+
     }  else {
             spin_unlock(&(hcsr->kconfig.kconfig_lock));
             printk(KERN_ALERT "Read: Mode doesn't get initialization-mode;%d\n", hcsr->kconfig.set.mode);
@@ -347,13 +377,23 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
     return 0;
 }
 
+int thread_function(void* data) {
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) data;
+    unsigned long ns = (1000^3)/(hcsr->kconfig.set.freq);
+
+    while(!kthread_should_stop()) {
+        send(hcsr, 3);
+        ndelay(ns);
+    }
+    return 0;
+}
 static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t count, loff_t *ptr) {
     struct hcsr_struct*hcsr = NULL;
     int act;
     int ret;
 
     printk(KERN_ALERT "hc_sr04: Write\n");
-    //copy_from_user..
+
     ret = copy_from_user(&act , buf, sizeof(int));
 
     hcsr = get_curr_hcsr(file->f_dentry->d_inode);
@@ -361,9 +401,13 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     if(ONE_SHOT == hcsr->kconfig.set.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+        spin_lock(&(hcsr->ongoing_lock));
         if(STOPPING == hcsr->ongoing) {
+            spin_unlock(&(hcsr->ongoing_lock));
             send(hcsr, 5);
         } 
+
         if(0 != act) {
             spin_lock(&(hcsr->cirb.cir_buf_lock));
             memset(&(hcsr->cirb.buf), 0, sizeof(record));
@@ -372,6 +416,26 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
         }
     } else if(PERIODIC == hcsr->kconfig.set.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+        spin_lock(&(hcsr->kthread_lock));
+        if(0 == act) {
+            do {
+                if(NULL == hcsr->kthread) {
+                    break;
+                }
+                kthread_stop(hcsr->kthread);
+                hcsr->kthread = NULL;
+            } while(0);
+        } else {
+            do {
+                if(NULL != hcsr->kthread) {
+                    break;
+                }
+                hcsr->kthread = kthread_run(thread_function, hcsr, hcsr->hc_sr04->name);
+            }while(0);
+        }
+        spin_unlock(&(hcsr->kthread_lock));
+
     } else {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
         printk(KERN_ALERT "Write: Mode doesn't get initialization-mode;%d\n", hcsr->kconfig.set.mode);
@@ -395,22 +459,25 @@ static void dereg_misc(struct miscdevice* md) {
     misc_deregister(md);
 }
 
-static void init_hcsr_struct(hcsr_struct* hc, struct miscdevice* md, char(*pins)[5][2], char*(*pin_str)[5]) {
+static void init_hcsr_struct(hcsr_struct* hcsr, struct miscdevice* md, char(*pins)[5][2], char*(*pin_str)[5]) {
     /*!!!!!*/
     //CHECK!!! INIT
-    hc->hc_sr04 = md;
-    hc->irq_done = IRQ_NOT_DONE;
-    hc->echo_isr_number = -1;
-    hc->pins = pins;
-    hc->kconfig.set.mode = 0;//__DEBUG__ ********
-//    hc->kconfig.set.mode = -1; 
-    hc->pin_str = pin_str;
-    spin_lock_init(&(hc->irq_done_lock));
-    spin_lock_init(&(hc->ongoing_lock));
-    spin_lock_init(&(hc->cirb.cir_buf_lock));
-    spin_lock_init(&(hc->kconfig.kconfig_lock));
-    INIT_LIST_HEAD(&(hc->list));
-    list_add(&(hc->list), &hc_list);
+    init_waitqueue_head(&(hcsr->wq));
+    hcsr->hc_sr04 = md;
+    hcsr->irq_done = IRQ_NOT_DONE;
+    hcsr->echo_isr_number = -1;
+    hcsr->pins = pins;
+    hcsr->kconfig.set.mode = 0;//__DEBUG__ ********
+//    hcsr->kconfig.set.mode = -1; 
+    hcsr->cirb.newest = -1;
+    hcsr->pin_str = pin_str;
+    spin_lock_init(&(hcsr->irq_done_lock));
+    spin_lock_init(&(hcsr->ongoing_lock));
+    spin_lock_init(&(hcsr->cirb.cir_buf_lock));
+    spin_lock_init(&(hcsr->kconfig.kconfig_lock));
+    spin_lock_init(&(hcsr->kthread_lock));
+    INIT_LIST_HEAD(&(hcsr->list));
+    list_add(&(hcsr->list), &hcsr_list);
 }
 
 
@@ -436,6 +503,7 @@ void free_gpio(struct hcsr_struct* hcsr) {
                 continue;
             }
             //gpio_set_value(hcsr->pins[i][j][PIN_INDEX],0);
+            printk(KERN_ALERT "gpinfree:%d\n", hcsr->pins[i][j][PIN_INDEX]);
             gpio_free(hcsr->pins[i][j][PIN_INDEX]);
         }
     }
@@ -445,18 +513,14 @@ static void __exit hc_sr04_exit(void) {
     printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!\n");
 
     if(IRQ_DONE == hcA.irq_done) {
-        if(0 < hcA.echo_isr_number) {
-            printk("---release hcA----\n");
-            free_irq(hcA.echo_isr_number, NULL);
-        }
+        printk("---release hcA----\n");
+        free_irq(hcA.echo_isr_number, &hcA);
         free_gpio(&hcA);  
     }
 
     if(IRQ_DONE == hcB.irq_done) {
-        if(0 < hcB.echo_isr_number) {
-            printk("---release hcB----\n");
-            free_irq(hcB.echo_isr_number, NULL);
-        }
+        printk("---release hcB----\n");
+        free_irq(hcB.echo_isr_number, &hcB);
         free_gpio(&hcB);  
     }
 
