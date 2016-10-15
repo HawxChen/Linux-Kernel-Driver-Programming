@@ -52,6 +52,7 @@ ktime_t kstart;
 module_init(hc_sr04_init);
 module_exit(hc_sr04_exit);
 
+
 struct hcsr_struct* get_curr_hcsr(struct inode* node) {
     int minor;
     hcsr_struct *c;
@@ -84,10 +85,6 @@ static int do_send(struct hcsr_struct* hcsr){
     char cnt = 0;
     int trig_pin = hcsr->pins[TRIGGER_INDEX][HC_GPIO_LINUX][PIN_INDEX];
 
-    spin_lock(&(hcsr->ongoing_lock));
-    hcsr->ongoing = ONGOING;
-    spin_unlock(&(hcsr->ongoing_lock));
-
     gpio_set_value(trig_pin, 1);
     udelay(10);
     gpio_set_value(trig_pin, 0);
@@ -95,10 +92,11 @@ static int do_send(struct hcsr_struct* hcsr){
     
     spin_lock(&(hcsr->ongoing_lock));
     while(ONGOING == hcsr->ongoing) {
-        if(!cnt){ 
+        if(0 == cnt){ 
             spin_unlock(&(hcsr->ongoing_lock));
             cnt++;
         }
+
         if(++counter > 50000) {
             spin_lock(&(hcsr->ongoing_lock));
             hcsr->ongoing = STOPPING;
@@ -107,19 +105,43 @@ static int do_send(struct hcsr_struct* hcsr){
         }
         udelay(1);
     }
-    if(!cnt) spin_unlock(&(hcsr->ongoing_lock));
+
+    if(0 == cnt) spin_unlock(&(hcsr->ongoing_lock));
     return 0;
 }
 
 static int send(struct hcsr_struct* hcsr, int retry_cnt) {
     int ret = 0;
     int send_cnt = 0;
+
+    spin_lock(&(hcsr->ongoing_lock));
+    if(ONGOING == hcsr->ongoing) {
+        spin_unlock(&(hcsr->ongoing_lock));
+        return 0;
+    }
+    else {
+        hcsr->ongoing = ONGOING;
+        spin_unlock(&(hcsr->ongoing_lock));
+    }
+
     do {
         ret = do_send(hcsr);
     } while( (0 != ret)  && (send_cnt++ < retry_cnt));
     return ret;
 }
 
+static int thread_function(void* data) {
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) data;
+    unsigned long ms = (1000)/(hcsr->kconfig.set.freq);
+    do {
+        send(hcsr, 3);
+        msleep_interruptible(ms);
+    }
+    while(!kthread_should_stop());
+
+
+return 0;
+}
 
 static irqreturn_t echo_recv_isr(int irq, void *data) {
     //Only one isr_handler in the same time: IRQF_DISABLED, enable it at request_irq.
@@ -130,6 +152,7 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
 
     printk(KERN_ALERT "echo_recv_isr\n");
 
+    /*
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     if(-1 == hcsr->kconfig.set.mode) {
         printk(KERN_ALERT "Mode doesn't get initialization-mode;%d\n", hcsr->kconfig.set.mode);
@@ -138,6 +161,7 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
     } else {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
     }
+    */
 
     spin_lock(&(hcsr->ongoing_lock));
     if(STOPPING == hcsr->ongoing) {
@@ -159,11 +183,11 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
     spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
     spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(PERIODIC == hcsr->kconfig.set.mode) {
+    if(ONE_SHOT == hcsr->kconfig.set.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
-        wake_up_all(&(hcsr->wq));
     } else {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
+        wake_up_all(&(hcsr->wq));
     }
 
     printk(KERN_ALERT "echo_recv_isr: %d CM, newest:%d\n",distance, hcsr->cirb.newest);
@@ -259,7 +283,6 @@ ERR_SETPIN_RETURN:
 SUCCESS_SETPIN_RETURN:
     hcsr->irq_done = IRQ_DONE;
     spin_unlock(&(hcsr->irq_done_lock));
-    send(hcsr, 0);
     printk(KERN_ALERT "ioctl_SETPIN DONE\n");
     return 0;
 }
@@ -277,25 +300,22 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
         goto ERR_SETMODE_RETURN;
     }
     
-    switch (set.mode){
-        case 0:
-        case 1:
-            break;
-        default:
-            ret = -EINVAL;
-            goto ERR_SETMODE_RETURN;
-    }
 
     hcsr = get_curr_hcsr(file->f_dentry->d_inode);
-    spin_lock(&(hcsr->kconfig.kconfig_lock)); {
-        // still peeriodical sampling
-        //before: one-shot ; after: one-shot
-        hcsr->kconfig.set = set;
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    // still peeriodical sampling
+    //before: one-shot ; after: one-shot
+    /*For Periodic Task*/
+    hcsr->kconfig.set = set;
+    if(ONE_SHOT != hcsr->kconfig.set.mode && NULL != hcsr->kthread) {
+        kthread_stop(hcsr->kthread);
+        hcsr->kthread = kthread_run (thread_function, hcsr, hcsr->hc_sr04->name);
     }
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
     goto SUCCESS_SETMODE_RETURN;
 
 ERR_SETMODE_RETURN:
+        printk(KERN_ALERT "ioctl_SETMODE FAILED\n");
         return ret;
 
 SUCCESS_SETMODE_RETURN:
@@ -353,40 +373,30 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
             spin_unlock(&(hcsr->cirb.cir_buf_lock));
             if(ret) return -EAGAIN;
         }
-    } else if(PERIODIC == hcsr->kconfig.set.mode) {
+    } else {
+        spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+        spin_lock(&(hcsr->cirb.cir_buf_lock));
+        if(-1 != hcsr->cirb.newest) {
+            ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
+            spin_unlock(&(hcsr->cirb.cir_buf_lock));
+        } else {
+            spin_unlock(&(hcsr->cirb.cir_buf_lock));
+
+            wait_event_interruptible((hcsr->wq),BUFF_IN);
+
             spin_lock(&(hcsr->cirb.cir_buf_lock));
-            if(-1 == hcsr->cirb.newest) {
-                spin_unlock(&(hcsr->cirb.cir_buf_lock));
-            } else {
-                spin_unlock(&(hcsr->cirb.cir_buf_lock));
-
-                wait_event_interruptible((hcsr->wq),BUFF_IN);
-
-                spin_lock(&(hcsr->cirb.cir_buf_lock));
-                ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
-                spin_unlock(&(hcsr->cirb.cir_buf_lock));
-                if(ret) return -EAGAIN;
-            }
-
-    }  else {
-            spin_unlock(&(hcsr->kconfig.kconfig_lock));
-            printk(KERN_ALERT "Read: Mode doesn't get initialization-mode;%d\n", hcsr->kconfig.set.mode);
-            return -EINVAL;
+            ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
+            spin_unlock(&(hcsr->cirb.cir_buf_lock));
+            if(ret) return -EAGAIN;
+        }
     }
+
     printk(KERN_ALERT "hc_sr04: Read Done\n");
     return 0;
 }
 
-int thread_function(void* data) {
-    struct hcsr_struct* hcsr = (struct hcsr_struct*) data;
-    unsigned long ns = (1000^3)/(hcsr->kconfig.set.freq);
 
-    while(!kthread_should_stop()) {
-        send(hcsr, 3);
-        ndelay(ns);
-    }
-    return 0;
-}
 static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t count, loff_t *ptr) {
     struct hcsr_struct*hcsr = NULL;
     int act;
@@ -403,10 +413,14 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
 
         spin_lock(&(hcsr->ongoing_lock));
-        if(STOPPING == hcsr->ongoing) {
+        do {
+            if(STOPPING == hcsr->ongoing) {
+                spin_unlock(&(hcsr->ongoing_lock));
+                send(hcsr, 5);
+                break;
+            } 
             spin_unlock(&(hcsr->ongoing_lock));
-            send(hcsr, 5);
-        } 
+        } while(0);
 
         if(0 != act) {
             spin_lock(&(hcsr->cirb.cir_buf_lock));
@@ -414,7 +428,7 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
             hcsr->cirb.newest = -1;
             spin_unlock(&(hcsr->cirb.cir_buf_lock));
         }
-    } else if(PERIODIC == hcsr->kconfig.set.mode) {
+    } else {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
 
         spin_lock(&(hcsr->kthread_lock));
@@ -423,6 +437,7 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
                 if(NULL == hcsr->kthread) {
                     break;
                 }
+                printk(KERN_ALERT "CALL ThreadStop");
                 kthread_stop(hcsr->kthread);
                 hcsr->kthread = NULL;
             } while(0);
@@ -436,12 +451,7 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
         }
         spin_unlock(&(hcsr->kthread_lock));
 
-    } else {
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
-        printk(KERN_ALERT "Write: Mode doesn't get initialization-mode;%d\n", hcsr->kconfig.set.mode);
-        return -EINVAL;
-    }
-    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    } 
     printk(KERN_ALERT "hc_sr04: Write Done\n");
     return 0;
 }
@@ -463,6 +473,7 @@ static void init_hcsr_struct(hcsr_struct* hcsr, struct miscdevice* md, char(*pin
     /*!!!!!*/
     //CHECK!!! INIT
     init_waitqueue_head(&(hcsr->wq));
+    hcsr->kthread = NULL;
     hcsr->hc_sr04 = md;
     hcsr->irq_done = IRQ_NOT_DONE;
     hcsr->echo_isr_number = -1;
