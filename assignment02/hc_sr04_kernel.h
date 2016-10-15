@@ -31,6 +31,7 @@ typedef struct hcsr_struct {
     int irq_done;
     int echo_isr_number;
     wait_queue_head_t wq;
+    ktime_t kstart;
     struct task_struct* kthread;
     spinlock_t kthread_lock;
     spinlock_t irq_done_lock;

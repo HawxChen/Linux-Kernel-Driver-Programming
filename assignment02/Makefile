@@ -23,7 +23,7 @@ all: $(TESTER_NAME)
 	make ARCH=$(ARCH) CORSS_COMPILE=$(CORSS_COMPILE) -C $(KDIR) SUBDIRS=$(PWD) modules
 
 $(TESTER_NAME): $(TESTER_NAME).c $(NAME)_user.h $(NAME)_common.h $(NAME)_kernel.h common_user.h
-	$(XCC) $(TESTER_FLAGS) -o $(TESTER_NAME) $(TESTER_NAME).c
+	$(XCC) $(TESTER_FLAGS) -o $(TESTER_NAME) $(TESTER_NAME).c -lpthread
 
 
 .PHONY: install uninstall dellog reinstall

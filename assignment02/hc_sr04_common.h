@@ -8,6 +8,10 @@
 #define SETPINS _IOW (HCSR_W_MAGIC, 1, struct pin_set*)
 #define SETMODE _IOW (HCSR_W_MAGIC, 2, struct pin_set*)
 #define U_PIN_SIZE (2)
+#define  HCSR_A_TRIG_PIN (6)
+#define  HCSR_A_ECHO_PIN (15)
+#define  HCSR_B_TRIG_PIN (10)
+#define  HCSR_B_ECHO_PIN (1)
 typedef struct pin_set {
     int trigger_pin;
     int echo_pin;
