@@ -1,0 +1,121 @@
+# KernelRocks
+Makefile:
+KDIR should be the path of kernel source directory
+
+Install it
+  #make
+  #make install
+
+Uninstall:
+  #make uninstall
+
+Demo for part1:
+ #./hc_sr04-test
+ #dmesg
+
+SEARCH "hc_sr04-test" in this file
+
+...
+...
+//From log: 62
+[ 1308.493133] ioctl_SETMODE
+[ 1308.495805] HCSR_1: mode:0, freq:7
+[ 1308.499230] ioctl_SETMODE DONE
+[ 1308.502391] ioctl DONE
+[ 1308.514089] hc_sr04: Write
+//hc_sr04-test.c: 65
+[ 1308.517658] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 1308.524186] hc_sr04: Write Done
+[ 1308.530137] hc_sr04: Write
+//hc_sr04-test.c: 66
+[ 1308.533401] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 1308.539811] hc_sr04: Write Done
+[ 1308.546812] hc_sr04: Write
+//hc_sr04-test.c: 68 ---CLEAR
+[ 1308.550148] echo_recv_isr: 93 CM, newest idx:0, from HCSR_1, mode:0 
+[ 1308.556576] hc_sr04: Write Done
+[ 1308.560163] hc_sr04: Read
+//hc_sr04-test.c: 70
+[ 1308.563336] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 1308.569747] hc_sr04: Read Done
+[ 1308.578929] hc_sr04: Read
+//hc_sr04-test.c: 71
+[ 1308.582213] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 1308.590125] hc_sr04: Read Done
+[ 1308.593230] ioctl
+[ 1308.595177] ioctl_SETMODE
+[ 1308.597825] HCSR_2: mode:1, freq:7
+[ 1308.601334] ioctl_SETMODE DONE
+[ 1308.604419] ioctl DONE
+[ 1308.613913] hc_sr04: Read
+//hc_sr04-test.c: 77 read blocked!
+[ 1308.616576] read Blocked:HCSR_2 
+[ 1308.619825] hc_sr04: Read Done
+[ 1309.626380] hc_sr04: Write
+//hc_sr04-test.c: 81
+[ 1309.629181] Write: Start thread from HCSR_2
+[ 1309.634847] hc_sr04: Write Done
+[ 1309.638828] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:1 
+[ 1309.800693] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 1309.960692] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 1310.120691] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 1310.280695] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 1310.440686] echo_recv_isr: 89 CM, newest idx:0, from HCSR_2, mode:1 
+[ 1310.600693] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 1310.649241] hc_sr04: Write
+//hc_sr04-test.c: 84
+[ 1310.653202] CALL ThreadStop
+[ 1310.760335] hc_sr04: Write Done
+[ 1310.763987] ioctl
+[ 1310.765951] ioctl_SETMODE
+[ 1310.768602] HCSR_2: mode:0, freq:7
+[ 1310.772139] ioctl_SETMODE DONE
+[ 1310.775262] ioctl DONE
+[ 1310.780291] hc_sr04: Write
+//hc_sr04-test.c: 94
+[ 1310.783557] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 1310.789979] hc_sr04: Write Done
+[ 1310.800128] hc_sr04: Write
+//hc_sr04-test.c: 97
+[ 1310.803471] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[ 1310.809926] hc_sr04: Write Done
+[ 1310.819561] ioctl
+[ 1310.821635] ioctl_SETMODE
+[ 1310.826787] ioctl
+[ 1310.828751] ioctl_SETMODE
+//hc_sr04-test.c: 107
+//Start multiplexing here by pthreads!
+[ 1310.834301] HCSR_2: mode:0, freq:7
+[ 1310.837995] ioctl_SETMODE DONE
+[ 1310.841193] ioctl DONE
+[ 1310.846892] HCSR_1: mode:1, freq:7
+[ 1310.850442] ioctl_SETMODE DONE
+[ 1310.853530] ioctl DONE
+[ 1310.859154] hc_sr04: Read
+[ 1310.862511] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:0 
+[ 1310.869581] hc_sr04: Read
+[ 1310.872365] hc_sr04: Read Done
+[ 1310.875536] hc_sr04: Read Done
+[ 1311.875636] hc_sr04: Write
+[ 1311.878961] echo_recv_isr: 92 CM, newest idx:0, from HCSR_2, mode:0 
+[ 1311.885497] hc_sr04: Write Done
+[ 1311.888725] hc_sr04: Write
+[ 1311.896404] Write: Start thread from HCSR_1
+[ 1311.900811] hc_sr04: Write Done
+[ 1311.904777] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 1312.070632] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 1312.230619] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 1312.390630] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 1312.550619] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 1312.710630] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 1312.870617] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 1312.896512] hc_sr04: Write
+[ 1312.899853] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 1312.906394] hc_sr04: Write Done
+[ 1312.910150] hc_sr04: Write
+[ 1312.912900] CALL ThreadStop
+[ 1313.030329] hc_sr04: Write Done
+[ 1313.035637] hc_sr04: Release
+[ 1313.038608] hc_sr04: Release Done
+[ 1313.046444] hc_sr04: Release
+[ 1313.049365] hc_sr04: Release Done

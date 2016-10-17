@@ -10,9 +10,7 @@ SROOT  = $(IOT_HOME)/i586-poky-linux-
 PWD := $(shell pwd)
 ARCH = i386
 
-
 obj-m := $(NAME).o
-#obj-m += $(NAME_MPROBE).o
 PWD := $(shell pwd)
 XBIN := $(IOT_HOME)/x86_64-pokysdk-linux/usr/bin/i586-poky-linux
 PATH := $(PATH):$(XBIN)
@@ -36,32 +34,6 @@ uninstall:
 reinstall:
 	modprobe -r hc_sr04
 	modprobe hc_sr04
-
-uninstall_hc_sr04:
-	modprobe -r hc_sr04
-
-reinstall_hc_sr04:
-	cp -f `pwd`/hc_sr04.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/hc_sr04/hc_sr04.ko 
-	modprobe -r hc_sr04
-	modprobe --force hc_sr04
-
-install_mprobe:
-	cp -f `pwd`/mprobe.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/hc_sr04/mprobe.ko 
-	modprobe --force mprobe
-
-uninstall_mprobe:
-	modprobe -r mprobe
-
-reinstall_mprobe:
-	cp -f `pwd`/mprobe.ko /lib/modules/3.16.0-4-amd64/kernel/drivers/hc_sr04/mprobe.ko 
-	modprobe -r mprobe 
-	modprobe --force mprobe
-
-install_all: install_hc_sr04 install_mprobe
-
-reinstall_all: reinstall_hc_sr04 reinstall_mprobe
-
-uninstall_all: uninstall_hc_sr04 uninstall_mprobe
 
 dellog:
 	cat /dev/null >  /var/log/kern.log

@@ -294,13 +294,16 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
     // still peeriodical sampling
     //before: one-shot ; after: one-shot
     /*For Periodic Task*/
-    printk("%s: mode:%d, freq:%d\n", hcsr->hc_sr04->name, hcsr->kconfig.set.mode, hcsr->kconfig.set.freq);
     hcsr->kconfig.set = set;
+    printk(KERN_ALERT "%s: mode:%d, freq:%d\n", hcsr->hc_sr04->name, hcsr->kconfig.set.mode, hcsr->kconfig.set.freq);
     if(ONE_SHOT != hcsr->kconfig.set.mode && NULL != hcsr->kthread) {
+        printk(KERN_ALERT "Keep Thread Going with period change: %s\n", hcsr->hc_sr04->name);
         kthread_stop(hcsr->kthread);
         hcsr->kthread = kthread_run (thread_function, hcsr, hcsr->hc_sr04->name);
     }else if(ONE_SHOT == hcsr->kconfig.set.mode && NULL != hcsr->kthread) {
+        printk(KERN_ALERT "Enter OneShot, Stop previous thread: %s\n", hcsr->hc_sr04->name);
         kthread_stop(hcsr->kthread);
+        hcsr->kthread = NULL;
     }
     spin_unlock(&(hcsr->kconfig.kconfig_lock));
     goto SUCCESS_SETMODE_RETURN;
@@ -445,6 +448,7 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
                 if(NULL != hcsr->kthread) {
                     break;
                 }
+                printk(KERN_ALERT "Write: Start thread from %s", hcsr->hc_sr04->name);
                 hcsr->kthread = kthread_run(thread_function, hcsr, hcsr->hc_sr04->name);
             }while(0);
         }
