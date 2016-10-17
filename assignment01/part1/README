@@ -1,0 +1,35 @@
+# KernelRocks
+Makefile:
+KDIR should be the path of kernel source directory
+
+Install it
+  #make
+  #make install
+
+Uninstall:
+  #make uninstall
+
+Reinstall:
+  #make reinstall
+
+Demo for part1:
+  #./ht530-test
+  It will generate four threads to do add/search/delete hash oabjects, then it will dump all existing objects from the hashtable.
+  
+Demo for part2:
+  #./mprobe-test
+  The testing program, mprobe-test.c, contains 2 sets of breaking point information. After each break, it will show all existing records.
+  When excuting ./mprobe-test once, it will hit the specified breakpoint once.
+  Example:
+  #./mprobe-test
+  items[0]: addr:0xffffffffa05aa09a, pid:7680, xtc:21232275630100, global:0x54321, local:0x123456
+  
+  #./mprobe-test
+  items[0]: addr:0xffffffffa05aa09a, pid:7680, xtc:21232275630100, global:0x54321, local:0x123456
+  items[1]: addr:0xffffffffa05aa09a, pid:7681, xtc:21235056370261, global:0x54321, local:0x123456
+  
+  #./mprobe-test
+  items[0]: addr:0xffffffffa05aa09a, pid:7680, xtc:21232275630100, global:0x54321, local:0x123456
+  items[1]: addr:0xffffffffa05aa09a, pid:7681, xtc:21235056370261, global:0x54321, local:0x123456
+  items[2]: addr:0xffffffffa05aa09a, pid:7682, xtc:21237411058402, global:0x54321, local:0x123456
+  

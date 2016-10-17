@@ -1,0 +1,41 @@
+# KernelRocks
+Makefile:
+KDIR should be the path of kernel source directory
+
+Install it
+  #make
+  #make install
+
+Uninstall:
+  #make uninstall
+
+Reinstall:
+  #make reinstall
+
+Demo for part2:
+  #./mprobe-test-1
+  The testing program, mprobe-test1.c, contains 2 sets of breaking point information. After each break, it will show all existing records.
+  When excuting ./mprobe-test1 once, it will hit the specified breakpoint once. It will pause in the function: ht530_fsync
+      Exampl: Execute ./mprobe-test1 for 3 times.
+      #./mprobe-test1
+      items[0]: addr:0xffffffffa04c209a, pid:8270, xtc:15669393845297, global:0x54321, local:0x123456
+      
+      #./mprobe-test1
+      items[0]: addr:0xffffffffa04c209a, pid:8270, xtc:15669393845297, global:0x54321, local:0x123456
+      items[1]: addr:0xffffffffa04c209a, pid:8271, xtc:15671263343773, global:0x54321, local:0x123456
+      
+      #./mprobe-test1
+      items[0]: addr:0xffffffffa04c209a, pid:8270, xtc:15669393845297, global:0x54321, local:0x123456
+      items[1]: addr:0xffffffffa04c209a, pid:8271, xtc:15671263343773, global:0x54321, local:0x123456
+      items[2]: addr:0xffffffffa04c209a, pid:8272, xtc:15673796754770, global:0x54321, local:0x123456
+
+
+  #./mprobe-test-2
+  When excuting ./mprobe-test2 once, it will hit the specified breakpoint once. It will pause in the function: ht530_flock. 
+      Example: After excecuting mprobe-test1 for 3 times, we excute ./mprobe-test2.
+      #./mprobe-test2 
+      items[0]: addr:0xffffffffa04c209a, pid:8270, xtc:15669393845297, global:0x54321, local:0x123456 //by mprobe-test1
+      items[1]: addr:0xffffffffa04c209a, pid:8271, xtc:15671263343773, global:0x54321, local:0x123456 //by mprobe-test1
+      items[2]: addr:0xffffffffa04c209a, pid:8272, xtc:15673796754770, global:0x54321, local:0x123456 //by mprobe-test1
+      items[3]: addr:0xffffffffa04c210a, pid:8299, xtc:15965159589766, global:0x54321, local:0x1234560 //by mprobe-test2
+                ^^^^^^^^^^^^^^^^^^^^^^^                                                ^^^^^^^^^^^^^^^
