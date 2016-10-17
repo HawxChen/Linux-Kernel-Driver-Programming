@@ -317,6 +317,7 @@ SUCCESS_SETMODE_RETURN:
 static long hc_sr04_ioctl(struct file* file, unsigned int arg1, unsigned long arg2) {
     int ret;
 
+    printk(KERN_ALERT "ioctl\n");
     switch (arg1) {
         case SETPINS:
             ret = ioctl_SETPINs(file, arg2);
@@ -328,6 +329,7 @@ static long hc_sr04_ioctl(struct file* file, unsigned int arg1, unsigned long ar
             return -EINVAL;
     }
 
+    printk(KERN_ALERT "ioctl DONE\n");
     return ret;
 }
 void spin_ongoing (struct hcsr_struct* hcsr) {
