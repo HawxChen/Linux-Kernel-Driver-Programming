@@ -1,4 +1,5 @@
 #ifndef _HW_SETTING_H_
+#define _HW_SETTING_H_
 #define PULL_DOWN (0)
 #define PULL_UP (1)
 #define DIR_IN (1)
