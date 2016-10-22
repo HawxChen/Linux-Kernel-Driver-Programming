@@ -68,6 +68,7 @@ static int hc_sr04_open(struct inode* node, struct file* file) {
     struct hcsr_struct* curr_hcsr;
     printk(KERN_ALERT "hc_sr04: Open\n");
     curr_hcsr = get_curr_hcsr(node);
+    file->private_data = (void*) curr_hcsr;
     printk(KERN_ALERT "Open: %s", curr_hcsr->hc_sr04->name);
     printk(KERN_ALERT "hc_sr04: Open Done\n");
     return 0;
@@ -75,6 +76,7 @@ static int hc_sr04_open(struct inode* node, struct file* file) {
 
 static int hc_sr04_release(struct inode* node, struct file* file) {
     printk(KERN_ALERT "hc_sr04: Release\n");
+    file->private_data = NULL;
     printk(KERN_ALERT "hc_sr04: Release Done\n");
     return 0;
 }
@@ -200,7 +202,8 @@ static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
         goto ERR_SETPIN_RETURN;
     }
 
-    hcsr = get_curr_hcsr(filp->f_dentry->d_inode);
+    //hcsr = get_curr_hcsr(filp->f_dentry->d_inode);
+    hcsr = (struct hcsr_struct*)filp->private_data;
     //if(...)
     if(hcsr->pins[TRIGGER_INDEX][HC_GPIO_LINUX][PIN_INDEX] != pins.trigger_pin  || hcsr->pins[ECHO_INDEX][HC_GPIO_LINUX][PIN_INDEX] != pins.echo_pin) {
         ret = -EINVAL;
@@ -289,7 +292,7 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
     }
     
 
-    hcsr = get_curr_hcsr(file->f_dentry->d_inode);
+    hcsr = (struct hcsr_struct*) file->private_data;
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     // still peeriodical sampling
     //before: one-shot ; after: one-shot
@@ -347,7 +350,7 @@ RETEST:
 }
 static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
     int ret = 0;
-    struct hcsr_struct* hcsr = get_curr_hcsr(file->f_dentry->d_inode);
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) file->private_data;
 
     printk(KERN_ALERT "hc_sr04: Read\n");
 
@@ -399,15 +402,15 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
 
 
 static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t count, loff_t *ptr) {
-    struct hcsr_struct*hcsr = NULL;
     int act;
     int ret;
+    //hcsr = get_curr_hcsr(file->f_dentry->d_inode);
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) file->private_data;
 
     printk(KERN_ALERT "hc_sr04: Write\n");
 
     ret = copy_from_user(&act , buf, sizeof(int));
 
-    hcsr = get_curr_hcsr(file->f_dentry->d_inode);
 
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     if(ONE_SHOT == hcsr->kconfig.set.mode) {
