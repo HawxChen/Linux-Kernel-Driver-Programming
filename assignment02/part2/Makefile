@@ -13,8 +13,6 @@ ARCH = i386
 
 obj-m := $(PLAT).o
 obj-m += $(DRV).o
-obj-m += Sample_platform_device.o
-obj-m += Sample_platform_driver.o
 PWD := $(shell pwd)
 XBIN := $(IOT_HOME)/x86_64-pokysdk-linux/usr/bin/i586-poky-linux
 PATH := $(PATH):$(XBIN)
@@ -32,12 +30,20 @@ $(TESTER_PLAT): $(TESTER_PLAT).c $(PLAT)_user.h $(PLAT)_common.h $(PLAT)_kernel.
 inall:
 	cp -f `pwd`/$(PLAT).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(PLAT)/$(PLAT).ko 
 	cp -f `pwd`/$(DRV).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(PLAT)/$(DRV).ko 
-	modprobe $(DRV) 
 	modprobe $(PLAT) 
+	modprobe $(DRV) 
 
 unall:
 	modprobe -r $(DRV) 
 	modprobe -r $(PLAT) 
+reall:
+	modprobe -r $(DRV) 
+	modprobe -r $(PLAT) 
+	cp -f `pwd`/$(PLAT).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(PLAT)/$(PLAT).ko 
+	cp -f `pwd`/$(DRV).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(PLAT)/$(DRV).ko 
+	modprobe $(PLAT) 
+	modprobe $(DRV) 
+
 inplat:
 	cp -f `pwd`/$(PLAT).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(PLAT)/$(PLAT).ko 
 	modprobe $(PLAT) 
@@ -49,7 +55,7 @@ replat:
 	modprobe $(PLAT) 
 
 indrv:
-	cp -f `pwd`/$(DRV).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(DRV)/$(DRV).ko 
+	cp -f `pwd`/$(DRV).ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/$(PLAT)/$(DRV).ko 
 	modprobe $(DRV) 
 undrv:
 	modprobe -r $(DRV) 

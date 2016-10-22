@@ -23,10 +23,10 @@
 #include <linux/spinlock.h>
 #include <linux/wait.h>
 #include<linux/platform_device.h>
-static int HCSR_driver_probe(struct platform_device* pplat_dev);
 typedef struct HCSR_device {
     char* name;
     int dev_no;
-    struct platform_device plat_dev;
+    void* pdev; //HCSR_device
+    struct platform_device plf_dev;
 } HCSR_device;
 #endif
