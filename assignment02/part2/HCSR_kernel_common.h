@@ -26,6 +26,7 @@
 typedef struct HCSR_device {
     char* name;
     int dev_no;
+    //struct class* hcsr_class;
     void* pdev; //HCSR_device
     struct platform_device plf_dev;
 } HCSR_device;

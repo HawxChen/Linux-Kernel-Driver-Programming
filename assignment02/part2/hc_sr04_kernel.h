@@ -29,7 +29,10 @@ typedef struct hcsr_kconfig {
 typedef struct hcsr_struct {
     struct miscdevice* hc_sr04;
     HCSR_device* pplat_dev;
+    struct class* hcsr_class;
     int irq_done;
+    dev_t devt;
+    struct cdev* hcsr_cdev;
     int echo_isr_number;
     wait_queue_head_t wq;
     ktime_t kstart;

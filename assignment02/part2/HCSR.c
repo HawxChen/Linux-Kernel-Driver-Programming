@@ -25,25 +25,32 @@ static struct HCSR_device HCSR_2_dev = {
 /**
  * register the device when module is initiated
  */
+#define SUBSYSTEM ("HCSR")
+static struct class* HCSR_class = NULL;
 static void HCSR_dummy_release(struct device *dev) {}
+static void init_HCSR_dev(struct HCSR_device* hcsr_dev) {
+    hcsr_dev->plf_dev.dev.release = HCSR_dummy_release;
+    //hcsr_dev->hcsr_class = HCSR_class;
+}
 static int HCSR_device_init(void)
 {
     int ret = 0;
     printk(KERN_ALERT "HCSR_device_init: INIT\n");
 
     /* Register the device */
-    HCSR_1_dev.plf_dev.dev.release = HCSR_dummy_release;
+//    HCSR_class = class_create(THIS_MODULE, SUBSYSTEM);
+    init_HCSR_dev(&HCSR_1_dev);
     ret = platform_device_register(&HCSR_1_dev.plf_dev);
     if(ret) {
         printk(KERN_ALERT "Failed device registration: HCSR_1\n");
     }
-/*
-    HCSR_2_dev.plf_dev.dev.release = HCSR_dummy_release;
+
+    init_HCSR_dev(&HCSR_2_dev);
     ret = platform_device_register(&HCSR_2_dev.plf_dev);
     if(ret) {
         printk(KERN_ALERT "Failed device registration: HCSR_2\n");
     }
-    */
+    
 
     printk(KERN_ALERT "HCSR_device_init: INIT DONE\n");
     return ret;
@@ -53,9 +60,10 @@ static void HCSR_device_exit(void)
 {
     int ret;
     printk(KERN_ALERT "HCSR_device: GoodBye Kernel World!!!\n");
+    platform_device_unregister(&HCSR_2_dev.plf_dev);
     platform_device_unregister(&HCSR_1_dev.plf_dev);
 
-    //platform_device_unregister(&HCSR_2_dev.plf_dev);
+//    class_destroy(HCSR_class);
 
     printk(KERN_ALERT "Goodbye, unregister the device\n");
     printk(KERN_ALERT "HCSR_device: EXIT DONE\n");

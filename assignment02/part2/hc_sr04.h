@@ -39,6 +39,8 @@ static struct file_operations hc_sr04_fops = {
 
 
 static LIST_HEAD(hcsr_list);
+static struct class* HCSR_class = NULL;
+static int class_cnt = 0;
 
 
 struct hcsr_struct* get_curr_hcsr(struct inode* node) {
@@ -465,6 +467,7 @@ static void init_hcsr_struct(hcsr_struct* hcsr, char(*pins)[5][2], char*(*pin_st
     /*!!!!!*/
     //CHECK!!! INIT
     init_waitqueue_head(&(hcsr->wq));
+    hcsr->hcsr_class = HCSR_class;
     hcsr->kthread = NULL;
     hcsr->irq_done = IRQ_NOT_DONE;
     hcsr->echo_isr_number = -1;
@@ -488,9 +491,9 @@ static void uninit_hcsr_struct(hcsr_struct* hcsr) {
     list_del(&(hcsr->list));
 }
 
-static struct class* HCSR_class = NULL;
 int hc_sr04_init(struct HCSR_device* pplat_dev) {
     //CHECK!!! INIT
+    int rval;
     hcsr_struct* pdev = NULL;
     printk(KERN_ALERT "hc_sr04: INIT: %s\n", pplat_dev->name);
 
@@ -501,23 +504,50 @@ int hc_sr04_init(struct HCSR_device* pplat_dev) {
     pplat_dev->pdev = pdev;
     pdev->pplat_dev =  pplat_dev;
 
+    //pdev->hcsr_class = pplat_dev->hcsr_class;
+
     pdev->hc_sr04->minor = MISC_DYNAMIC_MINOR;
     pdev->hc_sr04->name = pplat_dev->name;
     pdev->hc_sr04->fops = &hc_sr04_fops;
 
-
     if(reg_misc(pdev->hc_sr04))
         return 0;
+
+    rval = alloc_chrdev_region(&(pdev->devt), 1, 1, pplat_dev->plf_dev.name);
+    if (rval != 0)          /* error */
+        goto cdev_alloc_err;
+
+    /* Registring */
+    pdev->hcsr_cdev = cdev_alloc();
+    if (!pdev->hcsr_cdev) 
+        goto cdev_alloc_err;
+
+    /* Init it! */
+    cdev_init(pdev->hcsr_cdev, &hc_sr04_fops); 
+
+    /* Tell the kernel "hey, I'm exist" */
+    rval = cdev_add(pdev->hcsr_cdev, pdev->devt, 1);
+    if (rval < 0) 
+        goto cdev_add_out;
+
+
+    if(0 == class_cnt) {
+        HCSR_class = class_create(THIS_MODULE, "HCSR");
+    }
+    class_cnt+=1;
 
     //default
     init_hcsr_struct(pdev, A_pins, A_pin_str);
 
-    HCSR_class = class_create(THIS_MODULE, "HCSR");
-
-    device_create(HCSR_class, NULL, 0, NULL,pplat_dev->plf_dev.name);
+    device_create(pdev->hcsr_class, NULL, pdev->devt, pdev, pplat_dev->plf_dev.name);
 
     printk(KERN_ALERT "hc_sr04: INIT DONE: %s\n", pplat_dev->name);
     return 0;
+
+cdev_add_out:
+cdev_alloc_err:
+    printk("------ERROR------\n");
+    return -1;
 }
 
 void free_gpio(struct hcsr_struct* hcsr) {
@@ -536,19 +566,30 @@ void free_gpio(struct hcsr_struct* hcsr) {
 
 void hc_sr04_exit(struct HCSR_device* pplat_dev) {
 
-    hcsr_struct *c = (hcsr_struct *)(pplat_dev->pdev);
-    printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!: %s\n", c->hc_sr04->name);
+    hcsr_struct *pdev = (hcsr_struct *)(pplat_dev->pdev);
+    printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!: %s\n", pdev->hc_sr04->name);
 
-    free_irq(c->echo_isr_number, c);
-    free_gpio(c);  
+    free_irq(pdev->echo_isr_number, pdev);
+    free_gpio(pdev);  
 
-    class_destroy(HCSR_class);
-    dereg_misc((c->hc_sr04));
+    device_destroy(pdev->hcsr_class, pdev->devt);
 
-    uninit_hcsr_struct(c);
 
-    kfree(c->hc_sr04);
-    kfree(c);
+    class_cnt--;
+    if(class_cnt == 0){
+        class_destroy(pdev->hcsr_class);
+        printk(KERN_ALERT "Destroy HCSR_class");
+    } 
+
+    cdev_del(pdev->hcsr_cdev);
+
+    unregister_chrdev_region(pdev->devt, 1);
+
+    dereg_misc((pdev->hc_sr04));
+    uninit_hcsr_struct(pdev);
+
+    kfree(pdev->hc_sr04);
+    kfree(pdev);
 
     printk(KERN_ALERT "hc_sr04: EXIT DONE\n");
     return;
