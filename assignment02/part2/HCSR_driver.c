@@ -13,8 +13,8 @@
 #define MODULE_NAME ("HCSR_MODULE")
 
 static const struct platform_device_id P_id_table[] = {
-         { "HCSR_1", 0 },
-         { "HCSR_2", 0 },
+         { "HCSRdevice1", 0 },
+         { "HCSRdevice2", 0 },
 	 { },
 };
 

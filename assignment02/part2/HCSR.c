@@ -4,19 +4,19 @@
 #include"HCSR_kernel.h"
 
 static struct HCSR_device HCSR_1_dev = {
-    .name	= "HCSR_1_Device",
+    .name	= "HCSR_1",
     .dev_no 	= 20,
     .plf_dev = {
-        .name	= "HCSR_1",
+        .name	= "HCSRdevice1",
         .id	= -1,
     }
 };
 
 static struct HCSR_device HCSR_2_dev = {
-    .name	= "HCSR_2_Device",
+    .name	= "HCSR_2",
     .dev_no 	= 55,
     .plf_dev = {
-        .name	= "HCSR_2",
+        .name	= "HCSRdevice2",
         .id	= -1,
     }
 };

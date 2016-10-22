@@ -488,6 +488,7 @@ static void uninit_hcsr_struct(hcsr_struct* hcsr) {
     list_del(&(hcsr->list));
 }
 
+static struct class* HCSR_class = NULL;
 int hc_sr04_init(struct HCSR_device* pplat_dev) {
     //CHECK!!! INIT
     hcsr_struct* pdev = NULL;
@@ -495,12 +496,13 @@ int hc_sr04_init(struct HCSR_device* pplat_dev) {
 
     pdev = (hcsr_struct*) kmalloc(sizeof(hcsr_struct),GFP_KERNEL); 
     pdev->hc_sr04 = (struct miscdevice*) kmalloc(sizeof(struct miscdevice), GFP_KERNEL); 
+    memset(pdev->hc_sr04, 0, sizeof(struct miscdevice));
 
     pplat_dev->pdev = pdev;
     pdev->pplat_dev =  pplat_dev;
 
     pdev->hc_sr04->minor = MISC_DYNAMIC_MINOR;
-    pdev->hc_sr04->name = pplat_dev->plf_dev.name;
+    pdev->hc_sr04->name = pplat_dev->name;
     pdev->hc_sr04->fops = &hc_sr04_fops;
 
 
@@ -509,6 +511,10 @@ int hc_sr04_init(struct HCSR_device* pplat_dev) {
 
     //default
     init_hcsr_struct(pdev, A_pins, A_pin_str);
+
+    HCSR_class = class_create(THIS_MODULE, "HCSR");
+
+    device_create(HCSR_class, NULL, 0, NULL,pplat_dev->plf_dev.name);
 
     printk(KERN_ALERT "hc_sr04: INIT DONE: %s\n", pplat_dev->name);
     return 0;
@@ -535,13 +541,16 @@ void hc_sr04_exit(struct HCSR_device* pplat_dev) {
 
     free_irq(c->echo_isr_number, c);
     free_gpio(c);  
+
+    class_destroy(HCSR_class);
     dereg_misc((c->hc_sr04));
+
     uninit_hcsr_struct(c);
 
     kfree(c->hc_sr04);
     kfree(c);
 
-    printk(KERN_ALERT "hc_sr04: EXIT DONE: %s\n", c->hc_sr04->name);
+    printk(KERN_ALERT "hc_sr04: EXIT DONE\n");
     return;
 } 
 #endif
