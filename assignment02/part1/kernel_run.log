@@ -1,0 +1,1508 @@
+[    0.000000] Initializing cgroup subsys cpuset
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Linux version 3.8.7-yocto-standard (neck@flax) (gcc version 4.9.1 (GCC) ) #1 Thu May 12 08:17:14 PDT 2016
+[    0.000000] Disabling PGE capability bit
+[    0.000000] e820: BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000096fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000000097000-0x0000000000097fff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000098000-0x000000000009ffff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000000efdefff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000efdf000-0x000000000f01efff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x000000000f01f000-0x000000000f0defff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000000f0df000-0x000000000fddefff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x000000000fddf000-0x000000000fdeefff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000000fdef000-0x000000000fdeffff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000e0000000-0x00000000e1ffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[    0.000000] Early serial console at MMIO32 0x8010f000 (options '115200n8')
+[    0.000000] bootconsole [uart0] enabled
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] efi: EFI v2.31 by EKI
+[    0.000000] efi:  SMBIOS=0xfdee000  ACPI=0xf01e000  ACPI 2.0=0xf01e014 
+[    0.000000] efi: mem00: type=7, attr=0xf, range=[0x0000000000000000-0x0000000000095000) (0MB)
+[    0.000000] efi: mem01: type=2, attr=0xf, range=[0x0000000000095000-0x0000000000097000) (0MB)
+[    0.000000] efi: mem02: type=0, attr=0xf, range=[0x0000000000097000-0x0000000000098000) (0MB)
+[    0.000000] efi: mem03: type=7, attr=0xf, range=[0x0000000000098000-0x00000000000a0000) (0MB)
+[    0.000000] efi: mem04: type=2, attr=0xf, range=[0x0000000000100000-0x0000000000338000) (2MB)
+[    0.000000] efi: mem05: type=7, attr=0xf, range=[0x0000000000338000-0x0000000001ede000) (27MB)
+[    0.000000] efi: mem06: type=4, attr=0xf, range=[0x0000000001ede000-0x0000000002000000) (1MB)
+[    0.000000] efi: mem07: type=7, attr=0xf, range=[0x0000000002000000-0x000000000bfe0000) (159MB)
+[    0.000000] efi: mem08: type=4, attr=0xf, range=[0x000000000bfe0000-0x000000000c000000) (0MB)
+[    0.000000] efi: mem09: type=7, attr=0xf, range=[0x000000000c000000-0x000000000d96e000) (25MB)
+[    0.000000] efi: mem10: type=2, attr=0xf, range=[0x000000000d96e000-0x000000000dd6f000) (4MB)
+[    0.000000] efi: mem11: type=4, attr=0xf, range=[0x000000000dd6f000-0x000000000ddb4000) (0MB)
+[    0.000000] efi: mem12: type=2, attr=0xf, range=[0x000000000ddb4000-0x000000000ddb7000) (0MB)
+[    0.000000] efi: mem13: type=1, attr=0xf, range=[0x000000000ddb7000-0x000000000ddf9000) (0MB)
+[    0.000000] efi: mem14: type=4, attr=0xf, range=[0x000000000ddf9000-0x000000000e28b000) (4MB)
+[    0.000000] efi: mem15: type=3, attr=0xf, range=[0x000000000e28b000-0x000000000e28f000) (0MB)
+[    0.000000] efi: mem16: type=4, attr=0xf, range=[0x000000000e28f000-0x000000000e293000) (0MB)
+[    0.000000] efi: mem17: type=3, attr=0xf, range=[0x000000000e293000-0x000000000e296000) (0MB)
+[    0.000000] efi: mem18: type=4, attr=0xf, range=[0x000000000e296000-0x000000000e2f0000) (0MB)
+[    0.000000] efi: mem19: type=3, attr=0xf, range=[0x000000000e2f0000-0x000000000e2fd000) (0MB)
+[    0.000000] efi: mem20: type=4, attr=0xf, range=[0x000000000e2fd000-0x000000000e300000) (0MB)
+[    0.000000] efi: mem21: type=3, attr=0xf, range=[0x000000000e300000-0x000000000e302000) (0MB)
+[    0.000000] efi: mem22: type=4, attr=0xf, range=[0x000000000e302000-0x000000000e303000) (0MB)
+[    0.000000] efi: mem23: type=3, attr=0xf, range=[0x000000000e303000-0x000000000e308000) (0MB)
+[    0.000000] efi: mem24: type=4, attr=0xf, range=[0x000000000e308000-0x000000000e309000) (0MB)
+[    0.000000] efi: mem25: type=3, attr=0xf, range=[0x000000000e309000-0x000000000e30f000) (0MB)
+[    0.000000] efi: mem26: type=4, attr=0xf, range=[0x000000000e30f000-0x000000000e310000) (0MB)
+[    0.000000] efi: mem27: type=3, attr=0xf, range=[0x000000000e310000-0x000000000e31e000) (0MB)
+[    0.000000] efi: mem28: type=4, attr=0xf, range=[0x000000000e31e000-0x000000000e31f000) (0MB)
+[    0.000000] efi: mem29: type=3, attr=0xf, range=[0x000000000e31f000-0x000000000e321000) (0MB)
+[    0.000000] efi: mem30: type=4, attr=0xf, range=[0x000000000e321000-0x000000000e322000) (0MB)
+[    0.000000] efi: mem31: type=3, attr=0xf, range=[0x000000000e322000-0x000000000e354000) (0MB)
+[    0.000000] efi: mem32: type=4, attr=0xf, range=[0x000000000e354000-0x000000000e358000) (0MB)
+[    0.000000] efi: mem33: type=3, attr=0xf, range=[0x000000000e358000-0x000000000e35b000) (0MB)
+[    0.000000] efi: mem34: type=4, attr=0xf, range=[0x000000000e35b000-0x000000000e36e000) (0MB)
+[    0.000000] efi: mem35: type=3, attr=0xf, range=[0x000000000e36e000-0x000000000e377000) (0MB)
+[    0.000000] efi: mem36: type=4, attr=0xf, range=[0x000000000e377000-0x000000000e378000) (0MB)
+[    0.000000] efi: mem37: type=3, attr=0xf, range=[0x000000000e378000-0x000000000e381000) (0MB)
+[    0.000000] efi: mem38: type=4, attr=0xf, range=[0x000000000e381000-0x000000000e383000) (0MB)
+[    0.000000] efi: mem39: type=3, attr=0xf, range=[0x000000000e383000-0x000000000e39c000) (0MB)
+[    0.000000] efi: mem40: type=4, attr=0xf, range=[0x000000000e39c000-0x000000000e3b5000) (0MB)
+[    0.000000] efi: mem41: type=3, attr=0xf, range=[0x000000000e3b5000-0x000000000e3c2000) (0MB)
+[    0.000000] efi: mem42: type=4, attr=0xf, range=[0x000000000e3c2000-0x000000000e412000) (0MB)
+[    0.000000] efi: mem43: type=3, attr=0xf, range=[0x000000000e412000-0x000000000e415000) (0MB)
+[    0.000000] efi: mem44: type=4, attr=0xf, range=[0x000000000e415000-0x000000000e418000) (0MB)
+[    0.000000] efi: mem45: type=3, attr=0xf, range=[0x000000000e418000-0x000000000e431000) (0MB)
+[    0.000000] efi: mem46: type=4, attr=0xf, range=[0x000000000e431000-0x000000000e437000) (0MB)
+[    0.000000] efi: mem47: type=3, attr=0xf, range=[0x000000000e437000-0x000000000e43f000) (0MB)
+[    0.000000] efi: mem48: type=4, attr=0xf, range=[0x000000000e43f000-0x000000000e5a0000) (1MB)
+[    0.000000] efi: mem49: type=3, attr=0xf, range=[0x000000000e5a0000-0x000000000e5b5000) (0MB)
+[    0.000000] efi: mem50: type=4, attr=0xf, range=[0x000000000e5b5000-0x000000000e802000) (2MB)
+[    0.000000] efi: mem51: type=3, attr=0xf, range=[0x000000000e802000-0x000000000e807000) (0MB)
+[    0.000000] efi: mem52: type=4, attr=0xf, range=[0x000000000e807000-0x000000000e80a000) (0MB)
+[    0.000000] efi: mem53: type=3, attr=0xf, range=[0x000000000e80a000-0x000000000e80e000) (0MB)
+[    0.000000] efi: mem54: type=4, attr=0xf, range=[0x000000000e80e000-0x000000000e80f000) (0MB)
+[    0.000000] efi: mem55: type=3, attr=0xf, range=[0x000000000e80f000-0x000000000e829000) (0MB)
+[    0.000000] efi: mem56: type=4, attr=0xf, range=[0x000000000e829000-0x000000000e82a000) (0MB)
+[    0.000000] efi: mem57: type=3, attr=0xf, range=[0x000000000e82a000-0x000000000e82c000) (0MB)
+[    0.000000] efi: mem58: type=4, attr=0xf, range=[0x000000000e82c000-0x000000000e82e000) (0MB)
+[    0.000000] efi: mem59: type=3, attr=0xf, range=[0x000000000e82e000-0x000000000e834000) (0MB)
+[    0.000000] efi: mem60: type=4, attr=0xf, range=[0x000000000e834000-0x000000000e84e000) (0MB)
+[    0.000000] efi: mem61: type=3, attr=0xf, range=[0x000000000e84e000-0x000000000e858000) (0MB)
+[    0.000000] efi: mem62: type=4, attr=0xf, range=[0x000000000e858000-0x000000000e859000) (0MB)
+[    0.000000] efi: mem63: type=3, attr=0xf, range=[0x000000000e859000-0x000000000e866000) (0MB)
+[    0.000000] efi: mem64: type=4, attr=0xf, range=[0x000000000e866000-0x000000000e878000) (0MB)
+[    0.000000] efi: mem65: type=3, attr=0xf, range=[0x000000000e878000-0x000000000e87a000) (0MB)
+[    0.000000] efi: mem66: type=4, attr=0xf, range=[0x000000000e87a000-0x000000000e882000) (0MB)
+[    0.000000] efi: mem67: type=3, attr=0xf, range=[0x000000000e882000-0x000000000e888000) (0MB)
+[    0.000000] efi: mem68: type=4, attr=0xf, range=[0x000000000e888000-0x000000000e88f000) (0MB)
+[    0.000000] efi: mem69: type=3, attr=0xf, range=[0x000000000e88f000-0x000000000e894000) (0MB)
+[    0.000000] efi: mem70: type=4, attr=0xf, range=[0x000000000e894000-0x000000000efdf000) (7MB)
+[    0.000000] efi: mem71: type=9, attr=0xf, range=[0x000000000efdf000-0x000000000f01f000) (0MB)
+[    0.000000] efi: mem72: type=5, attr=0x800000000000000f, range=[0x000000000f01f000-0x000000000f07f000) (0MB)
+[    0.000000] efi: mem73: type=6, attr=0x800000000000000f, range=[0x000000000f07f000-0x000000000f0df000) (0MB)
+[    0.000000] efi: mem74: type=10, attr=0xf, range=[0x000000000f0df000-0x000000000fddf000) (13MB)
+[    0.000000] efi: mem75: type=0, attr=0xf, range=[0x000000000fddf000-0x000000000fdef000) (0MB)
+[    0.000000] efi: mem76: type=4, attr=0xf, range=[0x000000000fdef000-0x000000000fdf0000) (0MB)
+[    0.000000] efi: mem77: type=11, attr=0x8000000000000000, range=[0x00000000e0000000-0x00000000e2000000) (32MB)
+[    0.000000] efi: mem78: type=11, attr=0x8000000000000000, range=[0x00000000fed1c000-0x00000000fed20000) (0MB)
+[    0.000000] SMBIOS 2.7 present.
+[    0.000000] DMI: Intel Corp. QUARK/GalileoGen2, BIOS 0x01000200 01/01/2014
+[    0.000000] e820: update [mem 0x00000000-0x0000ffff] usable ==> reserved
+[    0.000000] e820: remove [mem 0x000a0000-0x000fffff] usable
+[    0.000000] e820: last_pfn = 0xfdf0 max_arch_pfn = 0x1000000
+[    0.000000] Scan for SMP in [mem 0x00000000-0x000003ff]
+[    0.000000] Scan for SMP in [mem 0x0009fc00-0x0009ffff]
+[    0.000000] Scan for SMP in [mem 0x000f0000-0x000fffff]
+[    0.000000] Scan for SMP in [mem 0x000aaaa0-0x000aae9f]
+[    0.000000] initial memory mapped: [mem 0x00000000-0x01bfffff]
+[    0.000000] Base memory trampoline at [c009b000] 9b000 size 16384
+[    0.000000] init_memory_mapping: [mem 0x00000000-0x0fdeffff]
+[    0.000000]  [mem 0x00000000-0x001fffff] page 4k
+[    0.000000]  [mem 0x00200000-0x0fbfffff] page 2M
+[    0.000000]  [mem 0x0fc00000-0x0fdeffff] page 4k
+[    0.000000] kernel direct mapping tables up to 0xfdeffff @ [mem 0x01bfa000-0x01bfffff]
+[    0.000000] ACPI: RSDP 0f01e014 00024 (v02 INTEL )
+[    0.000000] ACPI: XSDT 0f01d0e8 0006C (v01 INTEL  TIANO    00000004      01000013)
+[    0.000000] ACPI: FACP 0f01b000 000F4 (v03 INTEL  TIANO    00000004 INTL 0100000D)
+[    0.000000] ACPI: DSDT 0f012000 023C6 (v01 INTEL  QuarkNcS 00000003 INTL 20140424)
+[    0.000000] ACPI: FACS 0f1c7000 00040
+[    0.000000] ACPI: UEFI 0fbd5000 00042 (v01                 00000000      00000000)
+[    0.000000] ACPI: APIC 0f01c000 0005A (v01 INTEL  TIANO    00000001 MSFT 00000000)
+[    0.000000] ACPI: HPET 0f01a000 00038 (v01                 00000001      00000000)
+[    0.000000] ACPI: MCFG 0f019000 0003C (v01                 00000001      00000000)
+[    0.000000] ACPI: SSDT 0f018000 004D8 (v01 SsgPmm  Cpu0Cst 00000011 INTL 20140424)
+[    0.000000] ACPI: SSDT 0f017000 0043F (v01 SsgPmm  Cpu0Ist 00000012 INTL 20140424)
+[    0.000000] ACPI: SSDT 0f016000 0013B (v01 SsgPmm  Cpu0Tst 00000013 INTL 20140424)
+[    0.000000] ACPI: SSDT 0f015000 00056 (v01 SsgPmm    CpuPm 00000010 INTL 20140424)
+[    0.000000] ACPI: Local APIC address 0xfee00000
+[    0.000000] mapped APIC to         ffffb000 (        fee00000)
+[    0.000000] 0MB HIGHMEM available.
+[    0.000000] 253MB LOWMEM available.
+[    0.000000]   mapped low ram: 0 - 0fdf0000
+[    0.000000]   low ram: 0 - 0fdf0000
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x00010000-0x0fdeffff]
+[    0.000000]   HighMem  empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x00010000-0x00096fff]
+[    0.000000]   node   0: [mem 0x00098000-0x0009ffff]
+[    0.000000]   node   0: [mem 0x00100000-0x0efdefff]
+[    0.000000]   node   0: [mem 0x0fdef000-0x0fdeffff]
+[    0.000000] On node 0 totalpages: 61295
+[    0.000000] free_area_init_node: node 0, pgdat c152e8c0, node_mem_map cdb6f200
+[    0.000000]   Normal zone: 508 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 60787 pages, LIFO batch:15
+[    0.000000] Using APIC driver default
+[    0.000000] ACPI: PM-Timer IO Port: 0x1008
+[    0.000000] ACPI: Local APIC address 0xfee00000
+[    0.000000] mapped APIC to         ffffb000 (        fee00000)
+[    0.000000] ACPI: LAPIC (acpi_id[0x01] lapic_id[0x00] enabled)
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x01] high edge lint[0x1])
+[    0.000000] ACPI: IOAPIC (id[0x01] address[0xfec00000] gsi_base[0])
+[    0.000000] IOAPIC[0]: Assigned apic_id 1
+[    0.000000] IOAPIC[0]: apic_id 1, version 32, address 0xfec00000, GSI 0-23
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 00, APIC ID 1, APIC INT 02
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.000000] Int: type 0, pol 1, trig 3, bus 00, IRQ 09, APIC ID 1, APIC INT 09
+[    0.000000] ACPI: IRQ0 used by override.
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 01, APIC ID 1, APIC INT 01
+[    0.000000] ACPI: IRQ2 used by override.
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 03, APIC ID 1, APIC INT 03
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 04, APIC ID 1, APIC INT 04
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 05, APIC ID 1, APIC INT 05
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 06, APIC ID 1, APIC INT 06
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 07, APIC ID 1, APIC INT 07
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 08, APIC ID 1, APIC INT 08
+[    0.000000] ACPI: IRQ9 used by override.
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 0a, APIC ID 1, APIC INT 0a
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 0b, APIC ID 1, APIC INT 0b
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 0c, APIC ID 1, APIC INT 0c
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 0d, APIC ID 1, APIC INT 0d
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 0e, APIC ID 1, APIC INT 0e
+[    0.000000] Int: type 0, pol 0, trig 0, bus 00, IRQ 0f, APIC ID 1, APIC INT 0f
+[    0.000000] Using ACPI (MADT) for SMP configuration information
+[    0.000000] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.000000] mapped IOAPIC to ffffa000 (fec00000)
+[    0.000000] nr_irqs_gsi: 40
+[    0.000000] e820: [mem 0x0fdf0000-0xdfffffff] available for PCI devices
+[    0.000000] pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
+[    0.000000] pcpu-alloc: [0] 0 
+[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 60787
+[    0.000000] Kernel command line: root=/dev/mmcblk0p2 rootwait console=ttyS1,115200n8 earlycon=uart8250,mmio32,0x8010f000,115200n8 reboot=efi,warm apic=debug rw LABEL=boot debugshell=5 efi_main=0x000000015b421874 jmp_code32=0x00000001eee982b4
+[    0.000000] PID hash table entries: 1024 (order: 0, 4096 bytes)
+[    0.000000] Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+[    0.000000] __ex_table already sorted, skipping sort
+[    0.000000] Initializing CPU#0
+[    0.000000] Initializing HighMem for node 0 (00000000:00000000)
+[    0.000000] Memory: 216600k/260032k available (3414k kernel code, 28580k reserved, 1924k data, 384k init, 0k highmem)
+[    0.000000] virtual kernel memory layout:
+    fixmap  : 0xfffa2000 - 0xfffff000   ( 372 kB)
+    pkmap   : 0xffc00000 - 0xffe00000   (2048 kB)
+    vmalloc : 0xd05f0000 - 0xffbfe000   ( 758 MB)
+    lowmem  : 0xc0000000 - 0xcfdf0000   ( 253 MB)
+      .init : 0xc1537000 - 0xc1597000   ( 384 kB)
+      .data : 0xc13558b2 - 0xc15369c0   (1924 kB)
+      .text : 0xc1000000 - 0xc13558b2   (3414 kB)
+[    0.000000] Checking if this processor honours the WP bit even in supervisor mode...Ok.
+[    0.000000] SLUB: Genslabs=15, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS:2304 nr_irqs:256 16
+[    0.000000] CPU 0 irqstacks, hard=c0092000 soft=c0080000
+[    0.000000] spurious 8259A interrupt: IRQ7.
+[    0.000000] Console: colour dummy device 80x25
+[    0.000000] hpet clockevent registered
+[    0.000000] tsc: Fast TSC calibration using PIT
+[    0.000000] tsc: Detected 399.076 MHz processor
+[    0.010012] Calibrating delay loop (skipped), value calculated using timer frequency.. 798.15 BogoMIPS (lpj=3990760)
+[    0.010116] pid_max: default: 32768 minimum: 301
+[    0.049765] Security Framework initialized
+[    0.049957] Mount-cache hash table entries: 512
+[    0.051807] Initializing cgroup subsys cpuacct
+[    0.051881] Initializing cgroup subsys freezer
+[    0.052075] Disabling PGE capability bit
+[    0.052136] Intel Pentium with F0 0F bug - workaround enabled.
+[    0.052360] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0
+tlb_flushall_shift: 6
+[    0.052490] CPU: Intel 05/09 (fam: 05, model: 09, stepping: 00)
+[    0.052707] ACPI: Core revision 20121018
+[    0.126023] ftrace: allocating 15699 entries in 31 pages
+[    0.180648] Performance Events: no PMU driver, software events only.
+[    0.212507] Enabling APIC mode:  Flat.  Using 1 I/O APICs
+[    0.212578] Getting VERSION: 30010
+[    0.212618] Getting VERSION: 30010
+[    0.212656] Getting ID: 0
+[    0.212690] Getting ID: f000000
+[    0.212727] Getting LVT0: 700
+[    0.212763] Getting LVT1: 400
+[    0.212816] enabled ExtINT on CPU#0
+[    0.212964] ENABLING IO-APIC IRQs
+[    0.213005] Synchronizing Arb IDs.
+[    0.213042] init IO_APIC IRQs
+[    0.213062]  apic 1 pin 0 not connected
+[    0.213111] IOAPIC[0]: Set routing entry (1-1 -> 0x31 -> IRQ 1 Mode:0 Active:0 Dest:1)
+[    0.213163] IOAPIC[0]: Set routing entry (1-2 -> 0x30 -> IRQ 0 Mode:0 Active:0 Dest:1)
+[    0.213212] IOAPIC[0]: Set routing entry (1-3 -> 0x33 -> IRQ 3 Mode:0 Active:0 Dest:1)
+[    0.213262] IOAPIC[0]: Set routing entry (1-4 -> 0x34 -> IRQ 4 Mode:0 Active:0 Dest:1)
+[    0.213312] IOAPIC[0]: Set routing entry (1-5 -> 0x35 -> IRQ 5 Mode:0 Active:0 Dest:1)
+[    0.213361] IOAPIC[0]: Set routing entry (1-6 -> 0x36 -> IRQ 6 Mode:0 Active:0 Dest:1)
+[    0.213411] IOAPIC[0]: Set routing entry (1-7 -> 0x37 -> IRQ 7 Mode:0 Active:0 Dest:1)
+[    0.213461] IOAPIC[0]: Set routing entry (1-8 -> 0x38 -> IRQ 8 Mode:0 Active:0 Dest:1)
+[    0.213511] IOAPIC[0]: Set routing entry (1-9 -> 0x39 -> IRQ 9 Mode:1 Active:0 Dest:1)
+[    0.213562] IOAPIC[0]: Set routing entry (1-10 -> 0x3a -> IRQ 10 Mode:0 Active:0 Dest:1)
+[    0.213613] IOAPIC[0]: Set routing entry (1-11 -> 0x3b -> IRQ 11 Mode:0 Active:0 Dest:1)
+[    0.213665] IOAPIC[0]: Set routing entry (1-12 -> 0x3c -> IRQ 12 Mode:0 Active:0 Dest:1)
+[    0.213716] IOAPIC[0]: Set routing entry (1-13 -> 0x3d -> IRQ 13 Mode:0 Active:0 Dest:1)
+[    0.213768] IOAPIC[0]: Set routing entry (1-14 -> 0x3e -> IRQ 14 Mode:0 Active:0 Dest:1)
+[    0.213820] IOAPIC[0]: Set routing entry (1-15 -> 0x3f -> IRQ 15 Mode:0 Active:0 Dest:1)
+[    0.213852]  apic 1 pin 16 not connected
+[    0.213871]  apic 1 pin 17 not connected
+[    0.213891]  apic 1 pin 18 not connected
+[    0.213910]  apic 1 pin 19 not connected
+[    0.213929]  apic 1 pin 20 not connected
+[    0.213948]  apic 1 pin 21 not connected
+[    0.213968]  apic 1 pin 22 not connected
+[    0.213987]  apic 1 pin 23 not connected
+[    0.214152] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.314268] Using local APIC timer interrupts.
+calibrating APIC timer ...
+[    0.320000] ... lapic delta = 2494212
+[    0.320000] ... PM-Timer delta = 357952
+[    0.320000] ... PM-Timer result ok
+[    0.320000] ..... delta 2494212
+[    0.320000] ..... mult: 107125589
+[    0.320000] ..... calibration result: 3990739
+[    0.320000] ..... CPU clock speed is 399.0739 MHz.
+[    0.320000] ..... host bus clock speed is 399.0739 MHz.
+[    0.320000] devtmpfs: initialized
+[    0.320000] PM: Registering ACPI NVS region [mem 0x0f0df000-0x0fddefff] (13631488 bytes)
+[    0.333043] RTC time:  4:52:30, date: 01/01/01
+[    0.333616] NET: Registered protocol family 16
+[    0.336864] ACPI: bus type pci registered
+[    0.337921] PCI: MMCONFIG for domain 0000 [bus 00-1f] at [mem 0xe0000000-0xe1ffffff] (base 0xe0000000)
+[    0.338030] PCI: MMCONFIG at [mem 0xe0000000-0xe1ffffff] reserved in E820
+[    0.338095] PCI: Using MMCONFIG for extended config space
+[    0.338150] PCI: Using configuration type 1 for base access
+[    0.354473] bio: create slab <bio-0> at 0
+[    0.355628] ACPI: Added _OSI(Module Device)
+[    0.355700] ACPI: Added _OSI(Processor Device)
+[    0.355757] ACPI: Added _OSI(3.0 _SCP Extensions)
+[    0.355817] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.362179] ACPI: EC: Look up EC in DSDT
+[    0.407435] [Firmware Bug]: ACPI: BIOS _OSI(Linux) query ignored
+[    0.413708] ACPI: Interpreter enabled
+[    0.413801] ACPI: (supports S0 S3 S5)
+[    0.414186] ACPI: Using IOAPIC for interrupt routing
+[    0.492064] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.495905] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-1f])
+[    0.496026] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
+[    0.507121] PCI host bridge to bus 0000:00
+[    0.507217] pci_bus 0000:00: root bus resource [bus 00-1f]
+[    0.507298] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7]
+[    0.507381] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff]
+[    0.507465] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff]
+[    0.507554] pci_bus 0000:00: root bus resource [mem 0x10000000-0xfebfffff]
+[    0.507634] pci_bus 0000:00: scanning bus
+[    0.507755] pci 0000:00:00.0: [8086:0958] type 00 class 0x060000
+[    0.507829] pci 0000:00:00.0: calling quirk_mmio_always_on+0x0/0x10
+[    0.508100] pci 0000:00:14.0: [8086:08a7] type 00 class 0x080501
+[    0.508189] pci 0000:00:14.0: reg 10: [mem 0x90010000-0x90010fff]
+[    0.508354] pci 0000:00:14.0: PME# supported from D0 D3hot
+[    0.508404] pci 0000:00:14.0: PME# disabled
+[    0.508540] pci 0000:00:14.1: [8086:0936] type 00 class 0x070002
+[    0.508623] pci 0000:00:14.1: reg 10: [mem 0x9000f000-0x9000ffff]
+[    0.508687] pci 0000:00:14.1: reg 14: [mem 0x9000e000-0x9000efff]
+[    0.508844] pci 0000:00:14.1: PME# supported from D0 D3hot
+[    0.508896] pci 0000:00:14.1: PME# disabled
+[    0.509032] pci 0000:00:14.2: [8086:0939] type 00 class 0x0c03fe
+[    0.509114] pci 0000:00:14.2: reg 10: [mem 0x90004000-0x90005fff]
+[    0.509277] pci 0000:00:14.2: PME# supported from D0 D3hot
+[    0.509328] pci 0000:00:14.2: PME# disabled
+[    0.509465] pci 0000:00:14.3: [8086:0939] type 00 class 0x0c0320
+[    0.509549] pci 0000:00:14.3: reg 10: [mem 0x9000d000-0x9000dfff]
+[    0.509720] pci 0000:00:14.3: PME# supported from D0 D1 D2 D3hot D3cold
+[    0.509772] pci 0000:00:14.3: PME# disabled
+[    0.509939] pci 0000:00:14.4: [8086:093a] type 00 class 0x0c0310
+[    0.510089] pci 0000:00:14.4: reg 10: [mem 0x9000c000-0x9000cfff]
+[    0.510264] pci 0000:00:14.4: PME# supported from D0 D3hot
+[    0.510316] pci 0000:00:14.4: PME# disabled
+[    0.510453] pci 0000:00:14.5: [8086:0936] type 00 class 0x070002
+[    0.510537] pci 0000:00:14.5: reg 10: [mem 0x9000b000-0x9000bfff]
+[    0.510601] pci 0000:00:14.5: reg 14: [mem 0x9000a000-0x9000afff]
+[    0.510758] pci 0000:00:14.5: PME# supported from D0 D3hot
+[    0.510809] pci 0000:00:14.5: PME# disabled
+[    0.510945] pci 0000:00:14.6: [8086:0937] type 00 class 0x020000
+[    0.511027] pci 0000:00:14.6: reg 10: [mem 0x90002000-0x90003fff]
+[    0.511191] pci 0000:00:14.6: PME# supported from D0 D3hot
+[    0.511242] pci 0000:00:14.6: PME# disabled
+[    0.511378] pci 0000:00:14.7: [8086:0937] type 00 class 0x020000
+[    0.511461] pci 0000:00:14.7: reg 10: [mem 0x90000000-0x90001fff]
+[    0.511625] pci 0000:00:14.7: PME# supported from D0 D3hot
+[    0.511677] pci 0000:00:14.7: PME# disabled
+[    0.511814] pci 0000:00:15.0: [8086:0935] type 00 class 0x0c8000
+[    0.511896] pci 0000:00:15.0: reg 10: [mem 0x90009000-0x90009fff]
+[    0.512059] pci 0000:00:15.0: PME# supported from D0 D3hot
+[    0.512109] pci 0000:00:15.0: PME# disabled
+[    0.512247] pci 0000:00:15.1: [8086:0935] type 00 class 0x0c8000
+[    0.512330] pci 0000:00:15.1: reg 10: [mem 0x90008000-0x90008fff]
+[    0.512494] pci 0000:00:15.1: PME# supported from D0 D3hot
+[    0.512545] pci 0000:00:15.1: PME# disabled
+[    0.512683] pci 0000:00:15.2: [8086:0934] type 00 class 0x0c8000
+[    0.512765] pci 0000:00:15.2: reg 10: [mem 0x90007000-0x90007fff]
+[    0.512828] pci 0000:00:15.2: reg 14: [mem 0x90006000-0x90006fff]
+[    0.512984] pci 0000:00:15.2: PME# supported from D0 D3hot
+[    0.513034] pci 0000:00:15.2: PME# disabled
+[    0.513192] pci 0000:00:17.0: [8086:11c3] type 01 class 0x060400
+[    0.513361] pci 0000:00:17.0: calling pci_fixup_transparent_bridge+0x0/0x30
+[    0.513477] pci 0000:00:17.0: PME# supported from D0 D3hot D3cold
+[    0.513523] pci 0000:00:17.0: PME# disabled
+[    0.513697] pci 0000:00:17.1: [8086:11c4] type 01 class 0x060400
+[    0.513872] pci 0000:00:17.1: calling pci_fixup_transparent_bridge+0x0/0x30
+[    0.513987] pci 0000:00:17.1: PME# supported from D0 D3hot D3cold
+[    0.514033] pci 0000:00:17.1: PME# disabled
+[    0.514213] pci 0000:00:1f.0: [8086:095e] type 00 class 0x060100
+[    0.514369] pci_bus 0000:00: fixups for bus
+[    0.514428] pci 0000:00:17.0: scanning [bus 01-01] behind bridge, pass 0
+[    0.514558] pci_bus 0000:01: scanning bus
+[    0.514605] pci_bus 0000:01: fixups for bus
+[    0.514646] pci 0000:00:17.0: PCI bridge to [bus 01]
+[    0.514731] pci_bus 0000:01: bus scan returning with max=01
+[    0.514783] pci 0000:00:17.1: scanning [bus 02-02] behind bridge, pass 0
+[    0.514911] pci_bus 0000:02: scanning bus
+[    0.514958] pci_bus 0000:02: fixups for bus
+[    0.514995] pci 0000:00:17.1: PCI bridge to [bus 02]
+[    0.515078] pci_bus 0000:02: bus scan returning with max=02
+[    0.515132] pci 0000:00:17.0: scanning [bus 01-01] behind bridge, pass 1
+[    0.515180] pci 0000:00:17.1: scanning [bus 02-02] behind bridge, pass 1
+[    0.515222] pci_bus 0000:00: bus scan returning with max=02
+[    0.515257] pci_bus 0000:00: on NUMA node 0
+[    0.515473] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.PEX0._PRT]
+[    0.517278] ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.PEX1._PRT]
+[    0.520661]  pci0000:00: ACPI _OSC support notification failed, disabling PCIe ASPM
+[    0.520757]  pci0000:00: Unable to request _OSC control (_OSC support mask: 0x08)
+[    0.540687] ACPI: PCI Interrupt Link [LNKA] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.543411] ACPI: PCI Interrupt Link [LNKB] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.546134] ACPI: PCI Interrupt Link [LNKC] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.548884] ACPI: PCI Interrupt Link [LNKD] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.551681] ACPI: PCI Interrupt Link [LNKE] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.554405] ACPI: PCI Interrupt Link [LNKF] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.557124] ACPI: PCI Interrupt Link [LNKG] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.559848] ACPI: PCI Interrupt Link [LNKH] (IRQs 3 4 5 7 9 10 11 12) *0, disabled.
+[    0.562464] SCSI subsystem initialized
+[    0.564345] Intel Quark Board GalileoGen2 Firmware Version 0x01000200
+[    0.565327] Intel Quark side-band driver registered
+[    0.566038] IMR alloc id 0 0x00010000 - 0x0001536c locked
+[    0.567038] PCI: Using ACPI for IRQ routing
+[    0.567778] PCI: pci_cache_line_size set to 32 bytes
+[    0.567857] pci 0000:00:14.0: BAR 0: reserving [mem 0x90010000-0x90010fff flags 0x40200] (d=0, p=0)
+[    0.567929] pci 0000:00:14.1: BAR 0: reserving [mem 0x9000f000-0x9000ffff flags 0x40200] (d=0, p=0)
+[    0.567984] pci 0000:00:14.1: BAR 1: reserving [mem 0x9000e000-0x9000efff flags 0x40200] (d=0, p=0)
+[    0.568049] pci 0000:00:14.2: BAR 0: reserving [mem 0x90004000-0x90005fff flags 0x40200] (d=0, p=0)
+[    0.568118] pci 0000:00:14.3: BAR 0: reserving [mem 0x9000d000-0x9000dfff flags 0x40200] (d=0, p=0)
+[    0.568186] pci 0000:00:14.4: BAR 0: reserving [mem 0x9000c000-0x9000cfff flags 0x40200] (d=0, p=0)
+[    0.568255] pci 0000:00:14.5: BAR 0: reserving [mem 0x9000b000-0x9000bfff flags 0x40200] (d=0, p=0)
+[    0.568312] pci 0000:00:14.5: BAR 1: reserving [mem 0x9000a000-0x9000afff flags 0x40200] (d=0, p=0)
+[    0.568446] pci 0000:00:14.6: BAR 0: reserving [mem 0x90002000-0x90003fff flags 0x40200] (d=1, p=1)
+[    0.568516] pci 0000:00:14.7: BAR 0: reserving [mem 0x90000000-0x90001fff flags 0x40200] (d=1, p=1)
+[    0.568584] pci 0000:00:15.0: BAR 0: reserving [mem 0x90009000-0x90009fff flags 0x40200] (d=1, p=1)
+[    0.568653] pci 0000:00:15.1: BAR 0: reserving [mem 0x90008000-0x90008fff flags 0x40200] (d=1, p=1)
+[    0.568722] pci 0000:00:15.2: BAR 0: reserving [mem 0x90007000-0x90007fff flags 0x40200] (d=1, p=1)
+[    0.568778] pci 0000:00:15.2: BAR 1: reserving [mem 0x90006000-0x90006fff flags 0x40200] (d=1, p=1)
+[    0.568848] e820: reserve RAM buffer [mem 0x00097000-0x0009ffff]
+[    0.568884] e820: reserve RAM buffer [mem 0x0efdf000-0x0fffffff]
+[    0.568917] e820: reserve RAM buffer [mem 0x0fdf0000-0x0fffffff]
+[    0.570875] HPET: 3 timers in total, 0 timers will be used for per-cpu timer
+[    0.570972] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    0.571052] hpet0: 3 comparators, 64-bit 14.318180 MHz counter
+[    0.573630] Switching to clocksource hpet
+[    0.643312] pnp: PnP ACPI init
+[    0.643496] ACPI: bus type pnp registered
+[    0.647327] system 00:00: [mem 0xe0000000-0xe1ffffff] has been reserved
+[    0.647439] system 00:00: [mem 0xfed1c000-0xfed1ffff] has been reserved
+[    0.647535] system 00:00: [mem 0x000c0000-0x000dffff] has been reserved
+[    0.647633] system 00:00: [mem 0x000e0000-0x000fffff] could not be reserved
+[    0.647734] system 00:00: [mem 0xff800000-0xffffffff] has been reserved
+[    0.647839] system 00:00: Plug and Play ACPI device, IDs PNP0c02 (active)
+[    0.655301] pnp 00:01: Plug and Play ACPI device, IDs PNP0b00 (active)
+[    0.656141] pnp 00:02: Plug and Play ACPI device, IDs PNP0800 (active)
+[    0.665226] system 00:03: [io  0x1000-0x100f] has been reserved
+[    0.665331] system 00:03: [io  0x1010-0x101f] has been reserved
+[    0.665423] system 00:03: [io  0x1100-0x113f] has been reserved
+[    0.665516] system 00:03: [io  0x1080-0x10bf] has been reserved
+[    0.665609] system 00:03: [io  0x1040-0x107f] has been reserved
+[    0.665703] system 00:03: [io  0x1140-0x117f] has been reserved
+[    0.665806] system 00:03: Plug and Play ACPI device, IDs PNP0c02 (active)
+[    0.668614] IOAPIC[0]: Set routing entry (1-8 -> 0x38 -> IRQ 8 Mode:0 Active:0 Dest:1)
+[    0.669102] pnp 00:04: Plug and Play ACPI device, IDs PNP0103 (active)
+[    0.671470] pnp 00:05: Plug and Play ACPI device, IDs PNP0003 (active)
+[    0.673979] pnp 00:06: unknown resource type 19 in _CRS
+[    0.674063] pnp 00:06: can't evaluate _CRS: 1
+[    0.674536] pnp 00:06: Plug and Play ACPI device, IDs INT3491 (active)
+[    0.675782] pnp 00:07: unknown resource type 19 in _CRS
+[    0.675866] pnp 00:07: can't evaluate _CRS: 1
+[    0.676406] pnp 00:07: Plug and Play ACPI device, IDs INT3491 (active)
+[    0.677668] pnp 00:08: unknown resource type 19 in _CRS
+[    0.677753] pnp 00:08: can't evaluate _CRS: 1
+[    0.678226] pnp 00:08: Plug and Play ACPI device, IDs INT3491 (active)
+[    0.679472] pnp 00:09: unknown resource type 19 in _CRS
+[    0.679555] pnp 00:09: can't evaluate _CRS: 1
+[    0.680135] pnp 00:09: Plug and Play ACPI device, IDs INT3492 (active)
+[    0.681380] pnp 00:0a: unknown resource type 19 in _CRS
+[    0.681464] pnp 00:0a: can't evaluate _CRS: 1
+[    0.681930] pnp 00:0a: Plug and Play ACPI device, IDs INT3499 (active)
+[    0.683850] pnp 00:0b: unknown resource type 19 in _CRS
+[    0.683935] pnp 00:0b: can't evaluate _CRS: 1
+[    0.684403] pnp 00:0b: Plug and Play ACPI device, IDs INT3495 (active)
+[    0.685238] pnp: PnP ACPI: found 12 devices
+[    0.685300] ACPI: ACPI bus type pnp unregistered
+[    0.760348] pci 0000:00:17.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+[    0.760423] pci 0000:00:17.0: bridge window [mem 0x00100000-0x000fffff 64bit pref] to [bus 01] add_size 200000
+[    0.760483] pci 0000:00:17.0: bridge window [mem 0x00100000-0x000fffff] to [bus 01] add_size 200000
+[    0.760556] pci 0000:00:17.1: bridge window [io  0x1000-0x0fff] to [bus 02] add_size 1000
+[    0.760620] pci 0000:00:17.1: bridge window [mem 0x00100000-0x000fffff 64bit pref] to [bus 02] add_size 200000
+[    0.760679] pci 0000:00:17.1: bridge window [mem 0x00100000-0x000fffff] to [bus 02] add_size 200000
+[    0.760787] pci 0000:00:17.0: res[8]=[mem 0x00100000-0x000fffff] get_res_add_size add_size 200000
+[    0.760838] pci 0000:00:17.0: res[9]=[mem 0x00100000-0x000fffff 64bit pref] get_res_add_size add_size 200000
+[    0.760883] pci 0000:00:17.1: res[8]=[mem 0x00100000-0x000fffff] get_res_add_size add_size 200000
+[    0.760926] pci 0000:00:17.1: res[9]=[mem 0x00100000-0x000fffff 64bit pref] get_res_add_size add_size 200000
+[    0.760971] pci 0000:00:17.0: res[7]=[io  0x1000-0x0fff] get_res_add_size add_size 1000
+[    0.761011] pci 0000:00:17.1: res[7]=[io  0x1000-0x0fff] get_res_add_size add_size 1000
+[    0.761074] pci 0000:00:17.0: BAR 8: assigned [mem 0x10000000-0x101fffff]
+[    0.761183] pci 0000:00:17.0: BAR 9: assigned [mem 0x10200000-0x103fffff 64bit pref]
+[    0.761292] pci 0000:00:17.1: BAR 8: assigned [mem 0x10400000-0x105fffff]
+[    0.761399] pci 0000:00:17.1: BAR 9: assigned [mem 0x10600000-0x107fffff 64bit pref]
+[    0.761515] pci 0000:00:17.0: BAR 7: assigned [io  0x2000-0x2fff]
+[    0.761617] pci 0000:00:17.1: BAR 7: assigned [io  0x3000-0x3fff]
+[    0.761712] pci 0000:00:17.0: PCI bridge to [bus 01]
+[    0.761792] pci 0000:00:17.0:   bridge window [io  0x2000-0x2fff]
+[    0.761881] pci 0000:00:17.0:   bridge window [mem 0x10000000-0x101fffff]
+[    0.761975] pci 0000:00:17.0:   bridge window [mem 0x10200000-0x103fffff 64bit pref]
+[    0.762072] pci 0000:00:17.1: PCI bridge to [bus 02]
+[    0.762149] pci 0000:00:17.1:   bridge window [io  0x3000-0x3fff]
+[    0.762235] pci 0000:00:17.1:   bridge window [mem 0x10400000-0x105fffff]
+[    0.762326] pci 0000:00:17.1:   bridge window [mem 0x10600000-0x107fffff 64bit pref]
+[    0.762492] IOAPIC[0]: Set routing entry (1-20 -> 0x41 -> IRQ 20 Mode:1 Active:1 Dest:1)
+[    0.762637] IOAPIC[0]: Set routing entry (1-21 -> 0x51 -> IRQ 21 Mode:1 Active:1 Dest:1)
+[    0.762718] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7]
+[    0.762761] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff]
+[    0.762798] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff]
+[    0.762838] pci_bus 0000:00: resource 7 [mem 0x10000000-0xfebfffff]
+[    0.762881] pci_bus 0000:01: resource 0 [io  0x2000-0x2fff]
+[    0.762918] pci_bus 0000:01: resource 1 [mem 0x10000000-0x101fffff]
+[    0.762958] pci_bus 0000:01: resource 2 [mem 0x10200000-0x103fffff 64bit pref]
+[    0.762997] pci_bus 0000:02: resource 0 [io  0x3000-0x3fff]
+[    0.763034] pci_bus 0000:02: resource 1 [mem 0x10400000-0x105fffff]
+[    0.763074] pci_bus 0000:02: resource 2 [mem 0x10600000-0x107fffff 64bit pref]
+[    0.763531] NET: Registered protocol family 2
+[    0.765028] TCP established hash table entries: 2048 (order: 2, 16384 bytes)
+[    0.765233] TCP bind hash table entries: 2048 (order: 1, 8192 bytes)
+[    0.765364] TCP: Hash tables configured (established 2048 bind 2048)
+[    0.765662] TCP: reno registered
+[    0.765737] UDP hash table entries: 256 (order: 0, 4096 bytes)
+[    0.765839] UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+[    0.766463] NET: Registered protocol family 1
+[    0.766748] pci 0000:00:14.2: calling quirk_usb_early_handoff+0x0/0x6d0
+[    0.766847] pci 0000:00:14.3: calling quirk_usb_early_handoff+0x0/0x6d0
+[    0.766959] IOAPIC[0]: Set routing entry (1-19 -> 0x61 -> IRQ 19 Mode:1 Active:1 Dest:1)
+[    0.767172] pci 0000:00:14.4: calling quirk_usb_early_handoff+0x0/0x6d0
+[    0.767285] IOAPIC[0]: Set routing entry (1-16 -> 0x71 -> IRQ 16 Mode:1 Active:1 Dest:1)
+[    0.767497] pci 0000:00:14.6: calling quirk_e100_interrupt+0x0/0x1b0
+[    0.767593] pci 0000:00:14.7: calling quirk_e100_interrupt+0x0/0x1b0
+[    0.767738] PCI: CLS 0 bytes, default 32
+[    0.770419] microcode: Intel CPU family 0x5 not supported
+[    0.774024] HugeTLB registered 2 MB page size, pre-allocated 0 pages
+[    0.800570] fuse init (API version 7.20)
+[    0.802123] msgmni has been set to 461
+[    0.805477] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 253)
+[    0.805565] io scheduler noop registered
+[    0.805612] io scheduler deadline registered
+[    0.806226] io scheduler cfq registered (default)
+[    0.808842] input: Sleep Button as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input0
+[    0.808963] ACPI: Sleep Button [SLPB]
+[    0.809773] input: Power Button as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input1
+[    0.809893] ACPI: Power Button [PWRB]
+[    0.854040] Serial: 8250/16550 driver, 2 ports, IRQ sharing enabled
+[    0.856397] IOAPIC[0]: Set routing entry (1-17 -> 0x81 -> IRQ 17 Mode:1 Active:1 Dest:1)
+[    0.856547] Setup PCI port: port 0, irq 17, type 2
+[    0.877451] 0000:00:14.1: ttyS0 at MMIO 0x9000f000 (irq = 17) is a 16550A
+[    0.878508] Setup PCI port: port 0, irq 17, type 2
+[    0.899440] 0000:00:14.5: ttyS1 at MMIO 0x9000b000 (irq = 17) is a 16550A
+[    0.899611] console [ttyS1] enabled, bootconsole disabled
+[    0.910618] brd: module loaded
+[    0.916910] loop: module loaded
+[    0.920627] lpc_sch_probe BIOS_CNTL 0x00000101
+[    0.925114] lpc_sch_probe new BIOS_CNTL 0x00000101
+[    0.929935] lpc_sch_probe RCBA @ 0xfed1c000
+[    0.937080] tun: Universal TUN/TAP device driver, 1.6
+[    0.942252] tun: (C) 1999-2004 Max Krasnyansky <maxk@qualcomm.com>
+[    0.949221] rtc_cmos 00:01: RTC can wake from S4
+[    0.954869] rtc_cmos 00:01: rtc core: registered rtc_cmos as rtc0
+[    0.961182] rtc0: alarms up to one day, 242 bytes nvram, hpet irqs
+[    0.967608] cpuidle: using governor ladder
+[    0.971824] cpuidle: using governor menu
+[    0.975973] sdhci: Secure Digital Host Controller Interface driver
+[    0.982281] sdhci: Copyright(c) Pierre Ossman
+[    0.986822] sdhci-pci 0000:00:14.0: SDHCI controller found [8086:08a7] (rev 10)
+[    0.995512] sdhci-pci 0000:00:14.0: setting latency timer to 64
+[    0.996669] sdhci-pci 0000:00:14.0: setting latency timer to 64
+[    1.040153] mmc0: SDHCI controller on PCI [0000:00:14.0] using ADMA
+[    1.047013] sdhci-pltfm: SDHCI platform and OF driver helper
+[    1.067307] eSRAM: CTRL 0x047f3f91 block 0x00000000
+[    1.072309] eSRAM: pages 128
+[    1.096442] intel_qrk_esram_test_probe/May 12 2016/08:16:55 complete OK !!
+[    1.104526] THRM: critical reset 104 c hot 95 c hardware failover 105 c
+[    1.111483] oprofile: using timer interrupt.
+[    1.117296] TCP: cubic registered
+[    1.120835] NET: Registered protocol family 17
+[    1.126195] 
+printing PIC contents
+[    1.126239] ... PIC  IMR: ffff
+[    1.126256] ... PIC  IRR: 0000
+[    1.126274] ... PIC  ISR: 0000
+[    1.126291] ... PIC ELCR: 0000
+[    1.126313] printing local APIC contents on CPU#0/0:
+[    1.126333] ... APIC ID:      00000000 (0)
+[    1.130455] ... APIC VERSION: 00030010
+[    1.130685] ... APIC TASKPRI: 00000000 (00)
+[    1.130685] ... APIC ARBPRI: 00000000 (00)
+[    1.130685] ... APIC PROCPRI: 00000000
+[    1.130685] ... APIC RRR: 00000000
+[    1.130685] ... APIC LDR: 01000000
+[    1.130685] ... APIC DFR: ffffffff
+[    1.130685] ... APIC SPIV: 000001ff
+[    1.130685] ... APIC ISR field:
+[    1.130685] 0000000000000000000000000000000000000000000000000000000000000000
+[    1.130685] ... APIC TMR field:
+[    1.130685] 0000000000000000000000000002000000000000000000000000000000000000
+[    1.130685] ... APIC IRR field:
+[    1.130685] 0000000000000000000000000002000000000000000000000000000000008000
+[    1.130685] ... APIC ESR: 00000000
+[    1.130685] ... APIC ICR: 00088500
+[    1.130685] ... APIC ICR2: 00000000
+[    1.130685] ... APIC LVTT: 000000ef
+[    1.130685] ... APIC LVT0: 00010700
+[    1.130685] ... APIC LVT1: 00000400
+[    1.130685] ... APIC LVTERR: 000000fe
+[    1.130685] ... APIC TMICT: 0003895f
+[    1.130685] ... APIC TMCCT: 00000000
+[    1.130685] ... APIC TDCR: 00000003
+
+[    1.157798] number of MP IRQ sources: 15.
+[    1.157829] number of IO-APIC #1 registers: 24.
+[    1.157844] testing the IO APIC.......................
+[    1.163080] IO APIC #1......
+[    1.163106] .... register #00: 01000000
+[    1.163123] .......    : physical APIC id: 01
+[    1.163139] .......    : Delivery Type: 0
+[    1.163156] .......    : LTS          : 0
+[    1.163173] .... register #01: 00170020
+[    1.163190] .......     : max redirection entries: 17
+[    1.163207] .......     : PRQ implemented: 0
+[    1.163223] .......     : IO APIC version: 20
+[    1.163239] .... IRQ redirection table:
+[    1.163254]  NR Dst Mask Trig IRR Pol Stat Dmod Deli Vect:
+[    1.163275]  00 00  1    0    0   0   0    0    0    00
+[    1.163310]  01 01  0    0    0   0   0    1    1    31
+[    1.163343]  02 01  0    0    0   0   0    1    1    30
+[    1.163375]  03 01  0    0    0   0   0    1    1    33
+[    1.163407]  04 01  0    0    0   0   0    1    1    34
+[    1.163439]  05 01  0    0    0   0   0    1    1    35
+[    1.163471]  06 01  0    0    0   0   0    1    1    36
+[    1.163503]  07 01  0    0    0   0   0    1    1    37
+[    1.163535]  08 01  0    0    0   0   0    1    1    38
+[    1.163567]  09 01  0    1    0   0   0    1    1    39
+[    1.163599]  0a 01  0    0    0   0   0    1    1    3A
+[    1.163631]  0b 01  0    0    0   0   0    1    1    3B
+[    1.163663]  0c 01  0    0    0   0   0    1    1    3C
+[    1.163695]  0d 01  0    0    0   0   0    1    1    3D
+[    1.163727]  0e 01  0    0    0   0   0    1    1    3E
+[    1.163759]  0f 01  0    0    0   0   0    1    1    3F
+[    1.163791]  10 01  0    1    0   1   0    1    1    71
+[    1.163823]  11 01  1    1    0   1   0    1    1    81
+[    1.163856]  12 00  1    0    0   0   0    0    0    00
+[    1.163887]  13 01  1    1    0   1   0    1    1    61
+[    1.163919]  14 01  1    1    0   1   0    1    1    41
+[    1.163952]  15 01  1    1    0   1   0    1    1    51
+[    1.163984]  16 00  1    0    0   0   0    0    0    00
+[    1.164016]  17 00  1    0    0   0   0    0    0    00
+[    1.164044] IRQ to pin mappings:
+[    1.164063] IRQ0 -> 0:2
+[    1.164084] IRQ1 -> 0:1
+[    1.164105] IRQ3 -> 0:3
+[    1.164125] IRQ4 -> 0:4
+[    1.164145] IRQ5 -> 0:5
+[    1.164166] IRQ6 -> 0:6
+[    1.164186] IRQ7 -> 0:7
+[    1.164206] IRQ8 -> 0:8
+[    1.164226] IRQ9 -> 0:9
+[    1.164247] IRQ10 -> 0:10
+[    1.164267] IRQ11 -> 0:11
+[    1.164288] IRQ12 -> 0:12
+[    1.164309] IRQ13 -> 0:13
+[    1.164330] IRQ14 -> 0:14
+[    1.164350] IRQ15 -> 0:15
+[    1.164371] IRQ16 -> 0:16
+[    1.164392] IRQ17 -> 0:17
+[    1.164413] IRQ19 -> 0:19
+[    1.164434] IRQ20 -> 0:20
+[    1.164454] IRQ21 -> 0:21
+[    1.164475] .................................... done.
+[    1.169644] Using IPI Shortcut mode
+[    1.178207]   Magic number: 1:801:867
+[    1.182413] rtc_cmos 00:01: setting system clock to 2001-01-01 04:52:31 UTC (978324751)
+[    1.193043] Waiting for root device /dev/mmcblk0p2...
+[    1.207145] mmc0: new high speed SDHC card at address aaaa
+[    1.213862] mmcblk0: mmc0:aaaa SL32G 29.7 GiB 
+[    1.225994]  mmcblk0: p1 p2
+[    1.507967] kjournald starting.  Commit interval 5 seconds
+[    1.521130] EXT3-fs (mmcblk0p2): using internal journal
+[    1.537582] EXT3-fs (mmcblk0p2): recovery complete
+[    1.542501] EXT3-fs (mmcblk0p2): mounted filesystem with writeback data mode
+[    1.549658] VFS: Mounted root (ext3 filesystem) on device 179:2.
+[    1.562643] devtmpfs: mounted
+[    1.566032] Freeing unused kernel memory: 384k freed
+[    1.573809] Write protecting the kernel text: 3416k
+[    1.579115] Write protecting the kernel read-only data: 1524k
+[    1.584989] NX-protecting the kernel data: 2728k
+[    1.760146] tsc: Refined TSC clocksource calibration: 399.076 MHz
+[    1.767369] Switching to clocksource tsc
+[    1.817554] systemd[1]: systemd 216 running in system mode. (-PAM -AUDIT -SELINUX +IMA -APPARMOR +SMACK +SYSVINIT -LIBCRYPTSETUP -GCRYPT +GNUTLS +ACL +XZ -LZ4 -SECCOMP +BLKID -ELFUTILS +KMOD -IDN )
+[    1.837841] systemd[1]: Detected architecture 'x86'.
+[    1.950471] NET: Registered protocol family 10
+[    1.957877] systemd[1]: Inserted module 'ipv6'
+[    1.969598] systemd[1]: Set hostname to <galileo>.
+[    2.555435] systemd[1]: [/lib/systemd/system/wyliodrin-server.service:3] Failed to add dependency on redis, ignoring: Invalid argument
+[    2.582341] systemd[1]: [/lib/systemd/system/wyliodrin-hypervisor.service:3] Failed to add dependency on redis, ignoring: Invalid argument
+[    2.601301] systemd[1]: [/lib/systemd/system/redis.service:7] Unknown lvalue 'ExecPre' in section 'Service'
+[    2.690807] systemd[1]: Expecting device dev-ttyS1.device...
+[    2.720597] systemd[1]: Starting Forward Password Requests to Wall Directory Watch.
+[    2.729551] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[    2.737719] systemd[1]: Starting Dispatch Password Requests to Console Directory Watch.
+[    2.746719] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+[    2.755074] systemd[1]: Starting Paths.
+[    2.780545] systemd[1]: Reached target Paths.
+[    2.785306] systemd[1]: Starting Swap.
+[    2.810543] systemd[1]: Reached target Swap.
+[    2.815185] systemd[1]: Expecting device dev-mmcblk0p1.device...
+[    2.840586] systemd[1]: Starting Root Slice.
+[    2.890546] systemd[1]: Created slice Root Slice.
+[    2.895617] systemd[1]: Starting User and Session Slice.
+[    2.920550] systemd[1]: Created slice User and Session Slice.
+[    2.926664] systemd[1]: Starting /dev/initctl Compatibility Named Pipe.
+[    2.960550] systemd[1]: Listening on /dev/initctl Compatibility Named Pipe.
+[    2.967877] systemd[1]: Starting Delayed Shutdown Socket.
+[    2.990550] systemd[1]: Listening on Delayed Shutdown Socket.
+[    2.996659] systemd[1]: Starting Journal Socket (/dev/log).
+[    3.020550] systemd[1]: Listening on Journal Socket (/dev/log).
+[    3.026912] systemd[1]: Starting udev Control Socket.
+[    3.050553] systemd[1]: Listening on udev Control Socket.
+[    3.056391] systemd[1]: Starting udev Kernel Socket.
+[    3.080546] systemd[1]: Listening on udev Kernel Socket.
+[    3.086266] systemd[1]: Starting Journal Socket.
+[    3.110534] systemd[1]: Listening on Journal Socket.
+[    3.116050] systemd[1]: Starting System Slice.
+[    3.140545] systemd[1]: Created slice System Slice.
+[    3.145856] systemd[1]: Starting set initial time to last shutdown time...
+[    3.176433] systemd[1]: Starting Load modules for the Intel galileo...
+[    3.216580] systemd[1]: Started File System Check on Root Device.
+[    3.244569] systemd[1]: Mounting Temporary Directory...
+[    3.290199] systemd[1]: Starting system-serial\x2dgetty.slice.
+[    3.312876] systemd[1]: Created slice system-serial\x2dgetty.slice.
+[    3.321737] systemd[1]: Starting system-getty.slice.
+[    3.345213] systemd[1]: Created slice system-getty.slice.
+[    3.354241] systemd[1]: Mounting POSIX Message Queue File System...
+[    3.388243] systemd[1]: Starting udev Coldplug all Devices...
+[    3.481717] systemd[1]: Starting Load Kernel Modules...
+[    3.552409] systemd[1]: Mounting Huge Pages File System...
+[    3.638034] systemd[1]: Starting Create list of required static device nodes for the current kernel...
+[    3.648611] intel_qrk_gip 0000:00:15.2: enabling device (0000 -> 0002)
+[    3.690243] IOAPIC[0]: Set routing entry (1-18 -> 0x91 -> IRQ 18 Mode:1 Active:1 Dest:1)
+[    3.691377] intel_qrk_gpio_restrict_probe: i2c adapter not ready yet. Deferring..
+[    3.698957] platform qrk-gpio-restrict-sc.0: Driver qrk-gpio-restrict-sc requests probe deferral
+[    3.767849] systemd[1]: Mounting Debug File System...
+[    3.810583] intel_qrk_gpio_probe UIO addr 0x90006000 internal_addr 0xd2614000 size 4096 memtype 1
+[    3.819561] intel_qrk_gip 0000:00:15.2: i2c speed set to 400kHz
+[    3.869286] ACPI: bus type usb registered
+[    3.879453] systemd[1]: Starting Journal Service...
+[    3.915022] intel_qrk_gip 0000:00:15.2: enabling bus mastering
+[    3.915079] intel_qrk_gip 0000:00:15.2: setting latency timer to 64
+[    3.915227] intel_qrk_gip 0000:00:15.2: irq 40 for MSI/MSI-X
+[    3.917314] at24 0-0054: 1024 byte 24c08 EEPROM, writable, 1 bytes/write
+[    3.948798] usbcore: registered new interface driver usbfs
+[    3.989169] usbcore: registered new interface driver hub
+[    4.000630] systemd[1]: Started Journal Service.
+[    4.011295] usbcore: registered new device driver usb
+[    4.133202] Bluetooth: Core ver 2.16
+[    4.139690] NET: Registered protocol family 31
+[    4.144371] Bluetooth: HCI device and connection manager initialized
+[    4.171824] Bluetooth: HCI socket layer initialized
+[    4.241070] Bluetooth: L2CAP socket layer initialized
+[    4.246545] Bluetooth: SCO socket layer initialized
+[    4.267457] usbcore: registered new interface driver btusb
+[    4.371151] EFI Variables Facility v0.08 2004-May-17
+[    4.378574] i2c /dev entries driver
+[    4.567888] ce4100_spi 0000:00:15.0: enabling device (0000 -> 0002)
+[    4.620300] ce4100_spi 0000:00:15.0: enabling bus mastering
+[    4.620358] ce4100_spi 0000:00:15.0: setting latency timer to 64
+[    4.620511] ce4100_spi 0000:00:15.0: irq 41 for MSI/MSI-X
+[    4.621171] ce4100_spi 0000:00:15.1: enabling device (0000 -> 0002)
+[    4.627626] ce4100_spi 0000:00:15.1: enabling bus mastering
+[    4.627683] ce4100_spi 0000:00:15.1: setting latency timer to 64
+[    4.627840] ce4100_spi 0000:00:15.1: irq 42 for MSI/MSI-X
+[    4.707572] pxa2xx-spi pxa2xx-spi.0: registered master spi0
+[    4.710217] spi_master spi0: will run message pump with realtime priority
+[    4.746080] spi spi0.0: 1666666 Hz actual, PIO
+[    4.746147] spi spi0.0: setup mode 3, 8 bits/w, 16667000 Hz max --> 0
+[    4.746517] pxa2xx-spi pxa2xx-spi.0: registered child spi0.0
+[    4.747180] pxa2xx-spi pxa2xx-spi.1: registered master spi1
+[    4.747540] spi_master spi1: will run message pump with realtime priority
+[    4.780204] spi spi1.0: 5000000 Hz actual, PIO
+[    4.780261] spi spi1.0: setup mode 0, 8 bits/w, 50000000 Hz max --> 0
+[    4.790610] pxa2xx-spi pxa2xx-spi.1: registered child spi1.0
+[    4.923003] adc1x8s102: module is from the staging directory, the quality is unknown, you have been warned.
+[    6.498096] systemd-udevd[86]: starting version 216
+[    6.636511] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    6.691965] ehci-pci: EHCI PCI platform driver
+[    6.696704] ehci-pci 0000:00:14.3: enabling bus mastering
+[    6.696763] ehci-pci 0000:00:14.3: setting latency timer to 64
+[    6.696805] ehci-pci 0000:00:14.3: EHCI Host Controller
+[    6.742227] ehci-pci 0000:00:14.3: new USB bus registered, assigned bus number 1
+[    6.768153] ehci-pci 0000:00:14.3: enabling Mem-Wr-Inval
+[    6.768290] ehci-pci 0000:00:14.3: INSNREG01 is 0x007f007f
+[    6.774000] ehci-pci 0000:00:14.3: INSNREG01 is 0x007f007f
+[    6.801902] ehci-pci 0000:00:14.3: irq 19, io mem 0x9000d000
+[    6.840191] ehci-pci 0000:00:14.3: USB 2.0 started, EHCI 1.00
+[    6.871432] hub 1-0:1.0: USB hub found
+[    6.875290] hub 1-0:1.0: 2 ports detected
+[    7.013482] sch_gpio_probe UIO port addr 0x1080 size 64 porttype 1
+[    7.419939] cfg80211: Calling CRDA to update world regulatory domain
+[    7.509611] Intel(R) Wireless WiFi driver for Linux, in-tree:
+[    7.515520] Copyright(c) 2003-2012 Intel Corporation
+[    7.598131] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+[    7.617327] ohci_hcd 0000:00:14.4: enabling bus mastering
+[    7.617386] ohci_hcd 0000:00:14.4: setting latency timer to 64
+[    7.617426] ohci_hcd 0000:00:14.4: OHCI Host Controller
+[    7.640764] ohci_hcd 0000:00:14.4: new USB bus registered, assigned bus number 2
+[    7.648383] ohci_hcd 0000:00:14.4: irq 16, io mem 0x9000c000
+[    7.731410] hub 2-0:1.0: USB hub found
+[    7.735270] hub 2-0:1.0: 2 ports detected
+[    7.838086] pch_udc 0000:00:14.2: setting latency timer to 64
+[    7.838254] pch_udc 0000:00:14.2: irq 49 for MSI/MSI-X
+[    7.838469] pch_udc 0000:00:14.2: enabling Mem-Wr-Inval
+[    7.920134] PPP generic driver version 2.4.2
+[    7.973616] NET: Registered protocol family 24
+[    8.098023] stmmaceth 0000:00:14.6: enabling device (0000 -> 0002)
+[    8.150281] stmmaceth 0000:00:14.6: enabling bus mastering
+[    8.150339] stmmaceth 0000:00:14.6: setting latency timer to 64
+[    8.150494] stmmaceth 0000:00:14.6: irq 50 for MSI/MSI-X
+[    8.150604] stmmac MSI mode enabled
+[    8.153954] Vendor 0x8086 Device 0x0937
+[    8.158145] stmmac - user ID: 0x10, Synopsys ID: 0x37
+[    8.163346]  DMA HW capability register supported
+[    8.167915]  Enhanced/Alternate descriptors
+[    8.172393]  RX Checksum Offload Engine supported (type 2)
+[    8.177913]  TX Checksum insertion supported
+[    8.182274]  Enable RX Mitigation via HW Watchdog Timer
+[    8.290192] libphy: stmmac: probed
+[    8.293649] eth0: PHY ID 20005c90 at 1 IRQ 0 (stmmac-1:01) active
+[    8.464065] Initializing USB Mass Storage driver...
+[    8.469468] usbcore: registered new interface driver usb-storage
+[    8.475629] USB Mass Storage support registered.
+[    8.653602] usbcore: registered new interface driver usbhid
+[    8.659313] usbhid: USB HID core driver
+[    8.880197] g_acm_ms gadget: Mass Storage Function, version: 2009/09/11
+[    8.886867] g_acm_ms gadget: Number of LUNs=1
+[    8.921773]  lun0: LUN: removable file: /dev/mmcblk0p1
+[    8.962448] g_acm_ms gadget: Composite Gadget (ACM + MS), version: 2011/10/10
+[    8.969667] g_acm_ms gadget: g_acm_ms ready
+[   10.549541] systemd-udevd[89]: renamed network interface eth0 to enp0s20f6
+[   10.739734] systemd-journald[62]: Received request to flush runtime journal from PID 1
+[   13.622495] enp0s20f6: device MAC address 98:4f:ee:05:50:c5
+[   13.777231] netlink: 12 bytes leftover after parsing attributes.
+[   13.829103] netlink: 12 bytes leftover after parsing attributes.
+[   13.850277] netlink: 12 bytes leftover after parsing attributes.
+[   15.670263] libphy: stmmac-1:01 - Link is Up - 100/Full
+[   15.710388] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[   15.715749] Bluetooth: BNEP filters: protocol multicast
+[   15.761290] Bluetooth: BNEP socket layer initialized
+[  556.769194] hc_sr04: INIT
+[  556.778523] hc_sr04: INIT DONE
+[  558.493552] hc_sr04: Open
+[  558.496270] Open: HCSR_1
+[  558.498654] hc_sr04: Open Done
+[  558.504872] ioctl
+[  558.506837] ioctl_SETPIN
+[  558.509396] ioctl_SETPIN: Trig:6, Echo:15
+[  558.517909] ioctl_SETPIN DONE
+[  558.521011] ioctl DONE
+[  558.528272] hc_sr04: Open
+[  558.531342] Open: HCSR_2
+[  558.533739] hc_sr04: Open Done
+[  558.539750] ioctl
+[  558.541821] ioctl_SETPIN
+[  558.544395] ioctl_SETPIN: Trig:10, Echo:1
+[  558.552960] setTrig: gpio_setValuet
+[  558.558067] ioctl_SETPIN DONE
+[  558.561383] ioctl DONE
+[  558.568340] ioctl
+[  558.570706] ioctl_SETMODE
+[  558.574216] HCSR_1: mode:0, freq:7
+[  558.577653] ioctl_SETMODE DONE
+[  558.580814] ioctl DONE
+[  558.588896] hc_sr04: Write
+[  558.593510] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[  558.599981] hc_sr04: Write Done
+[  558.605193] hc_sr04: Read
+[  558.608370] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[  558.616856] hc_sr04: Read Done
+[  558.622655] hc_sr04: Write
+[  558.626214] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[  558.632752] hc_sr04: Write Done
+[  558.638770] hc_sr04: Read
+[  558.642045] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[  558.650128] hc_sr04: Read Done
+[  558.654909] hc_sr04: Write
+[  558.658489] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[  558.665016] hc_sr04: Write Done
+[  558.672333] hc_sr04: Read
+[  558.675510] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[  558.683985] hc_sr04: Read Done
+[  558.688603] hc_sr04: Read
+[  558.692161] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[  558.700287] hc_sr04: Read Done
+[  558.703396] hc_sr04: Read
+[  558.706554] echo_recv_isr: 83 CM, newest idx:3, from HCSR_1, mode:0 
+[  558.717108] hc_sr04: Read Done
+[  558.722743] hc_sr04: Read
+[  558.726260] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:0 
+[  558.734762] hc_sr04: Read Done
+[  558.737871] hc_sr04: Read
+[  558.741129] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[  558.750280] hc_sr04: Read Done
+[  558.754900] ioctl
+[  558.757161] ioctl_SETMODE
+[  558.759832] HCSR_2: mode:1, freq:7
+[  558.763373] ioctl_SETMODE DONE
+[  558.766459] ioctl DONE
+[  558.774851] hc_sr04: Write
+[  558.783104] hc_sr04: Read
+[  558.785773] read Blocked:HCSR_2 
+[  558.777603] Write: Start thread from HCSR_2
+[  558.789104] hc_sr04: Write Done
+[  558.796844] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:1 
+[  558.804800] hc_sr04: Read
+[  558.807694] read Blocked:HCSR_2 
+[  558.811072] read unBlocked-idx:0,95
+[  558.817334] hc_sr04: Read Done
+[  558.820729] hc_sr04: Read Done
+[  558.823840] hc_sr04: Read
+[  558.826483] hc_sr04: Read Done
+[  558.960688] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[  559.120695] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[  559.280699] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[  559.440688] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[  559.600689] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[  559.760713] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[  559.835572] hc_sr04: Write
+[  559.838321] CALL ThreadStop
+[  559.920317] hc_sr04: Write Done
+[  559.923705] hc_sr04: Read
+[  559.926619] hc_sr04: Read Done
+[  559.934793] ioctl
+[  559.936808] ioctl_SETMODE
+[  559.939654] HCSR_2: mode:0, freq:7
+[  559.943203] ioctl_SETMODE DONE
+[  559.946290] ioctl DONE
+[  559.949884] hc_sr04: Write
+[  559.953235] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[  559.959652] hc_sr04: Write Done
+[  559.969082] hc_sr04: Read
+[  559.972379] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[  559.980278] hc_sr04: Read Done
+[  559.984901] hc_sr04: Write
+[  559.988243] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[  559.994762] hc_sr04: Write Done
+[  560.002712] hc_sr04: Read
+[  560.005961] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:0 
+[  560.014899] hc_sr04: Read Done
+[  560.022568] ioctl
+[  560.024583] ioctl_SETMODE
+[  560.028496] ioctl
+[  560.030573] ioctl_SETMODE
+[  560.036779] HCSR_2: mode:0, freq:7
+[  560.040331] ioctl_SETMODE DONE
+[  560.043418] ioctl DONE
+[  560.046004] HCSR_1: mode:1, freq:7
+[  560.049441] ioctl_SETMODE DONE
+[  560.052608] ioctl DONE
+[  560.055048] hc_sr04: Read
+[  560.058318] echo_recv_isr: 92 CM, newest idx:2, from HCSR_2, mode:0 
+[  560.070113] hc_sr04: Read Done
+[  560.073225] hc_sr04: Read
+[  560.076489] echo_recv_isr: 92 CM, newest idx:3, from HCSR_2, mode:0 
+[  560.090128] hc_sr04: Read
+[  560.092788] hc_sr04: Read Done
+[  560.095939] hc_sr04: Read Done
+[  560.103344] hc_sr04: Read
+[  560.106005] hc_sr04: Read Done
+[  561.110086] hc_sr04: Write
+[  561.113465] echo_recv_isr: 93 CM, newest idx:0, from HCSR_2, mode:0 
+[  561.119935] hc_sr04: Write Done
+[  561.123697] hc_sr04: Write
+[  561.134548] hc_sr04: Read
+[  561.137804] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[  561.126451] Write: Start thread from HCSR_1
+[  561.144812] hc_sr04: Write Done
+[  561.148724] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[  561.155448] hc_sr04: Read
+[  561.158109] hc_sr04: Read Done
+[  561.165678] hc_sr04: Read Done
+[  561.310622] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[  561.470622] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[  561.630629] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[  561.790620] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[  561.950619] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[  562.110628] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[  562.169053] hc_sr04: Write
+[  562.173468] echo_recv_isr: 95 CM, newest idx:2, from HCSR_2, mode:0 
+[  562.179933] hc_sr04: Write Done
+[  562.183693] hc_sr04: Write
+[  562.192101] hc_sr04: Read
+[  562.195357] echo_recv_isr: 95 CM, newest idx:3, from HCSR_2, mode:0 
+[  562.204484] hc_sr04: Read Done
+[  562.186442] CALL ThreadStop
+[  562.270277] hc_sr04: Write Done
+[  562.273968] hc_sr04: Read
+[  562.276629] hc_sr04: Read Done
+[  562.287640] hc_sr04: Release
+[  562.291030] hc_sr04: Release Done
+[  562.297138] hc_sr04: Release
+[  562.300171] hc_sr04: Release Done
+[ 3244.756460] hc_sr04: GoodBye Kernel World!!!
+[ 3244.760903] ---release hcA----
+[ 3244.767486] ---release hcB----
+[ 3244.777075] hc_sr04: EXIT DONE
+[ 3255.281573] HCSR_device_init: INIT
+[ 3255.301576] HCSR_device_init: INIT DONE
+[ 3255.330174] HCSR_MODULE: Probe: INIT
+[ 3255.333792] hc_sr04: INIT: HCSR_1
+[ 3255.354091] hc_sr04: INIT DONE: HCSR_1
+[ 3255.357887] Probe device -- HCSR_1  20 
+[ 3255.361864] HCSR_MODULE: Probe: INIT Done
+[ 3255.369403] HCSR_MODULE: Probe: INIT
+[ 3255.373137] hc_sr04: INIT: HCSR_2
+[ 3255.388955] hc_sr04: INIT DONE: HCSR_2
+[ 3255.392851] Probe device -- HCSR_2  55 
+[ 3255.396722] HCSR_MODULE: Probe: INIT Done
+[ 3266.422119] hc_sr04: Open
+[ 3266.424784] Open: HCSR_1
+[ 3266.427160] hc_sr04: Open Done
+[ 3266.434978] ioctl
+[ 3266.436943] ioctl_SETPIN
+[ 3266.439501] ioctl_SETPIN: Trig:6, Echo:15
+[ 3266.443688] HCSRdevice1: setTrig: Current: func:0, pin:6
+[ 3266.449094] HCSRdevice1: setTrig: Current: func:1, pin:36
+[ 3266.459953] HCSRdevice1: setEcho: Current: func:0, pin:15
+[ 3266.465520] HCSRdevice1: setEcho: Current: func:1, pin:42
+[ 3266.471726] HCSRdevice1: setEcho: Current: func:2, pin:43
+[ 3266.480485] ioctl_SETPIN DONE
+[ 3266.483543] ioctl DONE
+[ 3266.488985] hc_sr04: Open
+[ 3266.491768] Open: HCSR_2
+[ 3266.494159] hc_sr04: Open Done
+[ 3266.500280] ioctl
+[ 3266.502244] ioctl_SETPIN
+[ 3266.504802] ioctl_SETPIN: Trig:10, Echo:1
+[ 3266.508843] HCSRdevice2: setTrig: Current: func:0, pin:10
+[ 3266.514403] HCSRdevice2: setTrig: Current: func:1, pin:26
+[ 3266.527375] HCSRdevice2: setTrig: Current: func:3, pin:74
+[ 3266.535467] HCSRdevice2: setEcho: Current: func:0, pin:1
+[ 3266.540938] HCSRdevice2: setEcho: Current: func:1, pin:20
+[ 3266.548976] HCSRdevice2: setEcho: Current: func:2, pin:21
+[ 3266.556101] HCSRdevice2: setEcho: Current: func:3, pin:68
+[ 3266.563784] ioctl_SETPIN DONE
+[ 3266.566790] ioctl DONE
+[ 3266.573203] ioctl
+[ 3266.575167] ioctl_SETMODE
+[ 3266.577818] HCSR_1: mode:0, freq:7
+[ 3266.581354] ioctl_SETMODE DONE
+[ 3266.584475] ioctl DONE
+[ 3266.592078] hc_sr04: Write
+[ 3266.595639] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3266.602170] hc_sr04: Write Done
+[ 3266.610153] hc_sr04: Read
+[ 3266.613330] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3266.622379] hc_sr04: Read Done
+[ 3266.627164] hc_sr04: Write
+[ 3266.632939] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 3266.639359] hc_sr04: Write Done
+[ 3266.644728] hc_sr04: Read
+[ 3266.647903] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 3266.656610] hc_sr04: Read Done
+[ 3266.662327] hc_sr04: Write
+[ 3266.665831] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3266.672686] hc_sr04: Write Done
+[ 3266.679097] hc_sr04: Read
+[ 3266.682385] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3266.688802] hc_sr04: Read Done
+[ 3266.696500] hc_sr04: Read
+[ 3266.699991] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 3266.708641] hc_sr04: Read Done
+[ 3266.711874] hc_sr04: Read
+[ 3266.715042] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 3266.724541] hc_sr04: Read Done
+[ 3266.729169] hc_sr04: Read
+[ 3266.732782] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:0 
+[ 3266.740273] hc_sr04: Read Done
+[ 3266.743383] hc_sr04: Read
+[ 3266.746543] echo_recv_isr: 83 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3266.758158] hc_sr04: Read Done
+[ 3266.764093] ioctl
+[ 3266.766352] ioctl_SETMODE
+[ 3266.769023] HCSR_2: mode:1, freq:7
+[ 3266.772563] ioctl_SETMODE DONE
+[ 3266.775683] ioctl DONE
+[ 3266.780687] hc_sr04: Write
+[ 3266.787762] hc_sr04: Read
+[ 3266.790545] read Blocked:HCSR_2 
+[ 3266.783439] Write: Start thread from HCSR_2
+[ 3266.799521] hc_sr04: Write Done
+[ 3266.803613] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:1 
+[ 3266.810794] read Blocked:HCSR_2 
+[ 3266.814067] read unBlocked-idx:0,95
+[ 3266.817576] hc_sr04: Read Done
+[ 3266.820825] hc_sr04: Read
+[ 3266.823671] hc_sr04: Read Done
+[ 3266.833912] hc_sr04: Read
+[ 3266.836573] hc_sr04: Read Done
+[ 3266.970687] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 3267.130771] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 3267.290695] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 3267.450695] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 3267.610693] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 3267.770695] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 3267.827134] hc_sr04: Write
+[ 3267.831203] CALL ThreadStop
+[ 3267.930322] hc_sr04: Write Done
+[ 3267.933981] hc_sr04: Read
+[ 3267.936642] hc_sr04: Read Done
+[ 3267.944909] ioctl
+[ 3267.946874] ioctl_SETMODE
+[ 3267.949523] HCSR_2: mode:0, freq:7
+[ 3267.953035] ioctl_SETMODE DONE
+[ 3267.956162] ioctl DONE
+[ 3267.963808] hc_sr04: Write
+[ 3267.967075] echo_recv_isr: 83 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3267.973605] hc_sr04: Write Done
+[ 3267.979890] hc_sr04: Read
+[ 3267.983200] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3267.990117] hc_sr04: Read Done
+[ 3267.994913] hc_sr04: Write
+[ 3267.998257] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[ 3268.004774] hc_sr04: Write Done
+[ 3268.014038] hc_sr04: Read
+[ 3268.017290] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 3268.026353] hc_sr04: Read Done
+[ 3268.035314] ioctl
+[ 3268.037498] ioctl_SETMODE
+[ 3268.044101] ioctl
+[ 3268.046415] ioctl_SETMODE
+[ 3268.049282] HCSR_1: mode:1, freq:7
+[ 3268.052831] ioctl_SETMODE DONE
+[ 3268.055919] ioctl DONE
+[ 3268.059516] hc_sr04: Read
+[ 3268.062302] HCSR_2: mode:0, freq:7
+[ 3268.065738] ioctl_SETMODE DONE
+[ 3268.068811] ioctl DONE
+[ 3268.071469] hc_sr04: Read Done
+[ 3268.074581] hc_sr04: Read
+[ 3268.077225] hc_sr04: Read Done
+[ 3268.090140] hc_sr04: Read
+[ 3268.093421] echo_recv_isr: 92 CM, newest idx:2, from HCSR_2, mode:0 
+[ 3268.102174] hc_sr04: Read Done
+[ 3268.105589] hc_sr04: Read
+[ 3268.108843] echo_recv_isr: 95 CM, newest idx:3, from HCSR_2, mode:0 
+[ 3268.120270] hc_sr04: Read Done
+[ 3269.102268] hc_sr04: Write
+[ 3269.105069] Write: Start thread from HCSR_1
+[ 3269.109531] hc_sr04: Write Done
+[ 3269.113542] echo_recv_isr: 83 CM, newest idx:2, from HCSR_1, mode:1 
+[ 3269.124024] hc_sr04: Read
+[ 3269.126686] hc_sr04: Read Done
+[ 3269.129852] hc_sr04: Write
+[ 3269.136387] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[ 3269.142916] hc_sr04: Write Done
+[ 3269.148873] hc_sr04: Read
+[ 3269.152206] echo_recv_isr: 90 CM, newest idx:1, from HCSR_2, mode:0 
+[ 3269.160883] hc_sr04: Read Done
+[ 3269.280629] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 3269.440630] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 3269.600633] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 3269.760639] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 3269.920629] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 3270.080626] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 3270.148954] hc_sr04: Write
+[ 3270.164272] hc_sr04: Write
+[ 3270.167621] echo_recv_isr: 95 CM, newest idx:2, from HCSR_2, mode:0 
+[ 3270.174158] hc_sr04: Write Done
+[ 3270.180935] hc_sr04: Read
+[ 3270.184191] echo_recv_isr: 95 CM, newest idx:3, from HCSR_2, mode:0 
+[ 3270.193249] hc_sr04: Read Done
+[ 3270.152838] CALL ThreadStop
+[ 3270.240275] hc_sr04: Write Done
+[ 3270.243969] hc_sr04: Read
+[ 3270.246631] hc_sr04: Read Done
+[ 3270.257343] hc_sr04: Release
+[ 3270.260386] hc_sr04: Release Done
+[ 3270.264423] hc_sr04: Release
+[ 3270.267342] hc_sr04: Release Done
+[ 3404.176338] HCSR_MODULE: REMOVE
+[ 3404.179523] hc_sr04: GoodBye Kernel World!!!: HCSR_2
+[ 3404.184656] hc_sr04: Free IRQ
+[ 3404.194139] hc_sr04: EXIT DONE
+[ 3404.197423] HCSR_MODULE: REMOVE Done
+[ 3404.215796] HCSR_MODULE: REMOVE
+[ 3404.218982] hc_sr04: GoodBye Kernel World!!!: HCSR_1
+[ 3404.224121] hc_sr04: Free IRQ
+[ 3404.235206] Destroy HCSR_class
+[ 3404.243711] hc_sr04: EXIT DONE
+[ 3404.246810] HCSR_MODULE: REMOVE Done
+[ 3404.270587] HCSR_device: GoodBye Kernel World!!!
+[ 3404.282871] Goodbye, unregister the device
+[ 3404.287064] HCSR_device: EXIT DONE
+[ 3408.703465] HCSR_device_init: INIT
+[ 3408.722264] HCSR_device_init: INIT DONE
+[ 3408.751676] HCSR_MODULE: Probe: INIT
+[ 3408.755355] hc_sr04: INIT: HCSR_1
+[ 3408.775138] hc_sr04: INIT DONE: HCSR_1
+[ 3408.778934] Probe device -- HCSR_1  20 
+[ 3408.782913] HCSR_MODULE: Probe: INIT Done
+[ 3408.790777] HCSR_MODULE: Probe: INIT
+[ 3408.794396] hc_sr04: INIT: HCSR_2
+[ 3408.809730] hc_sr04: INIT DONE: HCSR_2
+[ 3408.813646] Probe device -- HCSR_2  55 
+[ 3408.817516] HCSR_MODULE: Probe: INIT Done
+[ 3416.597715] hc_sr04: Open
+[ 3416.600497] Open: HCSR_1
+[ 3416.602889] hc_sr04: Open Done
+[ 3416.606609] ioctl
+[ 3416.608574] ioctl_SETPIN
+[ 3416.616004] ioctl_SETPIN: Trig:6, Echo:15
+[ 3416.620184] HCSRdevice1: setTrig: Current: func:0, pin:6
+[ 3416.625546] HCSRdevice1: setTrig: Current: func:1, pin:36
+[ 3416.634736] HCSRdevice1: setEcho: Current: func:0, pin:15
+[ 3416.640300] HCSRdevice1: setEcho: Current: func:1, pin:42
+[ 3416.648271] HCSRdevice1: setEcho: Current: func:2, pin:43
+[ 3416.655393] ioctl_SETPIN DONE
+[ 3416.658451] ioctl DONE
+[ 3416.665875] hc_sr04: Open
+[ 3416.668836] Open: HCSR_2
+[ 3416.671374] hc_sr04: Open Done
+[ 3416.677832] ioctl
+[ 3416.679797] ioctl_SETPIN
+[ 3416.684453] ioctl_SETPIN: Trig:10, Echo:1
+[ 3416.688564] HCSRdevice2: setTrig: Current: func:0, pin:10
+[ 3416.694110] HCSRdevice2: setTrig: Current: func:1, pin:26
+[ 3416.703297] HCSRdevice2: setTrig: Current: func:3, pin:74
+[ 3416.710005] HCSRdevice2: setEcho: Current: func:0, pin:1
+[ 3416.715484] HCSRdevice2: setEcho: Current: func:1, pin:20
+[ 3416.724558] HCSRdevice2: setEcho: Current: func:2, pin:21
+[ 3416.731631] HCSRdevice2: setEcho: Current: func:3, pin:68
+[ 3416.738152] ioctl_SETPIN DONE
+[ 3416.741266] ioctl DONE
+[ 3416.748604] ioctl
+[ 3416.750993] ioctl_SETMODE
+[ 3416.753665] HCSR_1: mode:0, freq:7
+[ 3416.757090] ioctl_SETMODE DONE
+[ 3416.760283] ioctl DONE
+[ 3416.769501] hc_sr04: Write
+[ 3416.774193] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3416.780732] hc_sr04: Write Done
+[ 3416.786139] hc_sr04: Read
+[ 3416.789313] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3416.796336] hc_sr04: Read Done
+[ 3416.804377] hc_sr04: Write
+[ 3416.808082] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 3416.814617] hc_sr04: Write Done
+[ 3416.820283] hc_sr04: Read
+[ 3416.823458] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 3416.829869] hc_sr04: Read Done
+[ 3416.838455] hc_sr04: Write
+[ 3416.843196] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3416.849665] hc_sr04: Write Done
+[ 3416.855087] hc_sr04: Read
+[ 3416.858261] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3416.866932] hc_sr04: Read Done
+[ 3416.872692] hc_sr04: Read
+[ 3416.875868] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 3416.884565] hc_sr04: Read Done
+[ 3416.887674] hc_sr04: Read
+[ 3416.890943] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 3416.900284] hc_sr04: Read Done
+[ 3416.904905] hc_sr04: Read
+[ 3416.908080] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:0 
+[ 3416.918062] hc_sr04: Read Done
+[ 3416.922317] hc_sr04: Read
+[ 3416.925543] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3416.934212] hc_sr04: Read Done
+[ 3416.939346] ioctl
+[ 3416.941717] ioctl_SETMODE
+[ 3416.947509] HCSR_2: mode:1, freq:7
+[ 3416.951057] ioctl_SETMODE DONE
+[ 3416.954144] ioctl DONE
+[ 3416.960267] hc_sr04: Write
+[ 3416.967340] hc_sr04: Read
+[ 3416.970133] read Blocked:HCSR_2 
+[ 3416.963018] Write: Start thread from HCSR_2
+[ 3416.976633] hc_sr04: Write Done
+[ 3416.980714] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:1 
+[ 3416.990307] read Blocked:HCSR_2 
+[ 3416.993579] read unBlocked-idx:0,95
+[ 3416.997089] hc_sr04: Read Done
+[ 3417.000295] hc_sr04: Read
+[ 3417.007685] hc_sr04: Read Done
+[ 3417.013787] hc_sr04: Read
+[ 3417.016450] hc_sr04: Read Done
+[ 3417.140686] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 3417.300694] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 3417.460696] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 3417.620698] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 3417.780692] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 3417.940695] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 3418.013875] hc_sr04: Write
+[ 3418.016625] CALL ThreadStop
+[ 3418.100348] hc_sr04: Write Done
+[ 3418.104073] hc_sr04: Read
+[ 3418.106736] hc_sr04: Read Done
+[ 3418.114937] ioctl
+[ 3418.117107] ioctl_SETMODE
+[ 3418.119779] HCSR_2: mode:0, freq:7
+[ 3418.123293] ioctl_SETMODE DONE
+[ 3418.126422] ioctl DONE
+[ 3418.134686] hc_sr04: Write
+[ 3418.137949] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3418.144479] hc_sr04: Write Done
+[ 3418.150885] hc_sr04: Read
+[ 3418.154062] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3418.162735] hc_sr04: Read Done
+[ 3418.167361] hc_sr04: Write
+[ 3418.173316] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[ 3418.179733] hc_sr04: Write Done
+[ 3418.185601] hc_sr04: Read
+[ 3418.188853] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 3418.198037] hc_sr04: Read Done
+[ 3418.206505] ioctl
+[ 3418.208802] ioctl_SETMODE
+[ 3418.215323] ioctl
+[ 3418.217605] ioctl_SETMODE
+[ 3418.222593] HCSR_2: mode:0, freq:7
+[ 3418.226031] ioctl_SETMODE DONE
+[ 3418.229105] ioctl DONE
+[ 3418.234822] HCSR_1: mode:1, freq:7
+[ 3418.238260] ioctl_SETMODE DONE
+[ 3418.241445] ioctl DONE
+[ 3418.247034] hc_sr04: Read
+[ 3418.250285] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:0 
+[ 3418.257349] hc_sr04: Read
+[ 3418.263104] hc_sr04: Read Done
+[ 3418.266216] hc_sr04: Read
+[ 3418.331142] hc_sr04: Read Done
+[ 3418.334254] hc_sr04: Read
+[ 3418.336898] hc_sr04: Read Done
+[ 3418.345589] hc_sr04: Read Done
+[ 3419.351933] hc_sr04: Write
+[ 3419.354764] hc_sr04: Write
+[ 3419.367880] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:0 
+[ 3419.374418] hc_sr04: Write Done
+[ 3419.380135] hc_sr04: Read
+[ 3419.383393] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 3419.358696] Write: Start thread from HCSR_1
+[ 3419.392453] hc_sr04: Write Done
+[ 3419.396363] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 3419.403101] hc_sr04: Read
+[ 3419.405763] hc_sr04: Read Done
+[ 3419.415245] hc_sr04: Read Done
+[ 3419.560622] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 3419.720626] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 3419.880620] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 3420.040633] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 3420.200628] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 3420.360628] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 3420.409114] hc_sr04: Write
+[ 3420.421374] hc_sr04: Write
+[ 3420.424722] echo_recv_isr: 95 CM, newest idx:2, from HCSR_2, mode:0 
+[ 3420.431262] hc_sr04: Write Done
+[ 3420.438040] hc_sr04: Read
+[ 3420.441391] echo_recv_isr: 92 CM, newest idx:3, from HCSR_2, mode:0 
+[ 3420.450114] hc_sr04: Read Done
+[ 3420.413009] CALL ThreadStop
+[ 3420.520277] hc_sr04: Write Done
+[ 3420.523964] hc_sr04: Read
+[ 3420.526625] hc_sr04: Read Done
+[ 3420.537894] hc_sr04: Release
+[ 3420.541302] hc_sr04: Release Done
+[ 3420.547422] hc_sr04: Release
+[ 3420.550457] hc_sr04: Release Done
+[ 3424.004257] HCSR_MODULE: REMOVE
+[ 3424.007441] hc_sr04: GoodBye Kernel World!!!: HCSR_2
+[ 3424.012581] hc_sr04: Free IRQ
+[ 3424.022785] hc_sr04: EXIT DONE
+[ 3424.026070] HCSR_MODULE: REMOVE Done
+[ 3424.042749] HCSR_MODULE: REMOVE
+[ 3424.045936] hc_sr04: GoodBye Kernel World!!!: HCSR_1
+[ 3424.051073] hc_sr04: Free IRQ
+[ 3424.062059] Destroy HCSR_class
+[ 3424.068546] hc_sr04: EXIT DONE
+[ 3424.071760] HCSR_MODULE: REMOVE Done
+[ 3424.098034] HCSR_device: GoodBye Kernel World!!!
+[ 3424.110475] Goodbye, unregister the device
+[ 3424.114615] HCSR_device: EXIT DONE
+[ 3591.414200] hc_sr04: INIT
+[ 3591.427365] hc_sr04: INIT DONE
+[ 3600.962823] hc_sr04: Open
+[ 3600.965487] Open: HCSR_1
+[ 3600.967862] hc_sr04: Open Done
+[ 3600.975709] ioctl
+[ 3600.977675] ioctl_SETPIN
+[ 3600.982418] ioctl_SETPIN: Trig:6, Echo:15
+[ 3600.988034] ioctl_SETPIN DONE
+[ 3600.991148] ioctl DONE
+[ 3600.998984] hc_sr04: Open
+[ 3601.001764] Open: HCSR_2
+[ 3601.004154] hc_sr04: Open Done
+[ 3601.010655] ioctl
+[ 3601.012618] ioctl_SETPIN
+[ 3601.015176] ioctl_SETPIN: Trig:10, Echo:1
+[ 3601.024053] setTrig: gpio_setValuet
+[ 3601.029105] ioctl_SETPIN DONE
+[ 3601.032432] ioctl DONE
+[ 3601.039205] ioctl
+[ 3601.041283] ioctl_SETMODE
+[ 3601.045267] HCSR_1: mode:0, freq:7
+[ 3601.048705] ioctl_SETMODE DONE
+[ 3601.051867] ioctl DONE
+[ 3601.059540] hc_sr04: Write
+[ 3601.063982] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3601.070528] hc_sr04: Write Done
+[ 3601.075899] hc_sr04: Read
+[ 3601.079074] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3601.087745] hc_sr04: Read Done
+[ 3601.105685] hc_sr04: Write
+[ 3601.109186] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 3601.115716] hc_sr04: Write Done
+[ 3601.120281] hc_sr04: Read
+[ 3601.123453] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 3601.129867] hc_sr04: Read Done
+[ 3601.138076] hc_sr04: Write
+[ 3601.142513] echo_recv_isr: 83 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3601.148984] hc_sr04: Write Done
+[ 3601.154417] hc_sr04: Read
+[ 3601.157591] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3601.166266] hc_sr04: Read Done
+[ 3601.169411] hc_sr04: Read
+[ 3601.172686] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 3601.180282] hc_sr04: Read Done
+[ 3601.183392] hc_sr04: Read
+[ 3601.186551] echo_recv_isr: 83 CM, newest idx:3, from HCSR_1, mode:0 
+[ 3601.198271] hc_sr04: Read Done
+[ 3601.202567] hc_sr04: Read
+[ 3601.205794] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:0 
+[ 3601.214449] hc_sr04: Read Done
+[ 3601.217559] hc_sr04: Read
+[ 3601.220832] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3601.230283] hc_sr04: Read Done
+[ 3601.233426] ioctl
+[ 3601.235379] ioctl_SETMODE
+[ 3601.238028] HCSR_2: mode:1, freq:7
+[ 3601.241560] ioctl_SETMODE DONE
+[ 3601.244646] ioctl DONE
+[ 3601.254467] hc_sr04: Write
+[ 3601.262941] hc_sr04: Read
+[ 3601.265610] read Blocked:HCSR_2 
+[ 3601.257449] Write: Start thread from HCSR_2
+[ 3601.269144] hc_sr04: Write Done
+[ 3601.277111] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:1 
+[ 3601.284301] hc_sr04: Read
+[ 3601.286963] hc_sr04: Read Done
+[ 3601.293063] read Blocked:HCSR_2 
+[ 3601.296389] read unBlocked-idx:0,95
+[ 3601.302106] hc_sr04: Read Done
+[ 3601.305218] hc_sr04: Read
+[ 3601.307861] hc_sr04: Read Done
+[ 3601.440684] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 3601.600697] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 3601.760706] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 3601.920694] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 3602.080692] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 3602.240694] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 3602.314415] hc_sr04: Write
+[ 3602.317165] CALL ThreadStop
+[ 3602.400329] hc_sr04: Write Done
+[ 3602.403989] hc_sr04: Read
+[ 3602.406650] hc_sr04: Read Done
+[ 3602.409770] ioctl
+[ 3602.411839] ioctl_SETMODE
+[ 3602.420303] HCSR_2: mode:0, freq:7
+[ 3602.423741] ioctl_SETMODE DONE
+[ 3602.426814] ioctl DONE
+[ 3602.429205] hc_sr04: Write
+[ 3602.436872] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 3602.443411] hc_sr04: Write Done
+[ 3602.448747] hc_sr04: Read
+[ 3602.452032] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 3602.458450] hc_sr04: Read Done
+[ 3602.464780] hc_sr04: Write
+[ 3602.468123] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[ 3602.474649] hc_sr04: Write Done
+[ 3602.481632] hc_sr04: Read
+[ 3602.484883] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 3602.494107] hc_sr04: Read Done
+[ 3602.498056] ioctl
+[ 3602.500133] ioctl_SETMODE
+[ 3602.506019] ioctl
+[ 3602.507983] ioctl_SETMODE
+[ 3602.510772] HCSR_2: mode:0, freq:7
+[ 3602.514210] ioctl_SETMODE DONE
+[ 3602.517332] ioctl DONE
+[ 3602.524862] HCSR_1: mode:1, freq:7
+[ 3602.528300] ioctl_SETMODE DONE
+[ 3602.531494] ioctl DONE
+[ 3602.536996] hc_sr04: Read
+[ 3602.540238] echo_recv_isr: 92 CM, newest idx:2, from HCSR_2, mode:0 
+[ 3602.547185] hc_sr04: Read
+[ 3602.549846] hc_sr04: Read Done
+[ 3602.557062] hc_sr04: Read Done
+[ 3602.561346] hc_sr04: Read
+[ 3602.564597] echo_recv_isr: 95 CM, newest idx:3, from HCSR_2, mode:0 
+[ 3602.571776] hc_sr04: Read
+[ 3602.577503] hc_sr04: Read Done
+[ 3602.581828] hc_sr04: Read Done
+[ 3603.585137] hc_sr04: Write
+[ 3603.587977] hc_sr04: Write
+[ 3603.593465] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:0 
+[ 3603.599894] hc_sr04: Write Done
+[ 3603.610186] hc_sr04: Read
+[ 3603.613441] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 3603.619861] hc_sr04: Read Done
+[ 3603.605649] Write: Start thread from HCSR_1
+[ 3603.626232] hc_sr04: Write Done
+[ 3603.630151] echo_recv_isr: 83 CM, newest idx:2, from HCSR_1, mode:1 
+[ 3603.636827] hc_sr04: Read
+[ 3603.639487] hc_sr04: Read Done
+[ 3603.790784] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 3603.950632] echo_recv_isr: 83 CM, newest idx:4, from HCSR_1, mode:1 
+[ 3604.110628] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 3604.270626] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 3604.430625] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 3604.590625] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 3604.647748] hc_sr04: Write
+[ 3604.651673] hc_sr04: Write
+[ 3604.655014] echo_recv_isr: 95 CM, newest idx:2, from HCSR_2, mode:0 
+[ 3604.661532] hc_sr04: Write Done
+[ 3604.671152] hc_sr04: Read
+[ 3604.674377] echo_recv_isr: 89 CM, newest idx:3, from HCSR_2, mode:0 
+[ 3604.683673] hc_sr04: Read Done
+[ 3604.668135] CALL ThreadStop
+[ 3604.750280] hc_sr04: Write Done
+[ 3604.753966] hc_sr04: Read
+[ 3604.756628] hc_sr04: Read Done
+[ 3604.771356] hc_sr04: Release
+[ 3604.774887] hc_sr04: Release Done
+[ 3604.779335] hc_sr04: Release
+[ 3604.782368] hc_sr04: Release Done

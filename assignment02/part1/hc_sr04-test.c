@@ -27,7 +27,7 @@ void* pfunction(void* datain) {
     sleep(1);
 
 
-    i = 1;//ONE_SHOT: clear data, PEORIDIC: start thread
+    i = 1;//ONE_SHOT: clear data, PEORIDIC: start kthread
     write(data->fd, &i, sizeof(int)); PRINT(data->name, data->fd);
     sleep(1);
 
