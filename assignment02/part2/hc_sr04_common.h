@@ -3,6 +3,7 @@
 #define __DEUBG__
 #include<linux/ioctl.h>
 #define ONE_SHOT (0)
+#define PERIODIC (1)
 #define NUM_DATA (5) 
 #define HCSR_W_MAGIC ('H')
 #define SETPINS _IOW (HCSR_W_MAGIC, 1, struct pin_set*)

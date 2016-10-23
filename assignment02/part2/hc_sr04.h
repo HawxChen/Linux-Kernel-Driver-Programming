@@ -92,6 +92,7 @@ static ssize_t echo_show(struct device *dev,
     printk(KERN_ALERT "echo_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
     return ret;
 }
+
 static ssize_t echo_store(struct device *dev,
         struct device_attribute *attr,
         const char *buf,
@@ -123,6 +124,14 @@ static ssize_t echo_store(struct device *dev,
         printk(KERN_ALERT "set_ISR error: %d, echo_pin:%d", ret, echo_pin);
         goto FAILED_SET;
     }
+
+    spin_lock(&(hcsr->irq_done_lock));
+    hcsr->irq_done = IRQ_DONE;
+    spin_unlock(&(hcsr->irq_done_lock));
+
+    spin_lock(&(hcsr->irq_done_lock));
+    hcsr->irq_done = IRQ_DONE;
+    spin_unlock(&(hcsr->irq_done_lock));
 
     goto SUCCESS_SET;
     
@@ -166,6 +175,8 @@ static ssize_t mode_store(struct device *dev,
     printk(KERN_ALERT "mode_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
 
     ret = sscanf(buf,"%d", &mode);
+    if(ONE_SHOT != mode && PERIODIC != mode) return -EINVAL;
+
     if(0 >= ret) {
         printk(KERN_ALERT "sscanf error: %d, mode:%d", ret, mode);
         goto FAILED_SETMODE;
@@ -214,6 +225,8 @@ static ssize_t frequency_store(struct device *dev,
         printk(KERN_ALERT "sscanf error: %d, freq:%d", ret, freq);
         goto FAILED_SETMODE;
     }
+    if(0 == freq) return -EINVAL;
+
     goto SUCCESS_SETMODE;
 
 FAILED_SETMODE:
@@ -256,10 +269,49 @@ static ssize_t enable_store(struct device *dev,
 
     printk(KERN_ALERT "enable_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
 
+
     ret = sscanf(buf,"%d", &enable);
     if(0 >= ret) {
         printk(KERN_ALERT "sscanf error: %d, mode:%d", ret, enable);
         goto FAILED_SETMODE;
+    }
+    if(0 == enable) {
+        //stop kthread
+        spin_lock(&(hcsr->kthread_lock));
+        if(NULL != hcsr->kthread) {
+            kthread_stop(hcsr->kthread);
+            hcsr->kthread = NULL;
+        }
+        spin_unlock(&(hcsr->kthread_lock));
+
+        spin_lock(&(hcsr->ongoing_lock));
+        hcsr->ongoing = STOPPING;
+        spin_unlock(&(hcsr->ongoing_lock));
+    } else if (1 == enable) {
+        if(NULL != hcsr->kthread) return count;
+
+        spin_lock(&(hcsr->kconfig.kconfig_lock));
+        if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode) {
+            spin_unlock(&(hcsr->kconfig.kconfig_lock));
+            do {
+                spin_lock(&(hcsr->ongoing_lock));
+                if(STOPPING == hcsr->ongoing) {
+                    spin_unlock(&(hcsr->ongoing_lock));
+                    send(hcsr, 5);
+                    break;
+                } 
+                spin_unlock(&(hcsr->ongoing_lock));
+            }
+            while(0);
+        } else{
+            spin_lock(&(hcsr->kthread_lock));
+            hcsr->kthread = kthread_run(thread_function, hcsr, hcsr->hc_sr04->name);
+            spin_unlock(&(hcsr->kthread_lock));
+        }
+        //kthread , freq some issues
+       //if ONE_SHOT
+    } else {
+        return -EINVAL;
     }
     goto SUCCESS_SETMODE;
 
@@ -422,9 +474,14 @@ void hc_sr04_exit(struct HCSR_device* pplat_dev) {
     hcsr_struct *pdev = (hcsr_struct *)(pplat_dev->pdev);
     printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!: %s\n", pdev->hc_sr04->name);
 
+    if(NULL != pdev->kthread) 
+        kthread_stop(pdev->kthread);
+
     spin_lock(&(pdev->irq_done_lock));
     if(IRQ_DONE == pdev->irq_done) {
         free_irq(pdev->echo_isr_number, pdev);
+        printk(KERN_ALERT "hc_sr04: Free IRQ");
+
     }
     free_gpio(pdev);  
     spin_unlock(&(pdev->irq_done_lock));

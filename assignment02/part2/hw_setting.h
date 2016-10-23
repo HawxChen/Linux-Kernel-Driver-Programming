@@ -31,7 +31,6 @@ char* A_pin_str[2][5] = {
 char B_pins[2][5][2] = { 
           //Linux   Level             Pull            Mux0      Mux1
 
-//old
 /*IO10*/   {{HCSR_B_TRIG_PIN, 0}, {26, DIR_OUT}, {-1,-1},          {74, 0}, {-1,-1}},
 /*IO 6*/   {{HCSR_B_ECHO_PIN, 0}, {20,  DIR_IN}, { 21, PULL_DOWN}, {68, 0}, {-1, -1}},
 };
