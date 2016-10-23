@@ -124,7 +124,7 @@ int setTrig (struct hcsr_struct* hcsr, int pin) {
             }
 
             if(HC_GPIO_MUX0 == m || HC_GPIO_MUX1 == m) {
-                gpio_set_value(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
+                gpio_direction_output(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
                 printk(KERN_ALERT "setTrig: gpio_setValuet");
             } 
             else if(HC_GPIO_LEVEL == m) {
