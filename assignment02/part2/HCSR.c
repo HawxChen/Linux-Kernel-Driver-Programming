@@ -26,7 +26,6 @@ static struct HCSR_device HCSR_2_dev = {
  * register the device when module is initiated
  */
 #define SUBSYSTEM ("HCSR")
-static struct class* HCSR_class = NULL;
 static void HCSR_dummy_release(struct device *dev) {}
 static void init_HCSR_dev(struct HCSR_device* hcsr_dev) {
     hcsr_dev->plf_dev.dev.release = HCSR_dummy_release;
@@ -58,7 +57,6 @@ static int HCSR_device_init(void)
 
 static void HCSR_device_exit(void)
 {
-    int ret;
     printk(KERN_ALERT "HCSR_device: GoodBye Kernel World!!!\n");
     platform_device_unregister(&HCSR_2_dev.plf_dev);
     platform_device_unregister(&HCSR_1_dev.plf_dev);

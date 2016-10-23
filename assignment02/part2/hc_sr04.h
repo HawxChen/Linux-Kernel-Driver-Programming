@@ -20,72 +20,258 @@
 #include<linux/kthread.h>
 #include<linux/ktime.h>
 #include<linux/sched.h>
+#include<linux/sysfs.h>
 #include"hc_sr04_kernel.h"
 
 static ssize_t trigger_show(struct device *dev,
         struct device_attribute *attr,
         char *buf) {
-    return 0;
+    int ret = 0;
+    int trig_pin = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    trig_pin = hcsr->kconfig.set.pins.trigger_pin;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+
+    printk(KERN_ALERT "trigger_show@ %s\n", hcsr->pplat_dev->plf_dev.name);
+    ret = snprintf(buf, 10, "%d\n",trig_pin); 
+    printk(KERN_ALERT "trigger_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+    return ret;
 }
 
 static ssize_t trigger_store(struct device *dev,
         struct device_attribute *attr,
         const char *buf,
         size_t count) {
-    //SET_TRIG_PIN
-    return 0;
+    int ret = 0;
+    int trig_pin = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    printk(KERN_ALERT "trigger_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
+
+    ret = sscanf(buf,"%d", &trig_pin);
+    if(0 >= ret) {
+        printk(KERN_ALERT "sscanf error: %d, trig_pin:%d", ret, trig_pin);
+        goto FAILED_SET;
+    }
+
+    ret = setTrig(hcsr, trig_pin);
+    if(0 > ret) {
+        printk(KERN_ALERT "setTrigf error: %d, trig_pin:%d", ret, trig_pin);
+        goto FAILED_SET;
+    }
+    
+    goto SUCCESS_SET;
+
+FAILED_SET:
+    return ret;
+
+SUCCESS_SET:
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    hcsr->kconfig.set.pins.trigger_pin = trig_pin;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    printk(KERN_ALERT "trigger_store@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+    return count;
 }
 
 static ssize_t echo_show(struct device *dev,
         struct device_attribute *attr,
         char *buf) {
-    //SET_ECHO_PIN
-    return 0;
+    int ret = 0;
+    int echo_pin = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    echo_pin = hcsr->kconfig.set.pins.echo_pin;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+    printk(KERN_ALERT "echo_show@ %s\n", hcsr->pplat_dev->plf_dev.name);
+    ret = snprintf(buf, 10, "%d\n", echo_pin); 
+    printk(KERN_ALERT "echo_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+    return ret;
 }
 static ssize_t echo_store(struct device *dev,
         struct device_attribute *attr,
         const char *buf,
         size_t count) {
-    return 0;
+    int ret = 0;
+    int echo_pin = 0;
+    pin_set prev_pins;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    printk(KERN_ALERT "echo_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    prev_pins = hcsr->kconfig.set.pins;
+    ret = sscanf(buf,"%d", &echo_pin);
+    if(0 >= ret) {
+        printk(KERN_ALERT "sscanf error: %d, echo_pin:%d", ret, echo_pin);
+        goto FAILED_SET;
+    }
+
+    ret = setEcho(hcsr, echo_pin);
+    if(0 > ret) {
+        printk(KERN_ALERT "setEcho error: %d, echo_pin:%d", ret, echo_pin);
+        goto FAILED_SET;
+    }
+
+    hcsr->kconfig.set.pins.echo_pin = echo_pin;
+    ret = set_ISR(hcsr);
+    if(0 > ret) {
+        printk(KERN_ALERT "set_ISR error: %d, echo_pin:%d", ret, echo_pin);
+        goto FAILED_SET;
+    }
+
+    goto SUCCESS_SET;
+    
+
+FAILED_SET:
+    hcsr->kconfig.set.pins = prev_pins;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    return ret;
+
+SUCCESS_SET:
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    printk(KERN_ALERT "echo_store@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+    return count;
 }
 
 static ssize_t mode_show(struct device *dev,
         struct device_attribute *attr,
         char *buf) {
-    return 0;
+    int ret = 0;
+    int mode = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    mode = hcsr->kconfig.set.working_mode.mode;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+    printk(KERN_ALERT "mode_show@ %s\n", hcsr->pplat_dev->plf_dev.name);
+    ret = snprintf(buf, 10, "%d\n", mode); 
+    printk(KERN_ALERT "mode_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+    return ret;
 }
 static ssize_t mode_store(struct device *dev,
         struct device_attribute *attr,
         const char *buf,
         size_t count) {
-    return 0;
+
+    int ret = 0;
+    int mode = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    printk(KERN_ALERT "mode_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
+
+    ret = sscanf(buf,"%d", &mode);
+    if(0 >= ret) {
+        printk(KERN_ALERT "sscanf error: %d, mode:%d", ret, mode);
+        goto FAILED_SETMODE;
+    }
+    goto SUCCESS_SETMODE;
+
+FAILED_SETMODE:
+    return ret;
+
+SUCCESS_SETMODE:
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    hcsr->kconfig.set.working_mode.mode = mode;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    printk(KERN_ALERT "mode_store@ %s Done\n", hcsr->pplat_dev->plf_dev.name);
+    return count;
 }
 
 static ssize_t frequency_show(struct device *dev,
         struct device_attribute *attr,
         char *buf) {
-    return 0;
+    int ret = 0;
+    int freq = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    freq = hcsr->kconfig.set.working_mode.freq;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+    printk(KERN_ALERT "frequency_show@ %s\n", hcsr->pplat_dev->plf_dev.name);
+    ret = snprintf(buf, 10, "%d\n", freq); 
+    printk(KERN_ALERT "frequency_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+    return ret;
 }
 static ssize_t frequency_store(struct device *dev,
         struct device_attribute *attr,
         const char *buf,
         size_t count) {
-    //SET_FREQ
-    return 0;
+    int ret = 0;
+    int freq = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    printk(KERN_ALERT "freq_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
+
+    ret = sscanf(buf,"%d", &freq);
+    if(0 >= ret) {
+        printk(KERN_ALERT "sscanf error: %d, freq:%d", ret, freq);
+        goto FAILED_SETMODE;
+    }
+    goto SUCCESS_SETMODE;
+
+FAILED_SETMODE:
+    return ret;
+
+SUCCESS_SETMODE:
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    hcsr->kconfig.set.working_mode.freq = freq;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    printk(KERN_ALERT "freq_store@ %s Done\n", hcsr->pplat_dev->plf_dev.name);
+    return count;
 }
 
 static ssize_t enable_show(struct device *dev,
         struct device_attribute *attr,
         char *buf) {
     //SET RUN
-    return 0;
+    int ret = 0;
+    int enable = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    enable = hcsr->kconfig.enable;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+
+    printk(KERN_ALERT "enbale_show@ %s\n", hcsr->pplat_dev->plf_dev.name);
+    ret = snprintf(buf, 10, "%d\n", enable); 
+    printk(KERN_ALERT "enable_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+
+    return ret;
 }
+
 static ssize_t enable_store(struct device *dev,
         struct device_attribute *attr,
         const char *buf,
         size_t count) {
-    //SET STOP
-    return 0;
+    int ret = 0;
+    int enable = 0;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    printk(KERN_ALERT "enable_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
+
+    ret = sscanf(buf,"%d", &enable);
+    if(0 >= ret) {
+        printk(KERN_ALERT "sscanf error: %d, mode:%d", ret, enable);
+        goto FAILED_SETMODE;
+    }
+    goto SUCCESS_SETMODE;
+
+FAILED_SETMODE:
+    return ret;
+
+SUCCESS_SETMODE:
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    hcsr->kconfig.enable = enable;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
+    printk(KERN_ALERT "enable_store@ %s Done\n", hcsr->pplat_dev->plf_dev.name);
+    return count;
 }
 
 
@@ -94,7 +280,23 @@ static ssize_t distance_show(struct device *dev,
         struct device_attribute *attr,
         char *buf) {
     //SHOW Result
-    return 0;
+    int ret, distance;
+    struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
+
+    printk(KERN_ALERT "distance_show@ %s\n", hcsr->pplat_dev->plf_dev.name);
+
+    spin_lock(&(hcsr->cirb.cir_buf_lock));
+    if (-1 == hcsr->cirb.newest) {
+        distance = 0;
+    } else {
+        distance = hcsr->cirb.buf.data[hcsr->cirb.newest];
+    }
+    spin_unlock(&(hcsr->cirb.cir_buf_lock));
+
+    ret = snprintf(buf, 10, "%d\n", distance); 
+    printk(KERN_ALERT "distance_show@ Done: %s", hcsr->pplat_dev->plf_dev.name);
+
+    return ret;
 }
 
 
@@ -111,11 +313,13 @@ static void init_hcsr_struct(hcsr_struct* hcsr, char(*pins)[5][2], char*(*pin_st
     hcsr->kthread = NULL;
     hcsr->irq_done = IRQ_NOT_DONE;
     hcsr->echo_isr_number = -1;
-    hcsr->pins = pins;
+    hcsr->pins_default = pins;
     hcsr->kconfig.set.working_mode.mode = 0;//__DEBUG__ ********
 //    hcsr->kconfig.set.mode = -1; 
     hcsr->cirb.newest = -1;
     hcsr->pin_str = pin_str;
+    hcsr->kconfig.set.pins.trigger_pin = -1;
+    hcsr->kconfig.set.pins.echo_pin = -1;
     spin_lock_init(&(hcsr->irq_done_lock));
     spin_lock_init(&(hcsr->ongoing_lock));
     spin_lock_init(&(hcsr->cirb.cir_buf_lock));
@@ -146,6 +350,7 @@ int hc_sr04_init(struct HCSR_device* pplat_dev) {
     printk(KERN_ALERT "hc_sr04: INIT: %s\n", pplat_dev->name);
 
     pdev = (hcsr_struct*) kmalloc(sizeof(hcsr_struct),GFP_KERNEL); 
+    memset(pdev, 0, sizeof(hcsr_struct));
     pdev->hc_sr04 = (struct miscdevice*) kmalloc(sizeof(struct miscdevice), GFP_KERNEL); 
     memset(pdev->hc_sr04, 0, sizeof(struct miscdevice));
 
@@ -208,17 +413,8 @@ cdev_alloc_err:
 }
 
 void free_gpio(struct hcsr_struct* hcsr) {
-    int i, j;
-    for(i = 0; i < 2; i++) {
-        for(j = 0; j < PIN_SIZE; j++) {
-            if(-1 == hcsr->pins[i][j][PIN_INDEX]) {
-                continue;
-            }
-            //gpio_set_value(hcsr->pins[i][j][PIN_INDEX],0);
-            printk(KERN_ALERT "gpinfree:%d\n", hcsr->pins[i][j][PIN_INDEX]);
-            gpio_free(hcsr->pins[i][j][PIN_INDEX]);
-        }
-    }
+    freeTrig(hcsr->kconfig.set.pins.trigger_pin);
+    freeEcho(hcsr->kconfig.set.pins.echo_pin);
 }
 
 void hc_sr04_exit(struct HCSR_device* pplat_dev) {
@@ -226,8 +422,12 @@ void hc_sr04_exit(struct HCSR_device* pplat_dev) {
     hcsr_struct *pdev = (hcsr_struct *)(pplat_dev->pdev);
     printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!: %s\n", pdev->hc_sr04->name);
 
-    free_irq(pdev->echo_isr_number, pdev);
+    spin_lock(&(pdev->irq_done_lock));
+    if(IRQ_DONE == pdev->irq_done) {
+        free_irq(pdev->echo_isr_number, pdev);
+    }
     free_gpio(pdev);  
+    spin_unlock(&(pdev->irq_done_lock));
 
     device_destroy(pdev->hcsr_class, pdev->devt);
 

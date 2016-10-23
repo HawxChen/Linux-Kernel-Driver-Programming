@@ -24,6 +24,7 @@ typedef struct cir_buf {
 
 typedef struct hcsr_kconfig {
     hcsr_set set;
+    int enable;
     spinlock_t kconfig_lock;
 } hcsr_kconfig;
 
@@ -45,7 +46,7 @@ typedef struct hcsr_struct {
     cir_buf cirb;
     int ongoing;
     spinlock_t ongoing_lock;
-    char(*pins)[5][2];
+    char(*pins_default)[5][2];
     char*(*pin_str)[5];
     struct list_head list;
 } hcsr_struct;
@@ -128,6 +129,7 @@ int setTrig (struct hcsr_struct* hcsr, int pin) {
 
             if(-1 == all_pins[i][m][PIN_INDEX]) continue;
 
+            printk(KERN_ALERT "%s: setTrig: Current: func:%d, pin:%d\n", hcsr->pplat_dev->plf_dev.name, m, all_pins[i][m][PIN_INDEX]); 
             ret = gpio_request(all_pins[i][m][PIN_INDEX], hcsr->pin_str[TRIGGER_INDEX][m]);
             if(ret) {
                 printk(KERN_ALERT "setTrig: gpio_request,pin:%d, ret=%d\n", all_pins[i][m][PIN_INDEX], ret);
@@ -135,8 +137,8 @@ int setTrig (struct hcsr_struct* hcsr, int pin) {
             }
 
             if(HC_GPIO_MUX0 == m || HC_GPIO_MUX1 == m) {
-                gpio_set_value(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
-                printk(KERN_ALERT "setTrig: gpio_setValuet");
+                //gpio_set_value(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
+                gpio_direction_output(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
             } 
             else if(HC_GPIO_LEVEL == m) {
                 ret = gpio_direction_output(all_pins[i][m][PIN_INDEX], DIR_OUT);
@@ -159,7 +161,7 @@ int setTrig (struct hcsr_struct* hcsr, int pin) {
 ERR_OPER_RETURN:
     gpio_free(pin);
 ERR_setTrig_RETURN:
-    return -EINVAL; 
+    return ret; 
 }
 
 int setEcho (struct hcsr_struct* hcsr, int pin) {
@@ -172,6 +174,7 @@ int setEcho (struct hcsr_struct* hcsr, int pin) {
         for(m = 0; m < PIN_SIZE; m++) {
             if(-1 == all_pins[i][m][PIN_INDEX]) continue;
 
+            printk(KERN_ALERT "%s: setEcho: Current: func:%d, pin:%d\n", hcsr->pplat_dev->plf_dev.name, m, all_pins[i][m][PIN_INDEX]); 
             ret = gpio_request(all_pins[i][m][PIN_INDEX], hcsr->pin_str[ECHO_INDEX][m]);
             if(ret) {
                 printk(KERN_ALERT "setEcho: gpio_request,pin:%d, ret=%d\n", all_pins[i][m][PIN_INDEX], ret);
@@ -179,7 +182,8 @@ int setEcho (struct hcsr_struct* hcsr, int pin) {
             }
 
             if(HC_GPIO_MUX0 == m || HC_GPIO_MUX1 == m) {
-                gpio_set_value(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
+                gpio_direction_output(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
+                //gpio_set_value(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
             } 
             else if(HC_GPIO_PULL == m) {
                  gpio_direction_output(all_pins[i][m][PIN_INDEX], PULL_DOWN);
@@ -238,7 +242,11 @@ static int hc_sr04_release(struct inode* node, struct file* file) {
 static int do_send(struct hcsr_struct* hcsr){
     unsigned int counter = 0;
     char cnt = 0;
-    int trig_pin = hcsr->kconfig.set.pins.trigger_pin;
+    int trig_pin = 0;
+
+    spin_lock(&(hcsr->kconfig.kconfig_lock));
+    trig_pin = hcsr->kconfig.set.pins.trigger_pin;
+    spin_unlock(&(hcsr->kconfig.kconfig_lock));
 
     gpio_set_value(trig_pin, 1);
     udelay(10);
@@ -346,6 +354,7 @@ RETURNED:
 
 static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
     pin_set pins;
+    pin_set pre_pins;
     int ret = 0;
     struct hcsr_struct* hcsr = NULL; 
     printk(KERN_ALERT "ioctl_SETPIN\n");
@@ -356,11 +365,13 @@ static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
     }
     //hcsr = get_curr_hcsr(filp->f_dentry->d_inode);
     hcsr = (struct hcsr_struct*)filp->private_data;
-    hcsr->kconfig.set.pins = pins;
-    printk(KERN_ALERT "ioctl_SETPIN: Trig:%d, Echo:%d\n", hcsr->kconfig.set.pins.trigger_pin, hcsr->kconfig.set.pins.echo_pin);
+    printk(KERN_ALERT "ioctl_SETPIN: Trig:%d, Echo:%d\n", pins.trigger_pin, pins.echo_pin);
     
     spin_lock(&(hcsr->irq_done_lock));
+    pre_pins = hcsr->kconfig.set.pins;
+    hcsr->kconfig.set.pins = pins;
     if(IRQ_DONE == hcsr->irq_done) {
+        //Extention: set and then set the same device again.
         goto SUCCESS_SETPIN_RETURN;
     }
 
@@ -383,6 +394,7 @@ static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
     goto SUCCESS_SETPIN_RETURN;
 
 ERR_SETPIN_RETURN:
+    hcsr->kconfig.set.pins = pre_pins;
     spin_unlock(&(hcsr->irq_done_lock));
     return ret;
 
