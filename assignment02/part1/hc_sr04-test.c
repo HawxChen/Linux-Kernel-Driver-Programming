@@ -13,7 +13,7 @@ int func(char(*pin)[5][2], char*(*pin_str)[5]) {
     return 0;
 }
 typedef struct pdata {
-    int fd;
+    int fd; char*name;
     hcsr_set set;
 } pdata;
 void* pfunction(void* datain) {
@@ -22,16 +22,16 @@ void* pfunction(void* datain) {
     printf("mode:%d, freq:%u\n", data->set.working_mode.mode, data->set.working_mode.freq);
     ioctl(data->fd, SETMODE,(int)&(data->set.working_mode), 0);
     i = 1;
-    read(data->fd, &i, sizeof(int));
+    read(data->fd, &i, sizeof(int)); PRINT(data->name, data->fd);
     sleep(1);
 
 
     i = 1;//ONE_SHOT: clear data, PEORIDIC: start thread
-    write(data->fd, &i, sizeof(int));
+    write(data->fd, &i, sizeof(int)); PRINT(data->name, data->fd);
     sleep(1);
 
     i = 0;
-    write(data->fd, &i, sizeof(int));
+    write(data->fd, &i, sizeof(int)); PRINT(data->name, data->fd);
     return NULL;
 }
 
@@ -62,26 +62,26 @@ int main(int argc, char*argv[]) {
     perror("IOCTL");
 
     i = 0;
-    write(fdA, &i, sizeof(int));
-    write(fdA, &i, sizeof(int));
+    write(fdA, &i, sizeof(int)); PRINT("HCSR_1", fdA);
+    write(fdA, &i, sizeof(int)); PRINT("HCSR_1", fdA);
     i = 1; //clear
-    write(fdA, &i, sizeof(int));
+    write(fdA, &i, sizeof(int)); PRINT("HCSR_1", fdA);
 
-    read(fdA, &i, sizeof(int));
-    read(fdA, &i, sizeof(int));
+    read(fdA, &i, sizeof(int)); PRINT("HCSR_1", fdA);
+    read(fdA, &i, sizeof(int)); PRINT("HCSR_1", fdA);
 
     //B
     ret = ioctl(fdB, SETMODE, &Bset, 0);
     if(0 != ret)
         perror("SETMODE");
-    read(fdB, &i, sizeof(int));
+    read(fdB, &i, sizeof(int)); PRINT("HCSR_2", fdB);
     sleep(1);
 
     i = 1; //start thread
-    write(fdB, &i, sizeof(int));
+    write(fdB, &i, sizeof(int)); PRINT("HCSR_2", fdB);
     sleep(1);
     i = 0; //stop thread
-    write(fdB, &i, sizeof(int));
+    write(fdB, &i, sizeof(int)); PRINT("HCSR_2", fdB);
 
     
     Bset.mode = 0;
@@ -91,16 +91,16 @@ int main(int argc, char*argv[]) {
     i = 0;
 
     i = 1; //clear fdA
-    write(fdA, &i, sizeof(int));
+    write(fdA, &i, sizeof(int)); PRINT("HCSR_1", fdA);
 
     i = 1; //clear fdB
-    write(fdB, &i, sizeof(int));
+    write(fdB, &i, sizeof(int)); PRINT("HCSR_2", fdB);
    
    //For multi-thread test
-   Adata.fd = fdA;
+   Adata.fd = fdA; Adata.name = "HCSR_1";
    Adata.set.working_mode.mode = 1;
    Adata.set.working_mode.freq = 7;
-   Bdata.fd = fdB;
+   Bdata.fd = fdB; Bdata.name = "HCSR_2";
    Bdata.set.working_mode.mode = 0;
    Bdata.set.working_mode.freq = 7;
    pthread_t tA, tB;
