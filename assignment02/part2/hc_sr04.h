@@ -50,6 +50,7 @@ static ssize_t trigger_store(struct device *dev,
     struct hcsr_struct* hcsr = (struct hcsr_struct*) dev_get_drvdata(dev);//dev->driver_data;
 
     printk(KERN_ALERT "trigger_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
+    freeTrig(hcsr->kconfig.set.pins.trigger_pin);
 
     ret = sscanf(buf,"%d", &trig_pin);
     if(0 >= ret) {
@@ -104,6 +105,16 @@ static ssize_t echo_store(struct device *dev,
 
     printk(KERN_ALERT "echo_store@ %s\n", hcsr->pplat_dev->plf_dev.name);
 
+    spin_lock(&(hcsr->irq_done_lock));
+    if(IRQ_DONE == hcsr->irq_done) {
+        free_irq(hcsr->echo_isr_number, hcsr);
+        hcsr->irq_done = IRQ_NOT_DONE;
+    }
+    spin_unlock(&(hcsr->irq_done_lock));
+
+    freeEcho(hcsr->kconfig.set.pins.echo_pin);
+
+
     spin_lock(&(hcsr->kconfig.kconfig_lock));
     prev_pins = hcsr->kconfig.set.pins;
     ret = sscanf(buf,"%d", &echo_pin);
@@ -124,10 +135,6 @@ static ssize_t echo_store(struct device *dev,
         printk(KERN_ALERT "set_ISR error: %d, echo_pin:%d", ret, echo_pin);
         goto FAILED_SET;
     }
-
-    spin_lock(&(hcsr->irq_done_lock));
-    hcsr->irq_done = IRQ_DONE;
-    spin_unlock(&(hcsr->irq_done_lock));
 
     spin_lock(&(hcsr->irq_done_lock));
     hcsr->irq_done = IRQ_DONE;
@@ -360,7 +367,6 @@ static int class_cnt = 0;
 static void init_hcsr_struct(hcsr_struct* hcsr, char(*pins)[5][2], char*(*pin_str)[5]) {
     /*!!!!!*/
     //CHECK!!! INIT
-    init_waitqueue_head(&(hcsr->wq));
     hcsr->hcsr_class = HCSR_class;
     hcsr->kthread = NULL;
     hcsr->irq_done = IRQ_NOT_DONE;

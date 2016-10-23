@@ -1,0 +1,14 @@
+# KernelRocks
+Makefile:
+KDIR should be the path of kernel source directory
+
+Install it
+  #make
+  #make inall
+
+Uninstall:
+  #make unall
+
+Demo for part1:
+ #./test.sh
+ #dmesg

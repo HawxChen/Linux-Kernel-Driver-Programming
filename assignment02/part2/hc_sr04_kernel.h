@@ -37,7 +37,6 @@ typedef struct hcsr_struct {
     dev_t devt;
     struct cdev* hcsr_cdev;
     int echo_isr_number;
-    wait_queue_head_t wq;
     ktime_t kstart;
     struct task_struct* kthread;
     spinlock_t kthread_lock;
@@ -335,15 +334,6 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
         printk(KERN_ALERT "echo_recv_isr: %d CM, newest idx:%d, from %s, mode:%d \n",distance, hcsr->cirb.newest, hcsr->hc_sr04->name, hcsr->kconfig.set.working_mode.mode);
     spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
-    spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode) {
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
-    } else {
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
-        wake_up_all(&(hcsr->wq));
-    }
-
-
 RETURNED:
     spin_lock(&(hcsr->ongoing_lock));
     hcsr->ongoing = STOPPING;
@@ -516,10 +506,18 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
         } else {
             spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
+RECHECK_BUF:
+            spin_lock(&(hcsr->cirb.cir_buf_lock));
             printk("read Blocked:%s \n", hcsr->hc_sr04->name);
-            wait_event_interruptible((hcsr->wq),BUFF_IN);
+            if(-1 == hcsr->cirb.newest) {
+                spin_unlock(&(hcsr->cirb.cir_buf_lock));
+                msleep(10);
+                goto RECHECK_BUF;
+            }
+            spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
             spin_lock(&(hcsr->cirb.cir_buf_lock));
+            printk(KERN_ALERT "read unBlocked-idx:%d,%d\n", hcsr->cirb.newest, (hcsr->cirb.buf.data[hcsr->cirb.newest]));
             ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
             spin_unlock(&(hcsr->cirb.cir_buf_lock));
             if(ret) return -EAGAIN;
