@@ -4,6 +4,7 @@
 #include "hc_sr04_common.h"
 #include "hw_setting.h"
 #include <linux/spinlock.h>
+#include <linux/semaphore.h>
 #include <linux/wait.h>
 #define BUFF_IN (0x00000001)
 #define COUNT_MAX (3)
@@ -15,6 +16,13 @@
 #define IRQ_DONE (1)
 #define IRQ_NOT_DONE (0)
 
+#ifdef __EXTENNTION__
+typedef struct PV{
+    long cnt;
+    spinlock_t cnt_lock;
+    struct semaphore block_sem;
+} PV;
+#endif
 
 typedef struct cir_buf {
     int newest;
@@ -31,8 +39,10 @@ typedef struct hcsr_struct {
     struct miscdevice* hc_sr04;
     int irq_done;
     int echo_isr_number;
-    wait_queue_head_t wq;
     ktime_t kstart;
+#ifdef __EXTENNTION__
+    PV pv;
+#endif
     struct task_struct* kthread;
     spinlock_t kthread_lock;
     spinlock_t irq_done_lock;
@@ -54,6 +64,29 @@ static int __init hc_sr04_init(void);
 static void __exit hc_sr04_exit(void);
 
 static irqreturn_t echo_recv_isr(int irq, void *data);
+#ifdef __EXTENNTION__
+int P(PV* pv) {
+
+    spin_lock(&(pv->cnt_lock));
+    cnt--;
+    spin_unlock(&(pv->cnt_lock));
+
+    if(0 > cnt) {
+        down(&(pv->block_sem));
+    }
+}
+
+int V(PV* pv) {
+    spin_lock(&(pv->cnt_lock));
+    while(0 > cnt) {
+        cnt++;
+        up(&(pv->block_sem));
+    }
+    cnt++;
+    spin_unlock(&(pv->cnt_lock));
+}
+#endif 
+
 int set_ISR(struct hcsr_struct* hcsr) {
     //For Echo ISR
     int ret = 0;
@@ -168,7 +201,7 @@ int setEcho (struct hcsr_struct* hcsr, int pin) {
             }
 
             if(HC_GPIO_MUX0 == m || HC_GPIO_MUX1 == m) {
-                gpio_set_value(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
+                gpio_direction_output(all_pins[i][m][PIN_INDEX], all_pins[i][m][VAL_INDEX]);
             } 
             else if(HC_GPIO_PULL == m) {
                  gpio_direction_output(all_pins[i][m][PIN_INDEX], PULL_DOWN);

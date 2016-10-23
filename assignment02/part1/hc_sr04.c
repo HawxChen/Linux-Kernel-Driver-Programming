@@ -173,15 +173,6 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
         printk(KERN_ALERT "echo_recv_isr: %d CM, newest idx:%d, from %s, mode:%d \n",distance, hcsr->cirb.newest, hcsr->hc_sr04->name, hcsr->kconfig.set.working_mode.mode);
     spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
-    spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode) {
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
-    } else {
-        spin_unlock(&(hcsr->kconfig.kconfig_lock));
-        wake_up_all(&(hcsr->wq));
-    }
-
-
 RETURNED:
     spin_lock(&(hcsr->ongoing_lock));
     hcsr->ongoing = STOPPING;
@@ -351,10 +342,18 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
         } else {
             spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
+RECHECK_BUF:
+            spin_lock(&(hcsr->cirb.cir_buf_lock));
             printk("read Blocked:%s \n", hcsr->hc_sr04->name);
-            wait_event_interruptible((hcsr->wq),BUFF_IN);
+            if(-1 == hcsr->cirb.newest) {
+                spin_unlock(&(hcsr->cirb.cir_buf_lock));
+                msleep(10);
+                goto RECHECK_BUF;
+            }
+            spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
             spin_lock(&(hcsr->cirb.cir_buf_lock));
+            printk(KERN_ALERT "read unBlocked-idx:%d,%d\n", hcsr->cirb.newest, (hcsr->cirb.buf.data[hcsr->cirb.newest]));
             ret = copy_to_user(buf, &(hcsr->cirb.buf.data[hcsr->cirb.newest]), sizeof(int));
             spin_unlock(&(hcsr->cirb.cir_buf_lock));
             if(ret) return -EAGAIN;
@@ -447,7 +446,6 @@ static void dereg_misc(struct miscdevice* md) {
 static void init_hcsr_struct(hcsr_struct* hcsr, struct miscdevice* md, char(*pins)[5][2], char*(*pin_str)[5]) {
     /*!!!!!*/
     //CHECK!!! INIT
-    init_waitqueue_head(&(hcsr->wq));
     hcsr->kthread = NULL;
     hcsr->hc_sr04 = md;
     hcsr->irq_done = IRQ_NOT_DONE;
@@ -457,7 +455,12 @@ static void init_hcsr_struct(hcsr_struct* hcsr, struct miscdevice* md, char(*pin
 //    hcsr->kconfig.set.mode = -1; 
     hcsr->cirb.newest = -1;
     hcsr->pin_str = pin_str;
+#ifdef __EXTENNTION__
+    hcsr->pv.cnt = 0;
+    sema_init(&(hcsr->pv.block_sem),0);
+    spin_lock_init(&(hcsr->pv.cnt_lock));
     spin_lock_init(&(hcsr->irq_done_lock));
+#endif
     spin_lock_init(&(hcsr->ongoing_lock));
     spin_lock_init(&(hcsr->cirb.cir_buf_lock));
     spin_lock_init(&(hcsr->kconfig.kconfig_lock));

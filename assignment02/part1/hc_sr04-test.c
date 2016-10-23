@@ -5,17 +5,18 @@
 #include<errno.h>
 #include<fcntl.h>
 #include<stdlib.h>
-#include<sys/ioctl.h>
 #include"hc_sr04_user.h"
-#include"hw_setting.h"
 int func(char(*pin)[5][2], char*(*pin_str)[5]) {
     printf("%d, %s\n", pin[1][3][0], pin_str[1][3]); 
     return 0;
 }
-typedef struct pdata {
-    int fd; char*name;
-    hcsr_set set;
-} pdata;
+void* readfunc(void* datain) {
+    int i = 0;
+    pdata* data = (pdata*) datain;
+    read(data->fd, &i, sizeof(int)); PRINT(data->name, data->fd);
+    printf("READ UNBLOCKED\n");
+    return NULL;
+}
 void* pfunction(void* datain) {
     int i = 0;
     pdata* data = (pdata*) datain;
@@ -74,8 +75,9 @@ int main(int argc, char*argv[]) {
     ret = ioctl(fdB, SETMODE, &Bset, 0);
     if(0 != ret)
         perror("SETMODE");
-    read(fdB, &i, sizeof(int)); PRINT("HCSR_2", fdB);
-    sleep(1);
+    Bdata.fd = fdB; Bdata.name = "HCSR_2";
+    pthread_create((pthread_t*)&i, NULL, readfunc, &Bdata); 
+    //sleep(1);
 
     i = 1; //start thread
     write(fdB, &i, sizeof(int)); PRINT("HCSR_2", fdB);
