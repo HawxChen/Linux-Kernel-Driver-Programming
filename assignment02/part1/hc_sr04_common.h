@@ -17,9 +17,14 @@ typedef struct pin_set {
     int echo_pin;
 } pin_set;
 
-typedef struct hcsr_set {
+typedef struct mode_set {
     int mode;
     unsigned int freq;
+} mode_set;
+
+typedef struct hcsr_set {
+    pin_set pins;
+    mode_set working_mode;
 } hcsr_set;
 
 typedef struct record {

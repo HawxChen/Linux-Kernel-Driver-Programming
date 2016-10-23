@@ -19,8 +19,8 @@ typedef struct pdata {
 void* pfunction(void* datain) {
     int i = 0;
     pdata* data = (pdata*) datain;
-    printf("mode:%d, freq:%u\n", data->set.mode, data->set.freq);
-    ioctl(data->fd, SETMODE,(int)&(data->set), 0);
+    printf("mode:%d, freq:%u\n", data->set.working_mode.mode, data->set.working_mode.freq);
+    ioctl(data->fd, SETMODE,(int)&(data->set.working_mode), 0);
     i = 1;
     read(data->fd, &i, sizeof(int));
     sleep(1);
@@ -44,8 +44,8 @@ int main(int argc, char*argv[]) {
     int i = 1;
     pin_set Apins = {HCSR_A_TRIG_PIN, HCSR_A_ECHO_PIN};
     pin_set Bpins = {HCSR_B_TRIG_PIN, HCSR_B_ECHO_PIN};
-    hcsr_set Aset = {0, 7};
-    hcsr_set Bset = {1, 7};
+    mode_set Aset = {0, 7};
+    mode_set Bset = {2, 7};
     int ret = 0;
     int fdA = open("/dev/HCSR_1", O_RDWR);
     ret = ioctl(fdA, SETPINS, &Apins, 0);
@@ -98,11 +98,11 @@ int main(int argc, char*argv[]) {
    
    //For multi-thread test
    Adata.fd = fdA;
-   Adata.set.mode = 1;
-   Adata.set.freq = 7;
+   Adata.set.working_mode.mode = 1;
+   Adata.set.working_mode.freq = 7;
    Bdata.fd = fdB;
-   Bdata.set.mode = 0;
-   Bdata.set.freq = 7;
+   Bdata.set.working_mode.mode = 0;
+   Bdata.set.working_mode.freq = 7;
    pthread_t tA, tB;
    pthread_create(&tA, NULL, pfunction, &Adata);
    pthread_create(&tB, NULL, pfunction, &Bdata);

@@ -84,7 +84,7 @@ static int hc_sr04_release(struct inode* node, struct file* file) {
 static int do_send(struct hcsr_struct* hcsr){
     unsigned int counter = 0;
     char cnt = 0;
-    int trig_pin = hcsr->pins[TRIGGER_INDEX][HC_GPIO_LINUX][PIN_INDEX];
+    int trig_pin = hcsr->kconfig.set.pins.trigger_pin;
 
     gpio_set_value(trig_pin, 1);
     udelay(10);
@@ -133,7 +133,7 @@ static int send(struct hcsr_struct* hcsr, int retry_cnt) {
 
 static int thread_function(void* data) {
     struct hcsr_struct* hcsr = (struct hcsr_struct*) data;
-    unsigned long ms = (1000)/(hcsr->kconfig.set.freq);
+    unsigned long ms = (1000)/(hcsr->kconfig.set.working_mode.freq);
     do {
         send(hcsr, 3);
         msleep_interruptible(ms);
@@ -170,11 +170,11 @@ static irqreturn_t echo_recv_isr(int irq, void *data) {
     spin_lock(&(hcsr->cirb.cir_buf_lock));
         hcsr->cirb.newest = (hcsr->cirb.newest+1)%NUM_DATA;
         hcsr->cirb.buf.data[(hcsr->cirb.newest)] = distance;
-        printk(KERN_ALERT "echo_recv_isr: %d CM, newest idx:%d, from %s, mode:%d \n",distance, hcsr->cirb.newest, hcsr->hc_sr04->name, hcsr->kconfig.set.mode);
+        printk(KERN_ALERT "echo_recv_isr: %d CM, newest idx:%d, from %s, mode:%d \n",distance, hcsr->cirb.newest, hcsr->hc_sr04->name, hcsr->kconfig.set.working_mode.mode);
     spin_unlock(&(hcsr->cirb.cir_buf_lock));
 
     spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(ONE_SHOT == hcsr->kconfig.set.mode) {
+    if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
     } else {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
@@ -193,7 +193,6 @@ RETURNED:
 static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
     pin_set pins;
     int ret = 0;
-    int i, j;
     struct hcsr_struct* hcsr = NULL; 
     printk(KERN_ALERT "ioctl_SETPIN\n");
     if(0 != copy_from_user(&pins, (void*)addr, sizeof(pin_set))) {
@@ -204,67 +203,30 @@ static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
 
     //hcsr = get_curr_hcsr(filp->f_dentry->d_inode);
     hcsr = (struct hcsr_struct*)filp->private_data;
-    //if(...)
-    if(hcsr->pins[TRIGGER_INDEX][HC_GPIO_LINUX][PIN_INDEX] != pins.trigger_pin  || hcsr->pins[ECHO_INDEX][HC_GPIO_LINUX][PIN_INDEX] != pins.echo_pin) {
-        ret = -EINVAL;
-        goto ERR_SETPIN_RETURN;
-    }
+    hcsr->kconfig.set.pins = pins;
+    printk(KERN_ALERT "ioctl_SETPIN: Trig:%d, Echo:%d\n", hcsr->kconfig.set.pins.trigger_pin, hcsr->kconfig.set.pins.echo_pin);
     
     spin_lock(&(hcsr->irq_done_lock));
     if(IRQ_DONE == hcsr->irq_done) {
         goto SUCCESS_SETPIN_RETURN;
     }
 
-    for(i = 0 ; i < SET_SIZE; i++) {
-        for(j = 0; j < PIN_SIZE; j++) {
-            if(-1 == hcsr->pins[i][j][PIN_INDEX])
-                continue;
-            ret = gpio_request(hcsr->pins[i][j][PIN_INDEX], hcsr->pin_str[i][j]);
-            if(ret) {
-                printk(KERN_ALERT "SETPIN: gpio_request,pin:%d, ret=%d\n", hcsr->pins[i][j][PIN_INDEX], ret);
-                goto ERR_SETPIN_RETURN;
-            }
-
-            //if(unlikely(ECHO_INDEX == i && HC_GPIO_LINUX == j)) 
-            if(ECHO_INDEX == i && HC_GPIO_LINUX == j) 
-            {
-                ret = gpio_direction_input(hcsr->pins[i][j][PIN_INDEX]);
-                if(ret) {
-                    printk(KERN_ALERT "SETPIN: gpio_dir_input:%d\n", ret);
-                    goto ERR_SETPIN_RETURN;
-                }
-            } 
-
-            else if(HC_GPIO_MUX0 == j || HC_GPIO_MUX1 == j) {
-                gpio_set_value(hcsr->pins[i][j][PIN_INDEX], hcsr->pins[i][j][VAL_INDEX]);
-            } 
-            
-            else {
-                ret = gpio_direction_output(hcsr->pins[i][j][PIN_INDEX], hcsr->pins[i][j][VAL_INDEX]);
-                if(ret) {
-                    printk(KERN_ALERT "SETPIN: gpio_dir_output:%d:%d\n", hcsr->pins[i][j][VAL_INDEX],ret);
-                    goto ERR_SETPIN_RETURN;
-                }
-            }
-        }
-    }
-
-    //For Echo ISR
-    ret = gpio_to_irq(hcsr->pins[ECHO_INDEX][HC_GPIO_LINUX][PIN_INDEX]);
-    if(0 > ret) {
-        printk(KERN_ALERT "SETPIN: gpio_to_irq:%d\n", ret);
-        goto ERR_SETPIN_RETURN;
-    } else {
-         hcsr->echo_isr_number = ret;
-    }
-    printk("HERE");
-    //ret = request_irq(hcsr->echo_isr_number, echo_recv_isr, IRQ_FLAG, hcsr->pin_str[ECHO_INDEX][HC_GPIO_LINUX], hcsr);
-    ret = request_irq(hcsr->echo_isr_number, echo_recv_isr, IRQ_FLAG, "HC-SR04", hcsr);
+    ret = setTrig(hcsr, hcsr->kconfig.set.pins.trigger_pin);
     if(ret) {
-        printk(KERN_ALERT "SETPIN: request_irq:%d\n", ret);
+        printk(KERN_ALERT "setTrig Error,pin %d", hcsr->kconfig.set.pins.trigger_pin);
+        goto ERR_SETPIN_RETURN;
+    }
+    ret = setEcho(hcsr, hcsr->kconfig.set.pins.echo_pin);
+    if(ret) {
+        printk(KERN_ALERT "setEcho Error,pin %d", hcsr->kconfig.set.pins.echo_pin);
         goto ERR_SETPIN_RETURN;
     }
 
+    ret = set_ISR(hcsr);
+    if(ret) {
+        printk(KERN_ALERT "setEcho:  set_ISR failed \n");
+        goto ERR_SETPIN_RETURN;
+    }
     goto SUCCESS_SETPIN_RETURN;
 
 ERR_SETPIN_RETURN:
@@ -281,11 +243,11 @@ SUCCESS_SETPIN_RETURN:
 
 static long ioctl_SETMODE(struct file* file, unsigned long addr) {
     int ret = 0;
-    hcsr_set set;
+    mode_set working_mode;
     struct hcsr_struct* hcsr = NULL;
 
     printk(KERN_ALERT "ioctl_SETMODE\n");
-    if(0 != copy_from_user(&set, (void*)addr, sizeof(hcsr_set))) {
+    if(0 != copy_from_user(&working_mode, (void*)addr, sizeof(mode_set))) {
         printk(KERN_ALERT "SETPIN: copy_from_user ERROR\n");
         ret = -EAGAIN;
         goto ERR_SETMODE_RETURN;
@@ -297,13 +259,13 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
     // still peeriodical sampling
     //before: one-shot ; after: one-shot
     /*For Periodic Task*/
-    hcsr->kconfig.set = set;
-    printk(KERN_ALERT "%s: mode:%d, freq:%d\n", hcsr->hc_sr04->name, hcsr->kconfig.set.mode, hcsr->kconfig.set.freq);
-    if(ONE_SHOT != hcsr->kconfig.set.mode && NULL != hcsr->kthread) {
+    hcsr->kconfig.set.working_mode = working_mode;
+    printk(KERN_ALERT "%s: mode:%d, freq:%d\n", hcsr->hc_sr04->name, hcsr->kconfig.set.working_mode.mode, hcsr->kconfig.set.working_mode.freq);
+    if(ONE_SHOT != hcsr->kconfig.set.working_mode.mode && NULL != hcsr->kthread) {
         printk(KERN_ALERT "Keep Thread Going with period change: %s\n", hcsr->hc_sr04->name);
         kthread_stop(hcsr->kthread);
         hcsr->kthread = kthread_run (thread_function, hcsr, hcsr->hc_sr04->name);
-    }else if(ONE_SHOT == hcsr->kconfig.set.mode && NULL != hcsr->kthread) {
+    }else if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode && NULL != hcsr->kthread) {
         printk(KERN_ALERT "Enter OneShot, Stop previous thread: %s\n", hcsr->hc_sr04->name);
         kthread_stop(hcsr->kthread);
         hcsr->kthread = NULL;
@@ -355,7 +317,7 @@ static ssize_t hc_sr04_read(struct file *file, char *buf, size_t count, loff_t *
     printk(KERN_ALERT "hc_sr04: Read\n");
 
     spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(ONE_SHOT == hcsr->kconfig.set.mode) {
+    if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
 
         do {
@@ -413,7 +375,7 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
 
 
     spin_lock(&(hcsr->kconfig.kconfig_lock));
-    if(ONE_SHOT == hcsr->kconfig.set.mode) {
+    if(ONE_SHOT == hcsr->kconfig.set.working_mode.mode) {
         spin_unlock(&(hcsr->kconfig.kconfig_lock));
 
         if(0 != act) {
@@ -483,8 +445,8 @@ static void init_hcsr_struct(hcsr_struct* hcsr, struct miscdevice* md, char(*pin
     hcsr->hc_sr04 = md;
     hcsr->irq_done = IRQ_NOT_DONE;
     hcsr->echo_isr_number = -1;
-    hcsr->pins = pins;
-    hcsr->kconfig.set.mode = 0;//__DEBUG__ ********
+    hcsr->pins_default = pins;
+    hcsr->kconfig.set.working_mode.mode = 0;//__DEBUG__ ********
 //    hcsr->kconfig.set.mode = -1; 
     hcsr->cirb.newest = -1;
     hcsr->pin_str = pin_str;
@@ -513,17 +475,8 @@ static int __init hc_sr04_init(void) {
 }
 
 void free_gpio(struct hcsr_struct* hcsr) {
-    int i, j;
-    for(i = 0; i < 2; i++) {
-        for(j = 0; j < PIN_SIZE; j++) {
-            if(-1 == hcsr->pins[i][j][PIN_INDEX]) {
-                continue;
-            }
-            //gpio_set_value(hcsr->pins[i][j][PIN_INDEX],0);
-            printk(KERN_ALERT "gpinfree:%d\n", hcsr->pins[i][j][PIN_INDEX]);
-            gpio_free(hcsr->pins[i][j][PIN_INDEX]);
-        }
-    }
+    freeTrig(hcsr->kconfig.set.pins.trigger_pin);
+    freeEcho(hcsr->kconfig.set.pins.echo_pin);
 }
 
 static void __exit hc_sr04_exit(void) {
