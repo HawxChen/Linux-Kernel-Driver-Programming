@@ -112,7 +112,7 @@ static void init_hcsr_struct(hcsr_struct* hcsr, char(*pins)[5][2], char*(*pin_st
     hcsr->irq_done = IRQ_NOT_DONE;
     hcsr->echo_isr_number = -1;
     hcsr->pins = pins;
-    hcsr->kconfig.set.mode = 0;//__DEBUG__ ********
+    hcsr->kconfig.set.working_mode.mode = 0;//__DEBUG__ ********
 //    hcsr->kconfig.set.mode = -1; 
     hcsr->cirb.newest = -1;
     hcsr->pin_str = pin_str;

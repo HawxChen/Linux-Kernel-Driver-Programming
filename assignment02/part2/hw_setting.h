@@ -15,6 +15,7 @@
 #define HC_GPIO_PULL  (2)
 #define HC_GPIO_MUX0  (3)
 #define HC_GPIO_MUX1  (4)
+#define PHY_IO_NUM    (20)
 
 char A_pins[2][5][2] = { 
     //Linux   Level             Pull            Mux0      Mux1
@@ -37,5 +38,28 @@ char B_pins[2][5][2] = {
 char* B_pin_str[2][5] = { 
     {"HCSR_B_TRIG", "HCSR_B_TRIG_LEVEL",  "HCSR_B_TRIG_PULL",  "HCSR_B_TRIG_MUX0", "HCSR_B_TRIG_MUX1"},
     {"HCSR_B_ECHO", "HCSR_B_ECHO_LEVEL",  "HCSR_B_ECHO_PULL",  "HCSR_B_ECHO_MUX0", "HCSR_B_ECHO_MUX1"},
+};
+
+char all_pins[PHY_IO_NUM][5][2] = {
+/*IO 0*/    {{11, 0},              {32,      -1}, {33,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO 1*/    {{12, 0},              {28,      -1}, {29,PULL_DOWN},   {45, 0}, {-1,-1}},
+/*IO 2*/    {{13, 0},              {34,      -1}, {35,PULL_DOWN},   {77, 0}, {-1,-1}},
+/*IO 3*/    {{14, 0},              {16,      -1}, {17,PULL_DOWN},   {76, 0}, {64, 0}},
+/*IO 4*/    {{ 6, 0},              {36,      -1}, {37,PULL_DOWN},   {-1,-1}, {-1,-1}}, //Defult
+/*IO 5*/    {{ 0, 0},              {18,      -1}, {19,PULL_DOWN},   {66, 0}, {-1,-1}},
+/*IO 6*/    {{1, 0},               {20,      -1}, {21,PULL_DOWN},   {68, 0}, {-1,-1}}, //Defult
+/*IO 7*/    {{38, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO 8*/    {{40, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO 9*/    {{ 4, 0},              {22,      -1}, {23,PULL_DOWN},   {70, 0}, {-1,-1}},
+/*IO10*/    {{10, 0},              {26,      -1}, {27,PULL_DOWN},   {74, 0}, {-1,-1}}, //Defult
+/*IO11*/    {{ 5, 0},              {24,      -1}, {25,PULL_DOWN},   {44, 0}, {72, 0}},
+/*IO12*/    {{15, 0},              {42,      -1}, {43,PULL_DOWN},   {-1,-1}, {-1,-1}},  //Defult
+/*IO13*/    {{ 7, 0},              {30,      -1}, {31,PULL_DOWN},   {46, 0}, {-1,-1}},
+/*IO14*/    {{48, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}}, //A0
+/*IO15*/    {{50, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO16*/    {{52, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO17*/    {{54, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO18*/    {{56, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
+/*IO19*/    {{58, 0},              {-1, DIR_OUT}, {-1,PULL_DOWN},   {-1,-1}, {-1,-1}},
 };
 #endif
