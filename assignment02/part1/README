@@ -1,4 +1,6 @@
 # KernelRocks
+#For advanced pratices, I implemented the PIN MUXING in kernel mode with the whole galileo GEN2 Table in hw_setting.h, so that users only have to enter Trigger and Echo pins in the user mode program file.
+
 Setup:
 On Gen2 Board:
 # mkdir -p /lib/modules/3.8.7-yocto-standard/kernel/drivers/hc_sr04/

@@ -344,7 +344,6 @@ RETURNED:
 
 static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
     pin_set pins;
-    pin_set pre_pins;
     int ret = 0;
     struct hcsr_struct* hcsr = NULL; 
     printk(KERN_ALERT "ioctl_SETPIN\n");
@@ -353,17 +352,19 @@ static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
         ret = -EAGAIN;
         goto ERR_SETPIN_RETURN;
     }
+    
     //hcsr = get_curr_hcsr(filp->f_dentry->d_inode);
     hcsr = (struct hcsr_struct*)filp->private_data;
     printk(KERN_ALERT "ioctl_SETPIN: Trig:%d, Echo:%d\n", pins.trigger_pin, pins.echo_pin);
     
     spin_lock(&(hcsr->irq_done_lock));
-    pre_pins = hcsr->kconfig.set.pins;
-    hcsr->kconfig.set.pins = pins;
     if(IRQ_DONE == hcsr->irq_done) {
-        //Extention: set and then set the same device again.
-        goto SUCCESS_SETPIN_RETURN;
+        free_irq(hcsr->echo_isr_number, hcsr);
     }
+    freeTrig(hcsr->kconfig.set.pins.trigger_pin);
+    freeEcho(hcsr->kconfig.set.pins.echo_pin);
+
+    hcsr->kconfig.set.pins = pins;
 
     ret = setTrig(hcsr, hcsr->kconfig.set.pins.trigger_pin);
     if(ret) {
@@ -384,14 +385,15 @@ static long ioctl_SETPINs(struct file* filp, unsigned long addr) {
     goto SUCCESS_SETPIN_RETURN;
 
 ERR_SETPIN_RETURN:
-    hcsr->kconfig.set.pins = pre_pins;
+    hcsr->kconfig.set.pins.trigger_pin = -1;
+    hcsr->kconfig.set.pins.echo_pin = -1;
     spin_unlock(&(hcsr->irq_done_lock));
     return ret;
 
 SUCCESS_SETPIN_RETURN:
     hcsr->irq_done = IRQ_DONE;
     spin_unlock(&(hcsr->irq_done_lock));
-    printk(KERN_ALERT "ioctl_SETPIN DONE\n");
+    printk(KERN_ALERT "ioctl_SETPIN Done: Trig:%d, Echo:%d\n", pins.trigger_pin, pins.echo_pin);
     return 0;
 }
 
