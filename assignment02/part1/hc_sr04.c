@@ -252,6 +252,7 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
         ret = -EAGAIN;
         goto ERR_SETMODE_RETURN;
     }
+    if(ONE_SHOT != working_mode.mode && PERIODIC != working_mode.mode) return -EINVAL;
     
 
     hcsr = (struct hcsr_struct*) file->private_data;
@@ -261,6 +262,7 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
     /*For Periodic Task*/
     hcsr->kconfig.set.working_mode = working_mode;
     printk(KERN_ALERT "%s: mode:%d, freq:%d\n", hcsr->hc_sr04->name, hcsr->kconfig.set.working_mode.mode, hcsr->kconfig.set.working_mode.freq);
+    spin_lock(&(hcsr->kthread_lock));
     if(ONE_SHOT != hcsr->kconfig.set.working_mode.mode && NULL != hcsr->kthread) {
         printk(KERN_ALERT "Keep Thread Going with period change: %s\n", hcsr->hc_sr04->name);
         kthread_stop(hcsr->kthread);
@@ -270,6 +272,7 @@ static long ioctl_SETMODE(struct file* file, unsigned long addr) {
         kthread_stop(hcsr->kthread);
         hcsr->kthread = NULL;
     }
+    spin_unlock(&(hcsr->kthread_lock));
     spin_unlock(&(hcsr->kconfig.kconfig_lock));
     goto SUCCESS_SETMODE_RETURN;
 
@@ -407,6 +410,10 @@ static ssize_t hc_sr04_write(struct file *file, const char __user *buf, size_t c
                 printk(KERN_ALERT "CALL ThreadStop");
                 kthread_stop(hcsr->kthread);
                 hcsr->kthread = NULL;
+
+                spin_lock(&(hcsr->ongoing_lock));
+                hcsr->ongoing = STOPPING;
+                spin_unlock(&(hcsr->ongoing_lock));
             } while(0);
         } else {
             do {
@@ -482,12 +489,16 @@ void free_gpio(struct hcsr_struct* hcsr) {
 static void __exit hc_sr04_exit(void) {
     printk(KERN_ALERT "hc_sr04: GoodBye Kernel World!!!\n");
 
+    if(NULL != hcA.kthread)
+        kthread_stop(hcA.kthread);
     if(IRQ_DONE == hcA.irq_done) {
         printk("---release hcA----\n");
         free_irq(hcA.echo_isr_number, &hcA);
         free_gpio(&hcA);  
     }
 
+    if(NULL != hcB.kthread)
+        kthread_stop(hcB.kthread);
     if(IRQ_DONE == hcB.irq_done) {
         printk("---release hcB----\n");
         free_irq(hcB.echo_isr_number, &hcB);

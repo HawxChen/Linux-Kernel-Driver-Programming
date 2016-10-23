@@ -45,7 +45,7 @@ int main(int argc, char*argv[]) {
     pin_set Apins = {HCSR_A_TRIG_PIN, HCSR_A_ECHO_PIN};
     pin_set Bpins = {HCSR_B_TRIG_PIN, HCSR_B_ECHO_PIN};
     mode_set Aset = {0, 7};
-    mode_set Bset = {2, 7};
+    mode_set Bset = {1, 7};
     int ret = 0;
     int fdA = open("/dev/HCSR_1", O_RDWR);
     ret = ioctl(fdA, SETPINS, &Apins, 0);
