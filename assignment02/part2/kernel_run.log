@@ -1,0 +1,76 @@
+[ 1802.785581] HCSR_device_init: INIT
+[ 1802.800485] HCSR_device_init: INIT DONE
+[ 1802.835061] HCSR_MODULE: Probe: INIT
+[ 1802.838680] hc_sr04: INIT: HCSR_1
+[ 1802.858682] hc_sr04: INIT DONE: HCSR_1
+[ 1802.862595] Probe device -- HCSR_1  20 
+[ 1802.866503] HCSR_MODULE: Probe: INIT Done
+[ 1802.874321] HCSR_MODULE: Probe: INIT
+[ 1802.877939] hc_sr04: INIT: HCSR_2
+[ 1802.894239] hc_sr04: INIT DONE: HCSR_2
+[ 1802.898034] Probe device -- HCSR_2  55 
+[ 1802.902009] HCSR_MODULE: Probe: INIT Done
+[ 1808.175310] trigger_store@ HCSRdevice1
+[ 1808.179179] HCSRdevice1: setTrig: Current: func:0, pin:6
+[ 1808.184640] HCSRdevice1: setTrig: Current: func:1, pin:36
+[ 1808.193705] trigger_store@ Done: HCSRdevice1
+[ 1808.200731] echo_store@ HCSRdevice1
+[ 1808.204989] HCSRdevice1: setEcho: Current: func:0, pin:15
+[ 1808.210560] HCSRdevice1: setEcho: Current: func:1, pin:42
+[ 1808.220700] HCSRdevice1: setEcho: Current: func:2, pin:43
+[ 1808.226638] echo_store@ Done: HCSRdevice1
+[ 1808.234474] mode_store@ HCSRdevice1
+[ 1808.238510] mode_store@ HCSRdevice1 Done
+[ 1808.248533] freq_store@ HCSRdevice1
+[ 1808.252473] freq_store@ HCSRdevice1 Done
+[ 1808.261376] enable_store@ HCSRdevice1
+[ 1808.266721] enable_store@ HCSRdevice1 Done
+[ 1808.272701] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 1808.620620] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 1808.970632] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 1809.293224] enable_store@ HCSRdevice1
+[ 1809.320324] enable_store@ HCSRdevice1 Done
+[ 1809.327075] mode_store@ HCSRdevice1
+[ 1809.330736] mode_store@ HCSRdevice1 Done
+[ 1809.340552] enable_store@ HCSRdevice1
+[ 1809.345889] enable_store@ HCSRdevice1 Done
+[ 1809.350675] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 1809.362131] trigger_store@ HCSRdevice2
+[ 1809.365941] HCSRdevice2: setTrig: Current: func:0, pin:10
+[ 1809.371510] HCSRdevice2: setTrig: Current: func:1, pin:26
+[ 1809.380646] HCSRdevice2: setTrig: Current: func:3, pin:74
+[ 1809.387432] trigger_store@ Done: HCSRdevice2
+[ 1809.395380] echo_store@ HCSRdevice2
+[ 1809.399176] HCSRdevice2: setEcho: Current: func:0, pin:1
+[ 1809.404638] HCSRdevice2: setEcho: Current: func:1, pin:20
+[ 1809.414755] HCSRdevice2: setEcho: Current: func:2, pin:21
+[ 1809.421953] HCSRdevice2: setEcho: Current: func:3, pin:68
+[ 1809.428240] echo_store@ Done: HCSRdevice2
+[ 1809.436035] mode_store@ HCSRdevice2
+[ 1809.439763] mode_store@ HCSRdevice2 Done
+[ 1809.449374] freq_store@ HCSRdevice2
+[ 1809.453029] freq_store@ HCSRdevice2 Done
+[ 1809.461718] enable_store@ HCSRdevice2
+[ 1809.466741] enable_store@ HCSRdevice2 Done
+[ 1809.472822] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 1809.680696] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 1809.700630] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 1809.890695] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 1810.050631] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 1810.100676] echo_recv_isr: 89 CM, newest idx:3, from HCSR_2, mode:1 
+[ 1810.310696] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 1810.400625] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 1810.520696] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 1810.730698] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 1810.750630] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 1810.940693] echo_recv_isr: 93 CM, newest idx:2, from HCSR_2, mode:1 
+[ 1811.100646] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 1811.150686] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 1811.360695] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 1811.450620] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 1811.492143] enable_store@ HCSRdevice1
+[ 1811.570686] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 1811.780696] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 1811.800284] enable_store@ HCSRdevice1 Done
+[ 1811.805614] enable_store@ HCSRdevice2
+[ 1811.990333] enable_store@ HCSRdevice2 Done
