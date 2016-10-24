@@ -1,76 +1,241 @@
-[ 1802.785581] HCSR_device_init: INIT
-[ 1802.800485] HCSR_device_init: INIT DONE
-[ 1802.835061] HCSR_MODULE: Probe: INIT
-[ 1802.838680] hc_sr04: INIT: HCSR_1
-[ 1802.858682] hc_sr04: INIT DONE: HCSR_1
-[ 1802.862595] Probe device -- HCSR_1  20 
-[ 1802.866503] HCSR_MODULE: Probe: INIT Done
-[ 1802.874321] HCSR_MODULE: Probe: INIT
-[ 1802.877939] hc_sr04: INIT: HCSR_2
-[ 1802.894239] hc_sr04: INIT DONE: HCSR_2
-[ 1802.898034] Probe device -- HCSR_2  55 
-[ 1802.902009] HCSR_MODULE: Probe: INIT Done
-[ 1808.175310] trigger_store@ HCSRdevice1
-[ 1808.179179] HCSRdevice1: setTrig: Current: func:0, pin:6
-[ 1808.184640] HCSRdevice1: setTrig: Current: func:1, pin:36
-[ 1808.193705] trigger_store@ Done: HCSRdevice1
-[ 1808.200731] echo_store@ HCSRdevice1
-[ 1808.204989] HCSRdevice1: setEcho: Current: func:0, pin:15
-[ 1808.210560] HCSRdevice1: setEcho: Current: func:1, pin:42
-[ 1808.220700] HCSRdevice1: setEcho: Current: func:2, pin:43
-[ 1808.226638] echo_store@ Done: HCSRdevice1
-[ 1808.234474] mode_store@ HCSRdevice1
-[ 1808.238510] mode_store@ HCSRdevice1 Done
-[ 1808.248533] freq_store@ HCSRdevice1
-[ 1808.252473] freq_store@ HCSRdevice1 Done
-[ 1808.261376] enable_store@ HCSRdevice1
-[ 1808.266721] enable_store@ HCSRdevice1 Done
-[ 1808.272701] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
-[ 1808.620620] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
-[ 1808.970632] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
-[ 1809.293224] enable_store@ HCSRdevice1
-[ 1809.320324] enable_store@ HCSRdevice1 Done
-[ 1809.327075] mode_store@ HCSRdevice1
-[ 1809.330736] mode_store@ HCSRdevice1 Done
-[ 1809.340552] enable_store@ HCSRdevice1
-[ 1809.345889] enable_store@ HCSRdevice1 Done
-[ 1809.350675] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
-[ 1809.362131] trigger_store@ HCSRdevice2
-[ 1809.365941] HCSRdevice2: setTrig: Current: func:0, pin:10
-[ 1809.371510] HCSRdevice2: setTrig: Current: func:1, pin:26
-[ 1809.380646] HCSRdevice2: setTrig: Current: func:3, pin:74
-[ 1809.387432] trigger_store@ Done: HCSRdevice2
-[ 1809.395380] echo_store@ HCSRdevice2
-[ 1809.399176] HCSRdevice2: setEcho: Current: func:0, pin:1
-[ 1809.404638] HCSRdevice2: setEcho: Current: func:1, pin:20
-[ 1809.414755] HCSRdevice2: setEcho: Current: func:2, pin:21
-[ 1809.421953] HCSRdevice2: setEcho: Current: func:3, pin:68
-[ 1809.428240] echo_store@ Done: HCSRdevice2
-[ 1809.436035] mode_store@ HCSRdevice2
-[ 1809.439763] mode_store@ HCSRdevice2 Done
-[ 1809.449374] freq_store@ HCSRdevice2
-[ 1809.453029] freq_store@ HCSRdevice2 Done
-[ 1809.461718] enable_store@ HCSRdevice2
-[ 1809.466741] enable_store@ HCSRdevice2 Done
-[ 1809.472822] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
-[ 1809.680696] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
-[ 1809.700630] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
-[ 1809.890695] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
-[ 1810.050631] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
-[ 1810.100676] echo_recv_isr: 89 CM, newest idx:3, from HCSR_2, mode:1 
-[ 1810.310696] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
-[ 1810.400625] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
-[ 1810.520696] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
-[ 1810.730698] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
-[ 1810.750630] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
-[ 1810.940693] echo_recv_isr: 93 CM, newest idx:2, from HCSR_2, mode:1 
-[ 1811.100646] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
-[ 1811.150686] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
-[ 1811.360695] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
-[ 1811.450620] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
-[ 1811.492143] enable_store@ HCSRdevice1
-[ 1811.570686] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
-[ 1811.780696] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
-[ 1811.800284] enable_store@ HCSRdevice1 Done
-[ 1811.805614] enable_store@ HCSRdevice2
-[ 1811.990333] enable_store@ HCSRdevice2 Done
+[ 5825.418878] HCSR_device_init: INIT
+[ 5825.428115] HCSR_device_init: INIT DONE
+[ 5825.470410] HCSR_MODULE: Probe: INIT
+[ 5825.474028] hc_sr04: INIT: HCSR_1
+[ 5825.492657] hc_sr04: INIT DONE: HCSR_1
+[ 5825.496509] Probe device -- HCSR_1  20 
+[ 5825.500474] HCSR_MODULE: Probe: INIT Done
+[ 5825.509799] HCSR_MODULE: Probe: INIT
+[ 5825.513535] hc_sr04: INIT: HCSR_2
+[ 5825.530249] hc_sr04: INIT DONE: HCSR_2
+[ 5825.534044] Probe device -- HCSR_2  55 
+[ 5825.537959] HCSR_MODULE: Probe: INIT Done
+[ 5829.457808] hc_sr04: Open
+[ 5829.460589] Open: HCSR_1
+[ 5829.463011] hc_sr04: Open Done
+[ 5829.469643] ioctl
+[ 5829.471721] ioctl_SETPIN
+[ 5829.474296] ioctl_SETPIN: Trig:6, Echo:15
+[ 5829.478342] HCSRdevice1: setTrig: Current: func:0, pin:6
+[ 5829.483807] HCSRdevice1: setTrig: Current: func:1, pin:36
+[ 5829.495111] HCSRdevice1: setEcho: Current: func:0, pin:15
+[ 5829.500685] HCSRdevice1: setEcho: Current: func:1, pin:42
+[ 5829.508824] HCSRdevice1: setEcho: Current: func:2, pin:43
+[ 5829.516024] ioctl_SETPIN Done: Trig:6, Echo:15
+[ 5829.520621] ioctl DONE
+[ 5829.528061] hc_sr04: Open
+[ 5829.531121] Open: HCSR_2
+[ 5829.533560] hc_sr04: Open Done
+[ 5829.540238] ioctl
+[ 5829.542201] ioctl_SETPIN
+[ 5829.544759] ioctl_SETPIN: Trig:10, Echo:1
+[ 5829.548804] HCSRdevice2: setTrig: Current: func:0, pin:10
+[ 5829.554365] HCSRdevice2: setTrig: Current: func:1, pin:26
+[ 5829.565574] HCSRdevice2: setTrig: Current: func:3, pin:74
+[ 5829.573739] HCSRdevice2: setEcho: Current: func:0, pin:1
+[ 5829.579104] HCSRdevice2: setEcho: Current: func:1, pin:20
+[ 5829.587415] HCSRdevice2: setEcho: Current: func:2, pin:21
+[ 5829.594540] HCSRdevice2: setEcho: Current: func:3, pin:68
+[ 5829.602219] ioctl_SETPIN Done: Trig:10, Echo:1
+[ 5829.606698] ioctl DONE
+[ 5829.613655] ioctl
+[ 5829.615824] ioctl_SETMODE
+[ 5829.618496] HCSR_1: mode:0, freq:7
+[ 5829.622033] ioctl_SETMODE DONE
+[ 5829.625154] ioctl DONE
+[ 5829.632082] hc_sr04: Write
+[ 5829.635347] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 5829.641865] hc_sr04: Write Done
+[ 5829.650158] hc_sr04: Read
+[ 5829.653334] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 5829.662898] hc_sr04: Read Done
+[ 5829.667684] hc_sr04: Write
+[ 5829.673345] echo_recv_isr: 83 CM, newest idx:2, from HCSR_1, mode:0 
+[ 5829.679764] hc_sr04: Write Done
+[ 5829.685382] hc_sr04: Read
+[ 5829.688556] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 5829.697441] hc_sr04: Read Done
+[ 5829.703294] hc_sr04: Write
+[ 5829.706794] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 5829.713323] hc_sr04: Write Done
+[ 5829.720293] hc_sr04: Read
+[ 5829.723468] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 5829.729882] hc_sr04: Read Done
+[ 5829.738108] hc_sr04: Read
+[ 5829.741692] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:0 
+[ 5829.750281] hc_sr04: Read Done
+[ 5829.753391] hc_sr04: Read
+[ 5829.756548] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:0 
+[ 5829.766582] hc_sr04: Read Done
+[ 5829.772611] hc_sr04: Read
+[ 5829.776026] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:0 
+[ 5829.784813] hc_sr04: Read Done
+[ 5829.787922] hc_sr04: Read
+[ 5829.791193] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 5829.800280] hc_sr04: Read Done
+[ 5829.804970] ioctl
+[ 5829.807222] ioctl_SETMODE
+[ 5829.809894] HCSR_2: mode:1, freq:7
+[ 5829.813431] ioctl_SETMODE DONE
+[ 5829.816517] ioctl DONE
+[ 5829.826395] hc_sr04: Write
+[ 5829.834883] hc_sr04: Read
+[ 5829.837553] read Blocked:HCSR_2 
+[ 5829.829378] Write: Start thread from HCSR_2
+[ 5829.843228] hc_sr04: Write Done
+[ 5829.846615] hc_sr04: Read
+[ 5829.849262] read Blocked:HCSR_2 
+[ 5829.857437] echo_recv_isr: 95 CM, newest idx:0, from HCSR_2, mode:1 
+[ 5829.865717] read Blocked:HCSR_2 
+[ 5829.868990] read unBlocked-idx:0,95
+[ 5829.874863] read Blocked:HCSR_2 
+[ 5829.878136] read unBlocked-idx:0,95
+[ 5829.883949] hc_sr04: Read Done
+[ 5829.887293] hc_sr04: Read
+[ 5829.889954] hc_sr04: Read Done
+[ 5829.896212] hc_sr04: Read Done
+[ 5830.020693] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 5830.180696] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 5830.340694] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 5830.500692] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 5830.660693] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 5830.820693] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 5830.902681] hc_sr04: Write
+[ 5830.905431] CALL ThreadStop
+[ 5830.980332] hc_sr04: Write Done
+[ 5830.983993] hc_sr04: Read
+[ 5830.986655] hc_sr04: Read Done
+[ 5830.994916] ioctl
+[ 5830.996880] ioctl_SETMODE
+[ 5830.999531] HCSR_2: mode:0, freq:7
+[ 5831.003047] ioctl_SETMODE DONE
+[ 5831.006175] ioctl DONE
+[ 5831.014803] hc_sr04: Write
+[ 5831.018072] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:0 
+[ 5831.024609] hc_sr04: Write Done
+[ 5831.031925] hc_sr04: Read
+[ 5831.035096] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:0 
+[ 5831.044728] hc_sr04: Read Done
+[ 5831.049974] hc_sr04: Write
+[ 5831.055548] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:0 
+[ 5831.062046] hc_sr04: Write Done
+[ 5831.068440] hc_sr04: Read
+[ 5831.071793] echo_recv_isr: 93 CM, newest idx:1, from HCSR_2, mode:0 
+[ 5831.081075] hc_sr04: Read Done
+[ 5831.088286] ioctl
+[ 5831.090654] ioctl_SETMODE
+[ 5831.098181] ioctl
+[ 5831.100552] ioctl_SETMODE
+[ 5831.103807] HCSR_2: mode:0, freq:7
+[ 5831.107246] ioctl_SETMODE DONE
+[ 5831.110410] ioctl DONE
+[ 5831.112848] HCSR_1: mode:1, freq:7
+[ 5831.116325] ioctl_SETMODE DONE
+[ 5831.119408] ioctl DONE
+[ 5831.129906] hc_sr04: Read
+[ 5831.132877] hc_sr04: Read Done
+[ 5831.135989] hc_sr04: Read
+[ 5831.138634] hc_sr04: Read Done
+[ 5831.141843] hc_sr04: Read
+[ 5831.145121] echo_recv_isr: 92 CM, newest idx:2, from HCSR_2, mode:0 
+[ 5831.158273] hc_sr04: Read Done
+[ 5831.161514] hc_sr04: Read
+[ 5831.164784] echo_recv_isr: 91 CM, newest idx:3, from HCSR_2, mode:0 
+[ 5831.175224] hc_sr04: Read Done
+[ 5832.175318] hc_sr04: Write
+[ 5832.182270] hc_sr04: Write
+[ 5832.189429] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:0 
+[ 5832.195977] hc_sr04: Write Done
+[ 5832.202004] hc_sr04: Read
+[ 5832.205262] echo_recv_isr: 95 CM, newest idx:1, from HCSR_2, mode:0 
+[ 5832.178073] Write: Start thread from HCSR_1
+[ 5832.212037] hc_sr04: Write Done
+[ 5832.215426] hc_sr04: Read
+[ 5832.218072] hc_sr04: Read Done
+[ 5832.221785] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 5832.236100] hc_sr04: Read Done
+[ 5832.380631] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 5832.540629] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 5832.700620] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 5832.860631] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 5833.020628] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 5833.180627] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 5833.242518] hc_sr04: Write
+[ 5833.245350] hc_sr04: Write
+[ 5833.248678] echo_recv_isr: 93 CM, newest idx:2, from HCSR_2, mode:0 
+[ 5833.255212] hc_sr04: Write Done
+[ 5833.266025] hc_sr04: Read
+[ 5833.269282] echo_recv_isr: 95 CM, newest idx:3, from HCSR_2, mode:0 
+[ 5833.276268] hc_sr04: Read Done
+[ 5833.263124] CALL ThreadStop
+[ 5833.340281] hc_sr04: Write Done
+[ 5833.343670] hc_sr04: Read
+[ 5833.346314] hc_sr04: Read Done
+[ 5833.357564] hc_sr04: Release
+[ 5833.360603] hc_sr04: Release Done
+[ 5833.366235] hc_sr04: Release
+[ 5833.369155] hc_sr04: Release Done
+[ 5844.036833] trigger_store@ HCSRdevice1
+[ 5844.042366] HCSRdevice1: setTrig: Current: func:0, pin:6
+[ 5844.047732] HCSRdevice1: setTrig: Current: func:1, pin:36
+[ 5844.056078] trigger_store@ Done: HCSRdevice1
+[ 5844.062957] echo_store@ HCSRdevice1
+[ 5844.067271] HCSRdevice1: setEcho: Current: func:0, pin:15
+[ 5844.072850] HCSRdevice1: setEcho: Current: func:1, pin:42
+[ 5844.080773] HCSRdevice1: setEcho: Current: func:2, pin:43
+[ 5844.090163] echo_store@ Done: HCSRdevice1
+[ 5844.096944] mode_store@ HCSRdevice1
+[ 5844.101080] mode_store@ HCSRdevice1 Done
+[ 5844.111190] freq_store@ HCSRdevice1
+[ 5844.114730] freq_store@ HCSRdevice1 Done
+[ 5844.123917] enable_store@ HCSRdevice1
+[ 5844.127929] enable_store@ HCSRdevice1 Done
+[ 5844.135448] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 5844.490658] echo_recv_isr: 83 CM, newest idx:0, from HCSR_1, mode:1 
+[ 5844.840621] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 5845.156306] enable_store@ HCSRdevice1
+[ 5845.190333] enable_store@ HCSRdevice1 Done
+[ 5845.197360] mode_store@ HCSRdevice1
+[ 5845.201323] mode_store@ HCSRdevice1 Done
+[ 5845.211279] enable_store@ HCSRdevice1
+[ 5845.216667] enable_store@ HCSRdevice1 Done
+[ 5845.222775] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 5845.233370] trigger_store@ HCSRdevice2
+[ 5845.237608] HCSRdevice2: setTrig: Current: func:0, pin:10
+[ 5845.243502] HCSRdevice2: setTrig: Current: func:1, pin:26
+[ 5845.250782] HCSRdevice2: setTrig: Current: func:3, pin:74
+[ 5845.259966] trigger_store@ Done: HCSRdevice2
+[ 5845.267091] echo_store@ HCSRdevice2
+[ 5845.273762] HCSRdevice2: setEcho: Current: func:0, pin:1
+[ 5845.279185] HCSRdevice2: setEcho: Current: func:1, pin:20
+[ 5845.287484] HCSRdevice2: setEcho: Current: func:2, pin:21
+[ 5845.294587] HCSRdevice2: setEcho: Current: func:3, pin:68
+[ 5845.302358] echo_store@ Done: HCSRdevice2
+[ 5845.308879] mode_store@ HCSRdevice2
+[ 5845.313017] mode_store@ HCSRdevice2 Done
+[ 5845.322945] freq_store@ HCSRdevice2
+[ 5845.326784] freq_store@ HCSRdevice2 Done
+[ 5845.335747] enable_store@ HCSRdevice2
+[ 5845.341312] enable_store@ HCSRdevice2 Done
+[ 5845.348455] echo_recv_isr: 95 CM, newest idx:4, from HCSR_2, mode:1 
+[ 5845.560687] echo_recv_isr: 93 CM, newest idx:0, from HCSR_2, mode:1 
+[ 5845.571714] echo_recv_isr: 83 CM, newest idx:3, from HCSR_1, mode:1 
+[ 5845.770695] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 5845.920629] echo_recv_isr: 82 CM, newest idx:4, from HCSR_1, mode:1 
+[ 5845.980682] echo_recv_isr: 93 CM, newest idx:2, from HCSR_2, mode:1 
+[ 5846.190694] echo_recv_isr: 94 CM, newest idx:3, from HCSR_2, mode:1 
+[ 5846.270626] echo_recv_isr: 82 CM, newest idx:0, from HCSR_1, mode:1 
+[ 5846.400692] echo_recv_isr: 93 CM, newest idx:4, from HCSR_2, mode:1 
+[ 5846.610754] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 5846.621712] echo_recv_isr: 82 CM, newest idx:1, from HCSR_1, mode:1 
+[ 5846.820694] echo_recv_isr: 94 CM, newest idx:1, from HCSR_2, mode:1 
+[ 5846.970626] echo_recv_isr: 82 CM, newest idx:2, from HCSR_1, mode:1 
+[ 5847.030687] echo_recv_isr: 94 CM, newest idx:2, from HCSR_2, mode:1 
+[ 5847.240691] echo_recv_isr: 93 CM, newest idx:3, from HCSR_2, mode:1 
+[ 5847.320621] echo_recv_isr: 82 CM, newest idx:3, from HCSR_1, mode:1 
+[ 5847.367470] enable_store@ HCSRdevice1
+[ 5847.450694] echo_recv_isr: 94 CM, newest idx:4, from HCSR_2, mode:1 
+[ 5847.660694] echo_recv_isr: 94 CM, newest idx:0, from HCSR_2, mode:1 
+[ 5847.671367] enable_store@ HCSRdevice1 Done
+[ 5847.676706] enable_store@ HCSRdevice2
+[ 5847.870333] enable_store@ HCSRdevice2 Done

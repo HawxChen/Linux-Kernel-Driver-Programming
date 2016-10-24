@@ -1,14 +1,26 @@
 # KernelRocks
+
+Setup:
+On Gen2 Board:
+#mkdir -p /lib/modules/3.8.7-yocto-standard/kernel/drivers/HCSR
+
 Makefile:
 KDIR should be the path of kernel source directory
 
 Install it
   #make
   #make inall
+  #make depmod
+  #make inall
 
 Uninstall:
   #make unall
 
-Demo for part1:
+Demo for part2:
+ #./HCSR-test
  #./test.sh
  #dmesg
+
+
+#Demo Record
+#kernel_run.log

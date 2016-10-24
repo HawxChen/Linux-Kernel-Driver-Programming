@@ -11,6 +11,8 @@ Makefile:
 Install it
   #make
   #make install
+  #make depmod
+  #make install
 
 Uninstall:
   #make uninstall
