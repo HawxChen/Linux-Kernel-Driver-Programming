@@ -1,7 +1,7 @@
 /*
  * A sample program to show the binding of platform driver and device.
  */
-#include"HCSR_kernel.h"
+#include "HCSR_kernel_common.h"
 
 static struct HCSR_device HCSR_1_dev = {
     .name	= "HCSR_1",

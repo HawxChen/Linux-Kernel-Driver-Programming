@@ -22,7 +22,7 @@ XCC = $(XBIN)/i586-poky-linux-gcc
 all: $(TESTER_PLAT)
 	make ARCH=$(ARCH) CORSS_COMPILE=$(CORSS_COMPILE) -C $(KDIR) SUBDIRS=$(PWD) modules
 
-$(TESTER_PLAT): $(TESTER_PLAT).c $(PLAT)_user.h $(PLAT)_common.h $(PLAT)_kernel.h
+$(TESTER_PLAT): $(TESTER_PLAT).c
 	$(XCC) $(TESTER_FLAGS) -o $(TESTER_PLAT) $(TESTER_PLAT).c -lpthread
 
 
