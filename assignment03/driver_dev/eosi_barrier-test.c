@@ -67,6 +67,20 @@ void dev_run() {
     pthread_join(t1, NULL);
 }
 
+unsigned int id1, id2, id3;
+void init_test () {
+    barrier_init(3, &id1);
+    barrier_init(3, &id2);
+    barrier_init(3, &id3);
+
+    barrier_wait(id1);
+    barrier_wait(id2);
+    barrier_wait(id3);
+
+    //barrier_destroy(id1);
+    //barrier_destroy(id2);
+    //barrier_destroy(id3);
+}
 int main(int argc, char*argv[]) {
     if(2 == argc) {
         sleep_time = atoi(argv[1]);
@@ -78,13 +92,15 @@ int main(int argc, char*argv[]) {
     eosi_barrer_fd = open("/dev/eosi_barrier_1", O_RDWR);
     if(0 == fork()) {
         //fork_run();
-        dev_run();
+        //dev_run();
+        init_test ();
         return 0;
     }
     sleep(5);
     puts("--------");
 
     if(0 == fork()) {
+        //init_test ();
         //fork_run();
         return 0;
     }

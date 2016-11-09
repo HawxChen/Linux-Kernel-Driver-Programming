@@ -23,7 +23,8 @@ typedef struct per_tgid {
   pid_t tgid;
   unsigned int bid_count;
   int barrier_size;
-  barrier_struct barrier_dummy_head;
+  spinlock_t barrier_head_lock;
+  struct list_head barrier_head;
   struct list_head list;
 } per_tgid;
 static int eosi_barrier_open(struct inode* node, struct file* file);
