@@ -8,6 +8,7 @@
 #include<sys/wait.h>
 #include<sys/types.h>
 #include<errno.h>
+#include<features.h>
 #include"eosi_barrier_user.h"
 static unsigned int sleep_time = 1;
 
@@ -18,9 +19,9 @@ void* pfunction(void* datain) {
     printf("pid: 0x%x, tid: 0x%x\n", (int)getpid(), (unsigned int)pthread_self());
 
 re_cnt:
-    if(cnt == 100) return NULL;
+    if(cnt++ == 3) return 0;
+    sleep(1);
     barrier_wait(barrier_id);
-    cnt++;
     goto re_cnt;
 
     return NULL;
@@ -28,8 +29,7 @@ re_cnt:
 
 void* run_barriers(void* datain) {
     int num_threads = *(int*)datain;
-    pthread_t tids[num_threads];
-    int idx = 0;
+    pthread_t tids[num_threads]; int idx = 0;
     unsigned int barrier_id = 0;
 
     barrier_init(num_threads, &barrier_id);
@@ -45,6 +45,7 @@ void* run_barriers(void* datain) {
     return NULL;
 }
 
+//for official use 
 void fork_run() {
     int t1_num = 5;
     int t2_num = 20;
@@ -57,6 +58,15 @@ void fork_run() {
     pthread_join(t1, NULL);
     pthread_join(t2, NULL);
 }
+
+//for development use
+void dev_run() {
+    pthread_t t1;
+    int t_num = 2;
+    pthread_create(&t1, NULL, run_barriers, &t_num);
+    pthread_join(t1, NULL);
+}
+
 int main(int argc, char*argv[]) {
     if(2 == argc) {
         sleep_time = atoi(argv[1]);
@@ -65,13 +75,17 @@ int main(int argc, char*argv[]) {
         return 0;
     }
 
+    eosi_barrer_fd = open("/dev/eosi_barrier_1", O_RDWR);
     if(0 == fork()) {
         //fork_run();
+        dev_run();
         return 0;
     }
+    sleep(5);
+    puts("--------");
 
     if(0 == fork()) {
-        fork_run();
+        //fork_run();
         return 0;
     }
 

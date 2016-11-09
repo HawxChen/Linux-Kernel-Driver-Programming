@@ -1,6 +1,6 @@
 NAME = eosi_barrier
 TESTER_NAME = $(NAME)-test
-TESTER_FLAGS = -Wall -g -lpthread -std=c99
+TESTER_FLAGS = -Wall -g -lpthread
 
 IOT_HOME = /opt/iot-devkit/1.7.3/sysroots
 #KDIR := /root/source/galileo/galileo-linux-stable_backup
@@ -26,14 +26,15 @@ $(TESTER_NAME): $(TESTER_NAME).c $(NAME)_user.h $(NAME)_common.h $(NAME)_kernel.
 
 .PHONY: install uninstall dellog reinstall
 install:
-	cp -f `pwd`/hc_sr04.ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/hc_sr04/hc_sr04.ko 
-	modprobe hc_sr04
+	cp -f `pwd`/eosi_barrier.ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/eosi_barrier/eosi_barrier.ko 
+	modprobe eosi_barrier
 uninstall:
-	modprobe -r hc_sr04
+	modprobe -r eosi_barrier
 
 reinstall:
-	modprobe -r hc_sr04
-	modprobe hc_sr04
+	modprobe -r eosi_barrier
+	cp -f `pwd`/eosi_barrier.ko /lib/modules/3.8.7-yocto-standard/kernel/drivers/eosi_barrier/eosi_barrier.ko 
+	modprobe eosi_barrier
 
 dellog:
 	cat /dev/null >  /var/log/kern.log
