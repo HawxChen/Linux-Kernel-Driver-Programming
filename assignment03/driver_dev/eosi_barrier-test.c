@@ -10,17 +10,17 @@
 #include<errno.h>
 #include<features.h>
 #include"eosi_barrier_user.h"
-static unsigned int sleep_time = 1;
+static unsigned int sleep_time = 500;
 
 void* pfunction(void* datain) {
     int cnt = 0;
     unsigned int barrier_id = *(unsigned int*) datain;
 
-    printf("pid: 0x%x, tid: 0x%x\n", (int)getpid(), (unsigned int)pthread_self());
+    printf("pid: %d, tid: %d\n", (int)getpid(), (unsigned int)pthread_self());
 
 re_cnt:
-    if(cnt++ == 3) return 0;
-    sleep(1);
+    if(cnt++ == 2) return 0;
+    usleep(sleep_time);
     barrier_wait(barrier_id);
     goto re_cnt;
 
@@ -29,10 +29,13 @@ re_cnt:
 
 void* run_barriers(void* datain) {
     int num_threads = *(int*)datain;
-    pthread_t tids[num_threads]; int idx = 0;
+    pthread_t tids[num_threads]; 
+    int idx = 0;
     unsigned int barrier_id = 0;
+   
 
     barrier_init(num_threads, &barrier_id);
+    printf("pid: %d, tid: %d, id:%d\n", (int)getpid(), (unsigned int)pthread_self(), barrier_id);
     for(idx = 0; idx < num_threads; idx++) {
         pthread_create(&tids[idx], NULL, pfunction, &barrier_id);
     }
@@ -62,11 +65,18 @@ void fork_run() {
 //for development use
 void dev_run() {
     pthread_t t1;
-    int t_num = 2;
+    int t_num = 3;
     pthread_create(&t1, NULL, run_barriers, &t_num);
     pthread_join(t1, NULL);
 }
 
+void dev_run2() {
+    pthread_t t1;
+    int t2_num =2;
+    pthread_create(&t1, NULL, run_barriers, &t2_num);
+    pthread_join(t1, NULL);
+}
+/*
 unsigned int id1, id2, id3;
 void init_test () {
     barrier_init(3, &id1);
@@ -77,10 +87,11 @@ void init_test () {
     barrier_wait(id2);
     barrier_wait(id3);
 
-    //barrier_destroy(id1);
-    //barrier_destroy(id2);
-    //barrier_destroy(id3);
+    barrier_destroy(id1);
+    barrier_destroy(id2);
+    barrier_destroy(id3);
 }
+*/
 int main(int argc, char*argv[]) {
     if(2 == argc) {
         sleep_time = atoi(argv[1]);
@@ -92,16 +103,15 @@ int main(int argc, char*argv[]) {
     eosi_barrer_fd = open("/dev/eosi_barrier_1", O_RDWR);
     if(0 == fork()) {
         //fork_run();
-        //dev_run();
-        init_test ();
+        dev_run();
         return 0;
     }
-    sleep(5);
     puts("--------");
 
     if(0 == fork()) {
         //init_test ();
         //fork_run();
+        dev_run2();
         return 0;
     }
 

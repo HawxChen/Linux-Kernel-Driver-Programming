@@ -19,6 +19,7 @@ int barrier_wait(unsigned int barrier_id) {
 }
 
 int barrier_destroy(unsigned int barrier_id) {
+    ioctl(eosi_barrer_fd, BARRIER_DESTROY, barrier_id);
     return 0;
 }
 

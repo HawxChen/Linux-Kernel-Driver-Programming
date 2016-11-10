@@ -77,6 +77,7 @@ per_tgid* get_ptgid(pid_t tgid){
     spin_lock(&g_tgid_list_lock);
     list_for_each(scan, &tgid_list) {
         ptgid = list_entry(scan, per_tgid, list);
+        printk(KERN_ALERT "get_ptgid: required_tgid:%d, tgid:%d", tgid, ptgid->tgid);
         if(ptgid->tgid == tgid) {
             spin_unlock(&g_tgid_list_lock);
             return  ptgid;
@@ -95,6 +96,7 @@ barrier_struct* get_barrier_from_ptgid(per_tgid* ptgid, int barrier_id) {
     spin_lock(&(ptgid->barrier_head_lock));
     list_for_each(scan, &(ptgid->barrier_head)) {
         barrier = list_entry(scan, barrier_struct, list);
+        printk(KERN_ALERT "get_barrier:tgid:%d, required_bid:%d, bid:%d", ptgid->tgid, barrier_id, barrier->id);
         if(barrier->id == barrier_id) {
             spin_unlock(&(ptgid->barrier_head_lock));
             return  barrier;
@@ -107,7 +109,7 @@ barrier_struct* get_barrier_from_ptgid(per_tgid* ptgid, int barrier_id) {
 }
 
 barrier_struct* get_barrier_only_from_id(int barrier_id) {
-    return get_barrier_from_ptgid(get_ptgid(task_pid_vnr(current)), barrier_id);
+    return get_barrier_from_ptgid(get_ptgid(task_tgid_vnr(current)), barrier_id);
 }
 
 //barrier_struct* barray[10];
@@ -167,7 +169,7 @@ int barrier_init(barrier_info* binfo) {
     }
     spin_unlock(&(ptgid->barrier_head_lock));
 
-    printk(KERN_ALERT "barrier_init done\n");
+    printk(KERN_ALERT "barrier_init done: barrier: tgid:%d, id:%d\n", barrier->tgid, barrier->id);
 
     goto successful_ret;
 
@@ -178,6 +180,9 @@ successful_ret:
     return 0;
 }
 
+void printSYNC_self(void) {
+    printk(KERN_ALERT "curr(tgid, tid):(%d,%d)\n", task_tgid_vnr(current), task_pid_vnr(current));
+}
 void printSYNC_start(char* fun, barrier_struct* barrier) {
     printk(KERN_ALERT "%s: tgid:%d, tid:%d, id:%d, curr(tgid, tid):(%d,%d)\n", fun, barrier->tgid, barrier->tid, barrier->id, task_tgid_vnr(current), task_pid_vnr(current));
 }
@@ -198,8 +203,8 @@ void wake_up_here (barrier_struct* barrier) {
 
 }
 
-void wait_here (barrier_struct* barrier) {
-    char*s = "wait_here";
+void sleep_here (barrier_struct* barrier) {
+    char*s = "sleep_here";
     DEFINE_WAIT(wait);
 
     printSYNC_start(s, barrier);
@@ -215,15 +220,18 @@ int barrier_wait(unsigned int barrier_id) {
     barrier_struct* barrier = NULL;
     char*s = "barrier_wait";
 
+    printSYNC_self();
+    printk(KERN_ALERT "Current: Barrier_ID:%d\n", barrier_id);
     barrier = get_barrier_only_from_id(barrier_id);
+    printk(KERN_ALERT "Current: Barrier:%p\n", barrier);
+
     printSYNC_start(s, barrier);
-    return 0;
 
     spin_lock(&(barrier->lock_total));
 
     while(barrier->total > BARRIER_FLAG) {
         spin_unlock(&(barrier->lock_total));
-        wait_here(barrier);
+        sleep_here(barrier);
         spin_lock(&(barrier->lock_total));
     }
 
@@ -239,7 +247,7 @@ int barrier_wait(unsigned int barrier_id) {
     } else { //sleep here;
         while(barrier->total < BARRIER_FLAG) {
             spin_unlock(&(barrier->lock_total));
-            wait_here(barrier);
+            sleep_here(barrier);
             spin_lock(&(barrier->lock_total));
         }
 
@@ -260,37 +268,50 @@ int barrier_wait(unsigned int barrier_id) {
 int barrier_destroy(unsigned int barrier_id) {
     char* s = "barrier_destroy";
     barrier_struct* barrier = NULL;
-    pid_t tgid;
+    per_tgid* ptgid = NULL;
+    pid_t tgid = 0;
 
-    barrier = get_barrier_only_from_id(barrier_id);
+    printk(KERN_ALERT "barrier_destory");
+    tgid = task_tgid_vnr(current);
+    ptgid = get_ptgid(tgid);
+    if(NULL == ptgid) {
+        printk(KERN_ALERT "barrier_destroy: NO ptgid !!!");
+        return -1;
+    }
+
+    barrier = get_barrier_from_ptgid(ptgid, barrier_id);
+    if(NULL == barrier) {
+        printk(KERN_ALERT "barrier_destroy: NO barrier !!!");
+        return -1;
+    }
+
     printSYNC_start(s, barrier);
 
     spin_lock(&(barrier->lock_total));
-
-    while(barrier->total > BARRIER_FLAG) {
-        spin_unlock(&(barrier->lock_total));
-        wait_here(barrier);
-        spin_lock(&(barrier->lock_total));
+    {
+        while(barrier->total > BARRIER_FLAG) {
+            spin_unlock(&(barrier->lock_total));
+            sleep_here(barrier);
+            spin_lock(&(barrier->lock_total));
+        }
     }
-
     spin_unlock(&(barrier->lock_total));
 
     //Recycle HERE//
-    tgid = task_tgid_vnr(current);
-    /*
-    spin_lock
-    list_for_each_safe() {
-        if() {
-            list_for_each_safe() {
-            }
-        }
-        if(0 == size)
-            delete
-    }
-    spin_unlock
-    */
+    list_del(&(barrier->list));
+    printSYNC_start("barrier_free", barrier);
+    kfree(barrier);
 
-    printSYNC_done(s, barrier);
+    ptgid->barrier_size--;
+    if(0 == ptgid->barrier_size) {
+        printk(KERN_ALERT "ptgid_free:%d", ptgid->tgid);
+        list_del(&(ptgid->list));
+        kfree(ptgid);
+    }
+
+    //barrier has bee kfreed
+    //printSYNC_done(s, barrier);
+    printk(KERN_ALERT "barrier_destroy Done\n");
     return 0;
 }
 
