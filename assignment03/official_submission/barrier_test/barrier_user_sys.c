@@ -101,6 +101,7 @@ int main(int argc, char*argv[]) {
         puts("At most, only 1 parameter is allowed!");
         return 0;
     }
+    fflush(stdout);
 
 #ifdef _BARRIER_MODULE_BUILD_
     eosi_barrer_fd = open("/dev/eosi_barrier_1", O_RDWR);
@@ -110,7 +111,6 @@ int main(int argc, char*argv[]) {
         //dev_run3();
         return 0;
     }
-    puts("--------");
 
     if(0 == fork()) {
         //fork_run();
