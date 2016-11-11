@@ -2,11 +2,15 @@
 #define _HC_SR04_KERNEL_H_
 
 #define _BARRIER_MGMT_
-#include "eosi_barrier_common.h"
 #include <linux/spinlock.h>
 #include <linux/semaphore.h>
 #include <linux/wait.h>
 #define BARRIER_FLAG (1ULL<<63)
+
+typedef struct barrier_info {
+    int count;
+    unsigned int barrier_id;
+} barrier_info;
 
 typedef struct barrier_struct {
     unsigned int id;
@@ -27,8 +31,6 @@ typedef struct per_tgid {
   struct list_head barrier_head;
   struct list_head list;
 } per_tgid;
-static int eosi_barrier_open(struct inode* node, struct file* file);
-static int eosi_barrier_release(struct inode* node, struct file* file);
-static long eosi_barrier_ioctl(struct file* file, unsigned int cmd, unsigned long arg);
+
 static void init_barrier_struct(barrier_struct* barrier, int count, unsigned int id);
 #endif

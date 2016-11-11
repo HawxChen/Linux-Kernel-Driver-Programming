@@ -1,4 +1,5 @@
-#include<linux/module.h>
+#include<linux/kernel.h>
+#include<linux/syscalls.h>
 #include<linux/init.h>
 #include<linux/hashtable.h>
 #include<linux/fs.h>
@@ -17,58 +18,10 @@
 #include<linux/kthread.h>
 #include<linux/ktime.h>
 #include<linux/sched.h>
-#include<linux/kernel.h>
-#include"eosi_barrier_kernel.h"
-
-static struct file_operations eosi_barrier_fops = {
-    .owner = THIS_MODULE,
-    .open = eosi_barrier_open,
-    .unlocked_ioctl = eosi_barrier_ioctl,
-    .release = eosi_barrier_release,
-};
-
-static struct miscdevice eosi_barrier_A = {
-    .minor = MISC_DYNAMIC_MINOR,
-    .name  = "eosi_barrier_1",
-    .fops = &eosi_barrier_fops,
-};
-
-static struct miscdevice eosi_barrier_B = {
-    .minor = MISC_DYNAMIC_MINOR,
-    .name  = "eosi_barrier_2",
-    .fops = &eosi_barrier_fops,
-};
+#include"barrier_kernel.h"
 
 static LIST_HEAD(tgid_list);
 DEFINE_SPINLOCK(g_tgid_list_lock);
-
-
-struct barrier_struct* get_curr_barrier(struct inode* node) {
-    /*
-    int minor;
-    barrier_struct *c;
-    minor = iminor(node);
-    list_for_each_entry(c, &barrier_list, list) { if(c->eosi_barrier->minor == minor) {
-            return c;
-        }
-    }
-    */
-    return NULL;
-}
-
-//init
-static int eosi_barrier_open(struct inode* node, struct file* file) {
-    printk(KERN_ALERT "eosi_barrier2: Open\n");
-    printk(KERN_ALERT "eosi_barrier: sizeof(unsigned long):%d sizeof(int):%d\n", sizeof(unsigned long long), sizeof(int));
-    printk(KERN_ALERT "eosi_barrier: Open Done\n");
-    return 0;
-}
-
-//destroy
-static int eosi_barrier_release(struct inode* node, struct file* file) {
-    printk(KERN_ALERT "eosi_barrier: Release\n");
-    printk(KERN_ALERT "eosi_barrier: Release Done\n"); return 0;
-}
 
 per_tgid* get_ptgid_without_lock(pid_t tgid){
     struct list_head* scan = NULL;
@@ -91,7 +44,7 @@ per_tgid* get_ptgid(pid_t tgid){
     spin_lock(&g_tgid_list_lock);
     list_for_each(scan, &tgid_list) {
         ptgid = list_entry(scan, per_tgid, list);
-        printk(KERN_ALERT "get_ptgid: required_tgid:%d, tgid:%d", tgid, ptgid->tgid);
+        //printk(KERN_ALERT "get_ptgid: required_tgid:%d, tgid:%d", tgid, ptgid->tgid);
         if(ptgid->tgid == tgid) {
             spin_unlock(&g_tgid_list_lock);
             return  ptgid;
@@ -110,7 +63,7 @@ barrier_struct* get_barrier_from_ptgid(per_tgid* ptgid, int barrier_id) {
     spin_lock(&(ptgid->barrier_head_lock));
     list_for_each(scan, &(ptgid->barrier_head)) {
         barrier = list_entry(scan, barrier_struct, list);
-        printk(KERN_ALERT "get_barrier:tgid:%d, required_bid:%d, bid:%d", ptgid->tgid, barrier_id, barrier->id);
+        //printk(KERN_ALERT "get_barrier:tgid:%d, required_bid:%d, bid:%d", ptgid->tgid, barrier_id, barrier->id);
         if(barrier->id == barrier_id) {
             spin_unlock(&(ptgid->barrier_head_lock));
             return  barrier;
@@ -127,12 +80,12 @@ barrier_struct* get_barrier_only_from_id(int barrier_id) {
 }
 
 //barrier_struct* barray[10];
-int barrier_init(barrier_info* binfo) {
+int do_barrier_init(barrier_info* binfo) {
     pid_t tgid = 0;
     per_tgid* ptgid = NULL;
     barrier_struct* barrier = NULL;
 
-    printk(KERN_ALERT "barrier_init\n");
+    printk(KERN_ALERT "do_barrier_init\n");
 
     tgid = task_tgid_vnr(current);
 
@@ -176,11 +129,10 @@ int barrier_init(barrier_info* binfo) {
         init_barrier_struct(barrier, binfo->count, binfo->barrier_id);
         ptgid->barrier_size++;
         list_add(&(barrier->list), &(ptgid->barrier_head));
-        printk(KERN_ALERT "barrier LINKED, ptgid->tgid:%d, barrier_id:%d", barrier->tgid, barrier->id);
     }
     spin_unlock(&(ptgid->barrier_head_lock));
 
-    printk(KERN_ALERT "barrier_init done: barrier: tgid:%d, id:%d\n", barrier->tgid, barrier->id);
+    printk(KERN_ALERT "do_barrier_init done: barrier: tgid:%d, id:%d\n", barrier->tgid, barrier->id);
 
     goto successful_ret;
 
@@ -227,14 +179,12 @@ void sleep_here (barrier_struct* barrier) {
 
 }
 
-int barrier_wait(unsigned int barrier_id) {
+int do_barrier_wait(unsigned int barrier_id) {
     barrier_struct* barrier = NULL;
-    char*s = "barrier_wait";
+    char*s = "do_barrier_wait";
 
     printSYNC_self();
-    printk(KERN_ALERT "Current: Barrier_ID:%d\n", barrier_id);
     barrier = get_barrier_only_from_id(barrier_id);
-    printk(KERN_ALERT "Current: Barrier:%p\n", barrier);
 
     printSYNC_start(s, barrier);
 
@@ -276,23 +226,23 @@ int barrier_wait(unsigned int barrier_id) {
     return 0;
 }
 
-int barrier_destroy(unsigned int barrier_id) {
-    char* s = "barrier_destroy";
+int do_barrier_destroy(unsigned int barrier_id) {
+    char* s = "do_barrier_destroy";
     barrier_struct* barrier = NULL;
     per_tgid* ptgid = NULL;
     pid_t tgid = 0;
 
-    printk(KERN_ALERT "barrier_destory");
+    printk(KERN_ALERT "do_barrier_destory");
     tgid = task_tgid_vnr(current);
     ptgid = get_ptgid(tgid);
     if(NULL == ptgid) {
-        printk(KERN_ALERT "barrier_destroy: NO ptgid !!!");
+        printk(KERN_ALERT "do_barrier_destroy: NO ptgid !!!");
         return -1;
     }
 
     barrier = get_barrier_from_ptgid(ptgid, barrier_id);
     if(NULL == barrier) {
-        printk(KERN_ALERT "barrier_destroy: NO barrier !!!");
+        printk(KERN_ALERT "do_barrier_destroy: NO barrier !!!");
         return -1;
     }
 
@@ -333,39 +283,43 @@ int barrier_destroy(unsigned int barrier_id) {
     return 0;
 }
 
-static long eosi_barrier_ioctl(struct file* file, unsigned int cmd, unsigned long arg) {
+asmlinkage long sys_barrier_init(int count, unsigned int *barrier_id) {
     int ret = 0;
+    barrier_info binfo;
+    binfo.count = count;
+    printk(KERN_ALERT "sys_barrier_init\n");
+    ret = do_barrier_init(&binfo);
+    if(0 > ret) goto failed_ret;
 
-    printk(KERN_ALERT "ioctl\n");
-    switch (cmd) {
-        case BARRIER_INIT:
-            ret = barrier_init((barrier_info*)arg);
-            break;
-        case BARRIER_WAIT:
-            ret = barrier_wait((unsigned int)arg);
-            break;
-        case BARRIER_DESTROY:
-            ret = barrier_destroy((unsigned int)arg);
-            break;
-        default: 
-            return -EINVAL;
-    }
+    ret = copy_to_user(barrier_id,&(binfo.barrier_id),sizeof(int));
+    if(0 > ret) goto failed_ret;
 
-    printk(KERN_ALERT "ioctl DONE\n");
+    printk(KERN_ALERT "sys_barrier_init Done, barrier_id:%u\n", *barrier_id);
+    return ret;
+
+failed_ret:
+    printk(KERN_ALERT "sys_barrier_init FAILED !!!!!");
     return ret;
 }
 
-static int reg_misc(struct miscdevice* md) {
-    int error;
-    error = misc_register(md);
-    if(error)
-        printk(KERN_ALERT "Reg md Error:%s\n", md->name);
+asmlinkage long sys_barrier_wait(unsigned int barrier_id) {
+    int ret = 0;
 
-    return error;
+    printk(KERN_ALERT "sys_barrier_wait");
+    ret = do_barrier_wait(barrier_id);
+    printk(KERN_ALERT "sys_barrier_wait Done");
+
+    return ret;
 }
 
-static void dereg_misc(struct miscdevice* md) {
-    misc_deregister(md);
+asmlinkage long sys_barrier_destroy(unsigned int barrier_id) {
+    int ret = 0;
+
+    printk(KERN_ALERT "sys_barrier_destroy");
+    ret = do_barrier_destroy(barrier_id);
+    printk(KERN_ALERT "sys_barrier_destroy Done");
+
+    return ret;
 }
 
 static void init_barrier_struct(barrier_struct* barrier, int count, unsigned int id) {
@@ -378,33 +332,3 @@ static void init_barrier_struct(barrier_struct* barrier, int count, unsigned int
     init_waitqueue_head(&(barrier->waitQ));
 }
 
-#ifndef _BARRIER_MGMT_
-#endif
-
-static int __init eosi_barrier_init(void) {
-    /*!!!!!*/
-    //CHECK!!! INIT
-    printk(KERN_ALERT "eosi_barrier: INIT\n");
-    if( reg_misc(&eosi_barrier_A) || reg_misc(&eosi_barrier_B) )
-        return 0;
-
-//    init_hcsr_struct(&hcA, &eosi_barrier_A, A_pins, A_pin_str);
-//    init_hcsr_struct(&hcB, &eosi_barrier_B, B_pins, B_pin_str);
-
-    printk(KERN_ALERT "eosi_barrier: INIT DONE\n");
-    return 0;
-}
-
-static void __exit eosi_barrier_exit(void) {
-    printk(KERN_ALERT "eosi_barrier: GoodBye Kernel World!!!\n");
-
-    dereg_misc(&eosi_barrier_A);
-    dereg_misc(&eosi_barrier_B);
-    printk(KERN_ALERT "eosi_barrier: EXIT DONE\n");
-    return;
-} 
-
-module_init(eosi_barrier_init);
-module_exit(eosi_barrier_exit);
-
-MODULE_LICENSE("GPL");

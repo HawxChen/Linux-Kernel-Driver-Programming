@@ -9,17 +9,20 @@
 #include<sys/types.h>
 #include<errno.h>
 #include<features.h>
-#include"eosi_barrier_user.h"
-static unsigned int sleep_time = 500;
+#include"barrier_user_sys.h"
+static unsigned int sleep_time = 50;
+//#define SYNC_ROUNS (100)
+#define SYNC_ROUNS (100)
 
 void* pfunction(void* datain) {
     int cnt = 0;
     unsigned int barrier_id = *(unsigned int*) datain;
 
-    printf("pid: %d, tid: %d\n", (int)getpid(), (unsigned int)pthread_self());
+    printf("pid: %d, tid: 0x%x\n", (int)getpid(), (unsigned int)pthread_self());
 
 re_cnt:
-    if(cnt++ == 2) return 0;
+    printf("pid: %d, tid: 0x%x---cnt:%d---\n", (int)getpid(), (unsigned int)pthread_self(), cnt);
+    if(SYNC_ROUNS == cnt++) return NULL;
     usleep(sleep_time);
     barrier_wait(barrier_id);
     goto re_cnt;
@@ -35,7 +38,7 @@ void* run_barriers(void* datain) {
    
 
     barrier_init(num_threads, &barrier_id);
-    printf("pid: %d, tid: %d, id:%d\n", (int)getpid(), (unsigned int)pthread_self(), barrier_id);
+    printf("pid: %d, tid: 0x%x, id:%d\n", (int)getpid(), (unsigned int)pthread_self(), barrier_id);
     for(idx = 0; idx < num_threads; idx++) {
         pthread_create(&tids[idx], NULL, pfunction, &barrier_id);
     }
@@ -76,42 +79,42 @@ void dev_run2() {
     pthread_create(&t1, NULL, run_barriers, &t2_num);
     pthread_join(t1, NULL);
 }
-/*
-unsigned int id1, id2, id3;
-void init_test () {
-    barrier_init(3, &id1);
-    barrier_init(3, &id2);
-    barrier_init(3, &id3);
 
-    barrier_wait(id1);
-    barrier_wait(id2);
-    barrier_wait(id3);
-
-    barrier_destroy(id1);
-    barrier_destroy(id2);
-    barrier_destroy(id3);
+void dev_run3() {
+    pthread_t t1;
+    pthread_t t2;
+    int t_num = 2;
+    pthread_create(&t1, NULL, run_barriers, &t_num);
+    pthread_create(&t2, NULL, run_barriers, &t_num);
+    pthread_join(t2, NULL);
+    pthread_join(t1, NULL);
 }
-*/
 int main(int argc, char*argv[]) {
-    if(2 == argc) {
+    if(1 == argc) {
+        printf("Now Your DEFAULT Sleep Time in Microseconds: %d\n", sleep_time);
+    }
+    else if(2 == argc) {
         sleep_time = atoi(argv[1]);
+        printf("Now Your Sleep Time in Microseconds: %d\n", sleep_time);
+
     } else if(2 < argc) {
         puts("At most, only 1 parameter is allowed!");
         return 0;
     }
 
+#ifdef _BARRIER_MODULE_BUILD_
     eosi_barrer_fd = open("/dev/eosi_barrier_1", O_RDWR);
+#endif
     if(0 == fork()) {
-        //fork_run();
-        dev_run();
+        fork_run();
+        //dev_run3();
         return 0;
     }
     puts("--------");
 
     if(0 == fork()) {
-        //init_test ();
         //fork_run();
-        dev_run2();
+        fork_run();
         return 0;
     }
 
