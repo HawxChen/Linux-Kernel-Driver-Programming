@@ -85,8 +85,12 @@ static int ht530_release(struct inode* node, struct file* file) {
 static ssize_t ht530_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
 
     int failed_copy  = 0;
-    ht_object_t* uitem = (ht_object_t*) buf;
+    ht_object_t realitem;
+    ht_object_t* uitem = &realitem;
     struct ht530_node *kitem = NULL;
+
+    failed_copy = copy_from_user(uitem, buf, sizeof(ht_object_t));
+    if(0 > failed_copy) return -EINVAL;
 
     printk(KERN_ALERT "ht530: Read\n");
     printk(KERN_ALERT "IN: ht530: %p, key:%d , data:%d \n",  uitem, uitem->key, uitem->data);
@@ -98,6 +102,8 @@ static ssize_t ht530_read(struct file *file, char *buf, size_t count, loff_t *pt
     }
     
     failed_copy = copy_to_user(buf, (void*) &kitem->pair, count);
+    if(0 > failed_copy) return -EINVAL;
+
     printk(KERN_ALERT "ht530: Read Done\n");
 
     return count - failed_copy;
@@ -142,8 +148,13 @@ static struct ht530_node* find_the_node(const int key,struct hlist_head* bucket)
 }
 //ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
 static ssize_t ht530_write(struct file *file, const char __user *buf, size_t count, loff_t *ptr) {
-    ht_object_t* uitem = (ht_object_t*) buf;
+    int failed_copy  = 0;
+    ht_object_t realitem;
+    ht_object_t* uitem = &realitem;
     struct ht530_node *kitem = NULL;
+
+    failed_copy = copy_from_user(uitem, buf, sizeof(ht_object_t));
+    if(0 > failed_copy) return -EINVAL;
 
     printk(KERN_ALERT "ht530: Write\n");
     printk(KERN_ALERT "IN: ht530: %p, key:%d , data:%d , hash_num:%llu \n", uitem, uitem->key, uitem->data, KEY_TO_BUCKET(((u64) uitem->key)));
@@ -151,7 +162,7 @@ static ssize_t ht530_write(struct file *file, const char __user *buf, size_t cou
     kitem =  find_the_node(uitem->key, NULL);
 
     //Here should be a concurrent section protected by spin/sempahore
-    //This worload now is dispatched to user mode.
+    //This workload now is dispatched to user mode.
     if(NULL == kitem) {
         if(0 == uitem->data) {
             /*KUSO: Do Nothing*/
@@ -192,13 +203,17 @@ static ssize_t ht530_write(struct file *file, const char __user *buf, size_t cou
 }
 
 long ht530_unlocked_ioctl (struct file *file, unsigned int req1, unsigned long req2) {
-    struct dump_org* dump_set = (struct dump_org*) req2;
+    struct dump_org real_dump_set;
+    struct dump_org* dump_set = &real_dump_set;
     struct ht530_node* obj = NULL;
     int acc_n = 0;
     struct hlist_head* h;
     int failed_copy = 0;
 
     printk(KERN_ALERT "ht530: unlocked_ioctl\n");
+
+    failed_copy = copy_from_user(dump_set, (struct dump_org*) req2, sizeof(struct dump_org));
+    if(0 > failed_copy) return -EINVAL;
 
     h = &ht530_tbl[dump_set->n];
 

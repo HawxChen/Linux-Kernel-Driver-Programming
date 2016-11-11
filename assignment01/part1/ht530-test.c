@@ -17,6 +17,12 @@ struct Thread_Info{
 };
 static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
+int fill_cnt;
+static pthread_mutex_t fill_cnt_mtx = PTHREAD_MUTEX_INITIALIZER;
+
+int later_cnt;
+static pthread_mutex_t later_cnt_mtx = PTHREAD_MUTEX_INITIALIZER;
+
 int write_hash_atomic(int key, int data) {
     int ret = 0;
     int s = 0;
@@ -35,19 +41,46 @@ int write_hash_atomic(int key, int data) {
 int read_hash(int key) {
     int ret;
     ht_object_t obj = {key, 0};
+
+    pthread_mutex_lock(&mtx);
     ret = read(dev_fd, (void*) &obj, sizeof(ht_object_t));
+    pthread_mutex_unlock(&mtx);
+
     printf("read_hash: key:%d, data:%d\n", obj.key, obj.data);
     return ret;
 }
+
 
 void* thread_exec(void* arg) {
     /*random access*/
     int ret = 0;
     struct Thread_Info* tinfo = (struct Thread_Info*) arg;
     printf("I am thread:%2d\n", tinfo->thread_num);
-    int i = 0;
     int act = 0;
-    for(i = 0; i < 100;i++) {
+    //fill part
+    while(1) {
+//        pthread_mutex_lock
+        pthread_mutex_lock(&fill_cnt_mtx);
+        if(200 <= fill_cnt) {
+           pthread_mutex_unlock(&fill_cnt_mtx);
+           break;
+        }
+           fill_cnt++;
+       pthread_mutex_unlock(&fill_cnt_mtx);
+       write_hash_atomic(RAND_SCALE(1, 200), RAND_SCALE(1,200));
+    }
+
+    //later part
+    while(1) {
+        pthread_mutex_lock(&later_cnt_mtx);
+
+        if(100 <= later_cnt) {
+            pthread_mutex_unlock(&later_cnt_mtx);
+            return NULL;
+        }
+            later_cnt++;
+        pthread_mutex_unlock(&later_cnt_mtx);
+
         act = RAND_SCALE(DO_ADD, DO_SEARCH);
         switch (act) {
             case DO_ADD:
@@ -91,12 +124,6 @@ int part1_execute(int size) {
 }
 
 
-int fill_hash_table(int size) {
-    for(int i = 0; i < size; i++) {
-       write_hash_atomic(RAND_SCALE(1, 200), RAND_SCALE(1,200)); 
-    }
-    return 0;
-}
 
 int main(int argc, char*argv[]) {
     struct dump_org; 
@@ -110,7 +137,7 @@ int main(int argc, char*argv[]) {
     part1_execute(200);
     int i = 0;
 //    for() { }
-    fill_hash_table(HASH_INIT_PUSH_SIZE);
+    //fill_hash_table(HASH_INIT_PUSH_SIZE);
 
     ioctl(dev_fd, RET_CUR_SIZE, &hash_cur_size);
     printf("CURRENT SIZE:%lu\n", hash_cur_size);

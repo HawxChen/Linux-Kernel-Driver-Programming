@@ -13,6 +13,7 @@
 #include<linux/kprobes.h>
 #include<asm/timex.h>
 #include<linux/io.h>
+#include<linux/spinlock.h>
 #include "mprobe_kernel.h"
 
 module_init(mprobe_init);
@@ -31,6 +32,8 @@ static struct file_operations mprobe_fops = {
 static struct kprobe* kp=NULL ;
 
 ringbuffer rbf;
+DEFINE_SPINLOCK(g_rbf_lock);
+
 
 
 static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
@@ -38,11 +41,13 @@ static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
     unsigned long  g_addr = 0;
     struct debug_result *drst;
 
+    spin_lock(&g_rbf_lock);
     local_addr = ((unsigned long)regs->sp) + (unsigned long)rbf.req.of_local;
-    g_addr = ((unsigned long)rbf.req.sect.bss) + 0x440;
+    g_addr = ((unsigned long)rbf.req.sect.bss) + (unsigned long)rbf.req.of_gbl;
 
     drst = &rbf.rst[rbf.idx++];
     rbf.idx%=RING_SIZE;
+
     drst->addr = regs->ip;
     drst->pid = current->pid;
     drst->xtc = get_cycles();
@@ -51,6 +56,7 @@ static int handler_pre(struct kprobe *p, struct pt_regs *regs) {
 
     printk(KERN_INFO "pre_handler: p->addr = 0x%p, ip = %lx, flags = 0x%lx, bp = 0x%lx, sp = 0x%lx, time = %llu,local_addr:%lx, global_addr:%lx\n", p->addr, regs->ip, regs->flags, regs->bp, regs->sp, get_cycles(), local_addr, g_addr);
     printk(KERN_INFO "bss:%llx,*bp=0x%lx \n", rbf.req.sect.bss,*((unsigned long*)regs->bp));
+    spin_unlock(&g_rbf_lock);
     return 0;
 }
 
@@ -135,16 +141,25 @@ static int mprobe_release(struct inode* node, struct file* file) {
 static ssize_t mprobe_read(struct file *file, char *buf, size_t count, loff_t *ptr) {
     int i = 0;
     int failed_copy = 0;
+    struct debug_result rst[RING_SIZE];
+
     printk(KERN_ALERT "mprobe: read\n");
-    if(0 == rbf.rst[0].xtc) {
-        return -EINVAL;
-    }
 
-    for(; i < RING_SIZE ;i++) {
-       if(0 ==  rbf.rst[i].xtc) break;
-    }
+    spin_lock(&g_rbf_lock);
+        if(0 == rbf.rst[0].xtc) {
+            spin_unlock(&g_rbf_lock);
+            return -EINVAL;
+        }
 
-    failed_copy = copy_to_user(buf, &(rbf.rst),sizeof(struct debug_result)*i);
+        for(; i < RING_SIZE ;i++) {
+           if(0 ==  rbf.rst[i].xtc) break;
+        }
+        memcpy(rst, (rbf.rst), sizeof(struct debug_result)*RING_SIZE);
+
+    spin_unlock(&g_rbf_lock);
+
+    failed_copy = copy_to_user(buf, rst, sizeof(struct debug_result)*i);
+    if(0 > failed_copy) return -EINVAL;
 
     printk(KERN_ALERT "mprobe: read Done\n");
     return sizeof(struct debug_result)*i;
@@ -164,7 +179,11 @@ static ssize_t mprobe_write(struct file *file, const char __user *buf, size_t co
     printk("req->of_line + req->sect.text:%llx\n",req->of_line + req->sect.text);
     kp = (struct kprobe*) kmalloc(sizeof(struct kprobe), GFP_KERNEL);
     init_kp(kp, req->of_line + req->sect.text, NULL);
+
+    spin_lock(&g_rbf_lock);
     rbf.req = *req;
+    spin_unlock(&g_rbf_lock);
+
     printk("HERE2");
     register_kprobe(kp);
     

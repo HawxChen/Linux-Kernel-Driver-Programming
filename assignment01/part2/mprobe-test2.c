@@ -16,14 +16,14 @@ static int ht530_fd;
 char buff[1024];
 struct debug_request req1 = {
     .of_line = 0x99,     //break at ht530_fsync
-    .of_local = 0x0,    //print xmen3 in ht530_fsync 
-    .of_gbl = 0x440,   //print for_mprobe_test2 @ht530.c
+    .of_local = 0x0,    //print xmen2 in ht530_fsync 
+    .of_gbl = 0x424,     //print for_mprobe_test1 @ht530.c
 };
 
 struct debug_request req2 = {
-    .of_line = 0x109,     //ht530_release
-    .of_local = 0x0,       //print supermen3 in ht530_fsync 
-    .of_gbl = 0x444,     //print for_mprobe_test1 @ht530.c
+    .of_line = 0x109,     //ht530_flock
+    .of_local = 0x0,       //print supermen2 in ht530_flock
+    .of_gbl = 0x420,   //print for_mprobe_test2 @ht530.c
 };
 char*fp_bss = "/sys/module/ht530/sections/.bss";
 char*fp_text = "/sys/module/ht530/sections/.text";
@@ -54,12 +54,12 @@ int main(int argc, char*argv[]) {
     get_module_sections(&req1);
     get_module_sections(&req2);
 
-    flock(ht530_fd,LOCK_SH);
 
 
     //write(mprobe_fd,&req1,sizeof(struct debug_request));
     write(mprobe_fd,&req2,sizeof(struct debug_request));
 
+    flock(ht530_fd,LOCK_SH);
     fsync(ht530_fd);
     if( 0 > (ret_val = read(mprobe_fd,items,sizeof(items)))){
        printf("errno:%d\n" , errno); 

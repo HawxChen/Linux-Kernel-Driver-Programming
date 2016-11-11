@@ -4,7 +4,7 @@ TESTER_FLAGS = -Wall -g -lpthread -std=c99
 
 obj-m := $(NAME).o
 PWD := $(shell pwd)
-KDIR := /root/course/eosi/kernel/linux-3.16.4/
+KDIR := /usr/src/linux-headers-3.16.0-4-amd64/
 
 .PHONY: all 
 all: $(TESTER_NAME)
