@@ -11,7 +11,7 @@ I implemented all Linux Kernel/Driver assignments in ASU CSE530, independently.
     *   Export HC-SR04 module to the SYSFS interface.
     *   Both parts had testing programs and README.
 
-*   Assignment03 is the implementation of synchronization in Linux kernel.
+*   Assignment03 included the implementation of synchronization in Linux kernel.
     *   I implemented the Barrier through three system calls.
       *  barrier_init(int count, unsigned int\* barrier_id)
       *  barrier_wait(int barrier_id)
