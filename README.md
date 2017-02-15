@@ -1,4 +1,4 @@
-I implemented these Linux Kernel/Driver programs independently.
+I implement these Linux Kernel/Driver programs independently.
 
 *   01_mprobe_and_generanl_driver: 
     *   A kernel module uses hashtable and synchronization
