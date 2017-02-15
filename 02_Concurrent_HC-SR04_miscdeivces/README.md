@@ -1,3 +1,6 @@
+*   Two HC-SR04 driver instances registered through miscdevice are equipped with two modes of one-shot and periodical sampling. This kernel module can operate two HC-SR04 sensors in the same time.
+
+*   There two HC-SR04 devices running to measure distance concurrently.
 # KernelRocks
 #For advanced pratices, I implemented the PIN MUXING in kernel mode with the whole galileo GEN2 Table in hw_setting.h, so that users only have to enter Trigger and Echo pins in the user mode program file.
 
